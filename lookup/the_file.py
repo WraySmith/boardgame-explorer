@@ -2,13 +2,14 @@
 creates lookup tables for numeric data that should have a corresponding name/string
 """
 
+import time
 import requests
 
 import pandas as pd
-import bs4
+from bs4 import BeautifulSoup
 
 
-def scrape_game(game_id=15):
+def get_game_soup(game_id=15):
     """
     gets soup for given game
 
@@ -16,7 +17,38 @@ def scrape_game(game_id=15):
     """
 
     url = "https://boardgamegeek.com/boardgame/{}".format(game_id)
-    print(url)
+    resp = requests.get(url)
+
+    time.sleep(1)
+    if resp.status_code != 200:
+        print("failed because of error: {}".format(resp))
+        print("when looking for game with id: {}".format(game_id))
+        print("add error handling")
+        raise RuntimeError("Failed to scrape site")
+
+    soup = BeautifulSoup(resp.content, 'html.parser')
+    return soup
+
+
+def get_soup_for_id_and_group(group, bgg_id):
+    """
+    collects the name for the given id and group
+    """
+
+    base_url = "https://boardgamegeek.com/"
+
+    if group == "artist":
+        base_url += "boardgameartist"
+    elif group == "publisher":
+        base_url += "boardgamepublisher"
+    elif group == "category":
+        base_url += "boardgamecategory"
+    elif group == "mechanic":
+        base_url += "boardgamemechanic"
+    elif group == "designer":
+        base_url += "boardgamedesigner"
+    else:
+        raise RuntimeError("Incorrect group given")
 
 
 if __name__ == "__main__":
@@ -24,4 +56,4 @@ if __name__ == "__main__":
     # df = pd.read_csv("bgg_GameItem.csv")
 
     # print(df.head(20))
-    scrape_game(game_id=13)
+    get_game_soup(game_id=13)
