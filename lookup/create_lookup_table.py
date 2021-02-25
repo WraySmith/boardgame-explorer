@@ -36,10 +36,9 @@ def create_chunks(id_list, n):
     id_list : list of ints that are strings
     n : int
 
-    returns : list of lists of strings
+    returns : generator of lists
     """
 
-    # looping till length l
     for i in range(0, len(id_list), n):
         yield id_list[i : i + n]
 
