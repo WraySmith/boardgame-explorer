@@ -29,7 +29,7 @@ def group_id_to_name(id_list, group_name):
     for one group at a time
 
     id_list : list of ids given as ints
-    group_name : string (one of [artist, publisher, 
+    group_name : string (one of [artist, publisher,
                                  designer, category, mechanic, game])
 
     returns : dictionary
