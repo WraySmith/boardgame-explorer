@@ -1,26 +1,11 @@
 """
 working with the bgg api
+eg:
+https://www.boardgamegeek.com/xmlapi/boardgame/13,150
 """
 
 import requests
 import xml.etree.ElementTree as ET
-
-
-def get_publisher_id_name_dict(publisher_list):
-    id_name_dict = {}
-    publishers_string = [str(x) for x in publisher_list]
-    publishers_string = ",".join(publishers_string)
-    url = "https://www.boardgamegeek.com/xmlapi/boardgamepublisher/{}".format(
-        publishers_string
-    )
-    resp = requests.get(url)
-    tree = ET.fromstring(resp.content)
-    publishers = list(tree)
-    for idx, publisher in enumerate(publishers):
-        pub_name = publisher.find("name").text
-        pub_id = publisher_list[idx]
-        id_name_dict[pub_id] = pub_name
-    return id_name_dict
 
 
 def group_id_to_name(id_list, group_name):
