@@ -29,7 +29,8 @@ def group_id_to_name(id_list, group_name):
     for one group at a time
 
     id_list : list of ids given as ints
-    group_name : string (one of [artist, publisher, designer, category, mechanic])
+    group_name : string (one of [artist, publisher, 
+                                 designer, category, mechanic, game])
 
     returns : dictionary
 
@@ -39,9 +40,10 @@ def group_id_to_name(id_list, group_name):
     id_name_dict = {}
     publishers_string = [str(x) for x in id_list]
     publishers_string = ",".join(publishers_string)
-    url = "https://www.boardgamegeek.com/xmlapi/boardgame{}/{}".format(
-        group_name, publishers_string
-    )
+    url = "https://www.boardgamegeek.com/xmlapi/boardgame"
+    if group_name != "game":
+        url = url + group_name
+    url += "/{}".format(publishers_string)
     print(url)
     resp = requests.get(url)
     tree = ET.fromstring(resp.content)
@@ -57,8 +59,8 @@ if __name__ == "__main__":
     # resp = requests.get(url)
     # tree = ET.fromstring(resp.content)
 
-    pub_list = [100, 150]
-    pubs = group_id_to_name(pub_list, "publisher")
+    pub_list = [13, 150]
+    pubs = group_id_to_name(pub_list, "game")
     print(pubs)
 
     # import pdb
