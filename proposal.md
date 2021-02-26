@@ -1,4 +1,4 @@
-# Boardgame Dashboard Proposal
+# Board Game Dashboard Proposal
 **Team:** Nathan Smith, Mitch Harris, Ryan Koenig, Sophia Bulcock 
 
 ## Motivation and Purpose
@@ -11,10 +11,16 @@ Board games have been a popular past time since the 1950’s. Starting up and ow
 ## Description of the Data
 The proposed dashboard will visualize a dataset of approximately 10,000 boardgames published between 1950 and 2021. The dataset comes from the [Board Game Geek website](https://boardgamegeek.com/) and includes boardgames with descriptions, general game details, publisher, and user ratings. The dataset is available on [Kaggle](https://www.kaggle.com/mshepherd/board-games) and is regularly updated with the latest data.
 
-Numerical game details include features such as min/max players and min/max/ave playing time, while categorical game details include features such as `category` and  `mechanic`. Note that the categorical features can have multiple values. For example, the `mechanic` feature for an individual boardgame may have both "Area Control" and "Area Influence" as values. The publishing information includes `year_published` and features for the `author`, `designer`, and `publisher`. The `publisher` feature is missing the least amount of values in the datasets compared with `author` and `designer`. The user rating features include the boardgame average user rating (`average_rating`) as well as the number of users that have provided a rating (`users_rated`).  There are currently no derived features anticipated for the dataset.
+Numerical game details include features such as min/max players and min/max/ave playing time, while categorical game details include features such as `category` and  `mechanic`. Note that the categorical features can have multiple values. For example, the `mechanic` feature for an individual board game may have both "Area Control" and "Area Influence" as values. The publishing information includes `year_published` and features for the `author`, `designer`, and `publisher`. The `publisher` feature is missing the least amount of values in the datasets compared with `author` and `designer`. The user rating features include the board game average user rating (`average_rating`) as well as the number of users that have provided a rating (`users_rated`).  There are currently no derived features anticipated for the dataset.
 
 ## Research Questions and Usage Scenario
 Text here
 
 ## Description of App and Sketch
-Text and image here
+The app includes two tabs. The first tab allows the user to explore board game trends using game categories, mechanics and publishers. The upper section of this tab allows the user to select subsets of these features from dropdown menus.The selections will be presented on a histogram of annual published counts and will also be highlighted on a scatter plot of average game ratings vs published year. The lower portion of the tab allows the user to select a subset of years using a slider and the top five to ten categories, mechanics, and publishers will be presented on bar charts.
+
+The second tab allows the user to explore the most popular boardgames (based on average user rating) filtering on some or all of: categories, mechanics, publisher (using dropdown menus) and published year (using a slider). The user can also select the number of games they want shown using a slider. Features for each of these top selected games will be shown in table format and the average user ratings will also be shown on a bar chart.
+
+An additional tab that may be provided as part of the app (not shown in the sketch below) depending on the timeline includes a two- or three-dimensional plot showing clustering of similar board games likely completed using a dimensionality reducing technique such as Principle Component Analysis. The plot would allow a user to highlight specific categories, mechanics, and publishers.
+
+*Include app sketch here*
