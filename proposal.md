@@ -30,6 +30,6 @@ The second tab allows the user to explore the most popular boardgames (based on 
 
 An additional tab that may be provided as part of the app (not shown in the sketch below) depending on the timeline includes a two- or three-dimensional plot showing clustering of similar board games likely completed using a dimensionality reducing technique such as Principle Component Analysis. The plot would allow a user to highlight specific categories, mechanics, and publishers.
 
-![dashboard 1](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/images/dashboard_sketch_1.PNG)
+![dashboard 1](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/tree/main/images/dashboard_sketch_1.PNG)
 
-![dashboard 2](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/images/dashboard_sketch_2.PNG)
+![dashboard 2](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/tree/main/images/dashboard_sketch_2.PNG)
