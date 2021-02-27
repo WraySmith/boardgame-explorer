@@ -18,9 +18,6 @@ def extract_ids_from_column(column):
     returns: flat list of ints
     """
 
-    def split_string(string):
-        return string.split(",")
-
     st = column.astype("str", copy=False).dropna(
         inplace=False
     )  # some columns were mixed type
