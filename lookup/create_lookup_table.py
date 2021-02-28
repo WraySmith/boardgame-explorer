@@ -43,9 +43,9 @@ def create_chunks(id_list, n):
 
 if __name__ == "__main__":
     df = pd.read_csv("../data/bgg_GameItem.csv")
-    df = df[["bgg_id", "category"]]
+    df = df[["bgg_id", "publisher"]]
 
-    ids = extract_ids_from_column(df["category"])
+    ids = extract_ids_from_column(df["publisher"])
     print(len(ids))
     # chunked_list = list(create_chunks(ids, 500))
     # pub_id = id_lookup.group_id_to_name(chunked_list[-1], "publisher")
