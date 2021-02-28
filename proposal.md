@@ -20,7 +20,7 @@ Numerical game details include features such as min/max players and min/max/ave 
 
 To get an idea of how one would use this dashboard, we can look at a scenario:
 
-Sarah is a long time board game hobbyist and has always wanted to develop one on her own. One of her friends discovered the Board Game dashboard (name pending) and showed it to her. Looking through the dashboard, Sarah decided she now had the tools to start her game development. Her primary interests were to try and find out why some board games are immensly popular and why some are not. She first set about looking at which category of game she should develop. She wanted to build a game where there was a high amount of interest but not a flooded market and found that Trains and City Building games generally recieved high reviews but there were not too many of them in the market. She was also discovered that having a game that functioned with two to four players were the most typical. She was then able to filter the data by these variables in order to see what games already exist and also to compare how succesful each of these games were compared to the amount of mechanics they have.  She now has a good idea of what parameters she wants to develop her game within.
+Sarah is a long time board game hobbyist and has always wanted to develop one on her own. One of her friends discovered the Board Game dashboard and showed it to her. Looking through the dashboard, Sarah decided she now had the tools to start her game development. Her primary interests were to try and find out why some board games are immensly popular and why some are not. She first set about looking at which category of game she should develop. She wanted to build a game where there was a high amount of interest but not a flooded market and found that Trains and City Building games generally recieved high reviews but there were not too many of them in the market. She was also discovered that having a game that functioned with two to four players were the most typical. She was then able to filter the data by these variables in order to see what games already exist and also to compare how succesful each of these games were compared to the amount of mechanics they have.  She now has a good idea of what parameters she wants to develop her game within.
 
 ## Description of App and Sketch
 
@@ -30,6 +30,8 @@ The second tab allows the user to explore the most popular boardgames (based on 
 
 An additional tab that may be provided as part of the app (not shown in the sketch below) depending on the timeline includes a two- or three-dimensional plot showing clustering of similar board games likely completed using a dimensionality reducing technique such as Principle Component Analysis. The plot would allow a user to highlight specific categories, mechanics, and publishers.
 
-![dashboard 1](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/tree/main/images/dashboard_sketch_1.PNG)
+![dashboard 1](./images/dashboard_sketch_1.PNG)
+*Figure 1: Board Game Dashboard Sketch (Tab 1)*
 
-![dashboard 2](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/tree/main/images/dashboard_sketch_2.PNG)
+![dashboard 2](./images/dashboard_sketch_2.PNG)
+*Figure 2: Board Game Dashboard Sketch (Tab 2)*
