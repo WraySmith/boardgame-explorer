@@ -52,8 +52,23 @@ if __name__ == "__main__":
     df = df[["bgg_id", type_of_ids]]
 
     ids = extract_ids_from_column(df[type_of_ids])
-    chunked_list = list(create_chunks(ids, 500))
+    print(len(ids))
+
+    # TODO remove already saved ids
+    # by reading csv and collecting saved ids into a set
+    # then taking set difference
+
     ids_and_names = dict()
+    try:
+        with open(path_to_save) as f:
+            ids_and_names.update(json.load(f))
+    except FileNotFoundError:
+        pass
+
+    # remove ids that we have already
+    ids = list(set(ids) - set((ids_and_names.keys())))
+
+    chunked_list = list(create_chunks(ids, 500))
 
     for id_chunk in chunked_list:
         id_and_name = id_lookup.group_id_to_name(id_chunk, type_of_ids)
