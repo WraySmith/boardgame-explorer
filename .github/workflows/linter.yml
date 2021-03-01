@@ -22,5 +22,6 @@ jobs:
         uses: github/super-linter@v3
         env:
           VALIDATE_MARKDOWN: false
+          VALIDATE_HTML: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
