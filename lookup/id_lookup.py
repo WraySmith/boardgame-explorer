@@ -15,7 +15,7 @@ def group_id_to_name(id_list, group_name):
 
     id_list : list of ids given as ints
     group_name : string (one of [artist, publisher,
-                                 designer, category, mechanic, game])
+                                 designer, game])
 
     returns : dictionary
 
@@ -23,12 +23,12 @@ def group_id_to_name(id_list, group_name):
     group_id_to_name([100, 150], "publisher")
     """
     id_name_dict = {}
-    publishers_string = [str(x) for x in id_list]
-    publishers_string = ",".join(publishers_string)
+    id_string = [str(x) for x in id_list]
+    id_string = ",".join(id_string)
     url = "https://www.boardgamegeek.com/xmlapi/boardgame"
     if group_name != "game":
         url = url + group_name
-    url += "/{}".format(publishers_string)
+    url += "/{}".format(id_string)
     print(url)
     resp = requests.get(url)
     tree = ET.fromstring(resp.content)

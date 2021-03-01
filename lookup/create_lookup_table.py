@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # artist, publisher,
     # designer, category, mechanic, game
 
-    type_of_ids = "designer"
+    type_of_ids = "family"
     path_to_save = "./{}_lookup".format(type_of_ids)
 
     df = pd.read_csv("../data/bgg_GameItem.csv")
