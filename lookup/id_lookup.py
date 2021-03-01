@@ -31,10 +31,7 @@ def group_id_to_name(id_list, group_name):
     url += "/{}".format(publishers_string)
     print(url)
     resp = requests.get(url)
-    try:
-        tree = ET.fromstring(resp.content)
-    except:
-        print(resp.content)
+    tree = ET.fromstring(resp.content)
     for idx, val in enumerate(list(tree)):
         name = val.find("name").text
         id = id_list[idx]

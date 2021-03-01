@@ -10,6 +10,8 @@ import pandas as pd
 
 import id_lookup
 
+import xml.etree.ElementTree as ET
+
 
 def extract_ids_from_column(column):
     """
@@ -43,20 +45,33 @@ def create_chunks(id_list, n):
         yield id_list[i : i + n]
 
 
+def subtract_old_ids(old_ids, new_ids):
+    """
+    removes ids from look up list if they have already been saved to the lookup table
+
+    old_ids : dictionary
+    new_ids : list
+
+    returns : list
+    """
+
+    old_id_list = old_ids.keys()
+
+    return
+
+
 if __name__ == "__main__":
 
-    type_of_ids = "publisher"
+    # artist, publisher,
+    # designer, category, mechanic, game
+
+    type_of_ids = "designer"
     path_to_save = "./{}_lookup".format(type_of_ids)
 
     df = pd.read_csv("../data/bgg_GameItem.csv")
     df = df[["bgg_id", type_of_ids]]
 
     ids = extract_ids_from_column(df[type_of_ids])
-    print(len(ids))
-
-    # TODO remove already saved ids
-    # by reading csv and collecting saved ids into a set
-    # then taking set difference
 
     ids_and_names = dict()
     try:
@@ -66,13 +81,20 @@ if __name__ == "__main__":
         pass
 
     # remove ids that we have already
+    print(len(ids))
     ids = list(set(ids) - set((ids_and_names.keys())))
+    print(len(ids))
 
     chunked_list = list(create_chunks(ids, 500))
 
     for id_chunk in chunked_list:
-        id_and_name = id_lookup.group_id_to_name(id_chunk, type_of_ids)
-        ids_and_names.update(id_and_name)
+        try:
+            id_and_name = id_lookup.group_id_to_name(id_chunk, type_of_ids)
+            ids_and_names.update(id_and_name)
+        except UnboundLocalError as error:
+            print(error)
+        except ET.ParseError as error:
+            print(error)
         time.sleep(10)
 
     with open(path_to_save, "w") as fp:
