@@ -3,6 +3,7 @@ mechanics, category, and family are not accessable directly in the api
 so they will be gotten indirectly by querying boardgames
 """
 
+import time
 import json
 import requests
 
@@ -95,7 +96,7 @@ def group_id_to_name(id_list, group_name):
     return id_name_dict
 
 
-def parse_boardgame_id(id_list):
+def parse_boardgame_id(id_list, group_type):
     id_name_dict = {}
     id_string = [str(x) for x in id_list]
     id_string = ",".join(id_string)
@@ -104,29 +105,22 @@ def parse_boardgame_id(id_list):
     print(url)
     resp = requests.get(url)
     tree = ET.fromstring(resp.content)
+
     for idx, val in enumerate(list(tree)):
-        name = val.find("name").text
-        id = id_list[idx]
-        id_name_dict[id] = name
+
+        value = val.findall("boardgame{}".format(group_type))
+        ids = [x.items()[0][1] for x in value]
+        value = [x.text for x in value]
+
+        id_to_name = dict(zip(ids, value))
+        id_name_dict.update(id_to_name)
     return id_name_dict
-
-    print(tree)
-    for idx, val in enumerate(list(tree)):
-        name = val.find("name").text
-        mechanics = val.findall("boardgamemechanic")
-        mech_ids = [x.items()[0][1] for x in mechanics]
-        mechanics = [x.text for x in mechanics]
-        print(mechanics)
-        print(mech_ids)
-
-        id_to_name = dict(zip(mech_ids, mechanics))
-        print(id_to_name)
 
 
 if __name__ == "__main__":
 
     # one of category, mechanic, or family
-    type_of_ids = "mechanic"
+    type_of_ids = "category"
 
     # get list of missing thing
     path_to_save = "./{}_lookup".format(type_of_ids)
@@ -152,9 +146,15 @@ if __name__ == "__main__":
 
     chunked_ids = create_chunks(ids, 100)
 
-    for ids in chunked_ids:
-        id_and_name = parse_boardgame_id(ids)
-        ids_and_names.update(id_and_name)
+    for id_chunk in chunked_ids:
+        try:
+            id_and_name = parse_boardgame_id(id_chunk)
+            ids_and_names.update(id_and_name)
+        except UnboundLocalError as error:
+            print(error)
+        except ET.ParseError as error:
+            print(error)
+        time.sleep(10)
 
     with open(path_to_save, "w") as fp:
         json.dump(ids_and_names, fp)
