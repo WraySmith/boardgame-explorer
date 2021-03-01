@@ -3,6 +3,9 @@ mechanics, category, and family are not accessable directly in the api
 so they will be gotten indirectly by querying boardgames
 """
 
+import json
+import requests
+
 import pandas as pd
 import xml.etree.ElementTree as ET
 
@@ -61,6 +64,65 @@ def create_chunks(id_list, n):
         yield id_list[i : i + n]
 
 
+def group_id_to_name(id_list, group_name):
+    """
+    asks the api for names to ids then collects into a dict
+    for one group at a time
+
+    id_list : list of ids given as ints
+    group_name : string (one of [artist, publisher,
+                                 designer, game])
+
+    returns : dictionary
+
+    eg:
+    group_id_to_name([100, 150], "publisher")
+    """
+    id_name_dict = {}
+    id_string = [str(x) for x in id_list]
+    id_string = ",".join(id_string)
+    url = "https://www.boardgamegeek.com/xmlapi/boardgame"
+    if group_name != "game":
+        url = url + group_name
+    url += "/{}".format(id_string)
+    print(url)
+    resp = requests.get(url)
+    tree = ET.fromstring(resp.content)
+    for idx, val in enumerate(list(tree)):
+        name = val.find("name").text
+        id = id_list[idx]
+        id_name_dict[id] = name
+    return id_name_dict
+
+
+def parse_boardgame_id(id_list):
+    id_name_dict = {}
+    id_string = [str(x) for x in id_list]
+    id_string = ",".join(id_string)
+    url = "https://www.boardgamegeek.com/xmlapi/boardgame"
+    url += "/{}".format(id_string)
+    print(url)
+    resp = requests.get(url)
+    tree = ET.fromstring(resp.content)
+    for idx, val in enumerate(list(tree)):
+        name = val.find("name").text
+        id = id_list[idx]
+        id_name_dict[id] = name
+    return id_name_dict
+
+    print(tree)
+    for idx, val in enumerate(list(tree)):
+        name = val.find("name").text
+        mechanics = val.findall("boardgamemechanic")
+        mech_ids = [x.items()[0][1] for x in mechanics]
+        mechanics = [x.text for x in mechanics]
+        print(mechanics)
+        print(mech_ids)
+
+        id_to_name = dict(zip(mech_ids, mechanics))
+        print(id_to_name)
+
+
 if __name__ == "__main__":
 
     # one of category, mechanic, or family
@@ -75,8 +137,24 @@ if __name__ == "__main__":
     # ids = extract_ids_from_column(df[type_of_ids])
 
     ids = make_list_and_explode(df, type_of_ids)
+
+    ids_and_names = dict()
+    try:
+        with open(path_to_save) as f:
+            ids_and_names.update(json.load(f))
+    except FileNotFoundError:
+        pass
+
+    # remove ids that we have already
+    print(len(ids))
+    ids = list(set(ids) - set((ids_and_names.keys())))
+    print(len(ids))
+
     chunked_ids = create_chunks(ids, 100)
 
     for ids in chunked_ids:
-        print(len(ids))
+        id_and_name = parse_boardgame_id(ids)
+        ids_and_names.update(id_and_name)
 
+    with open(path_to_save, "w") as fp:
+        json.dump(ids_and_names, fp)
