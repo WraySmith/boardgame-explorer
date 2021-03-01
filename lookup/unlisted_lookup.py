@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     for id_chunk in chunked_ids:
         try:
-            id_and_name = parse_boardgame_id(id_chunk)
+            id_and_name = parse_boardgame_id(id_chunk, type_of_ids)
             ids_and_names.update(id_and_name)
         except UnboundLocalError as error:
             print(error)
