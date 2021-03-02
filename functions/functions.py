@@ -11,9 +11,9 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
     Takes in inputs filtering data and creates scatter plot
     for comparison of user ratings over time
 
-    cat: string input
-    mech: string input
-    pub: string input
+    cat: list of strings input
+    mech: list of strings input
+    pub: list of strings input
 
     returns: altair plot
     """
@@ -60,3 +60,38 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
     )
 
     return scatter_plot
+
+
+def count_plot_dates(cat=None, mech=None, pub=None):
+    """
+    Takes input filtering data and creates
+    a plot counting how many game occurances
+
+    cat: list of strings input
+    mech: list of strings input
+    pub: list of strings input
+
+    return: altair plot
+
+    """
+    count_plot = (
+        alt.Chart(call_boardgame_data(cat, mech, pub))
+        .mark_bar(color="#2ca02c")
+        .encode(
+            alt.X(
+                "year_published", axis=alt.Axis(title=None), scale=alt.Scale(zero=False)
+            ),
+            alt.Y(
+                "count()",
+                axis=alt.Axis(
+                    title="Count of Games Published",
+                    titleFontSize=12,
+                    offset=8,
+                    titleFontWeight=600,
+                ),
+            ),
+        )
+        .properties(width=700, height=200)
+    )
+
+    return count_plot
