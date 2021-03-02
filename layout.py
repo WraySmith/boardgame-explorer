@@ -5,8 +5,7 @@ from dash.dependencies import Input, Output
 import altair as alt
 from vega_datasets import data
 import dash_bootstrap_components as dbc
-import pandas as pd
-import functions
+
 
 # read in dummy data for layout
 cars = data.cars()

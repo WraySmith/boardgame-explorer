@@ -5,12 +5,51 @@ from dash.dependencies import Input, Output
 import altair as alt
 from vega_datasets import data
 import dash_bootstrap_components as dbc
+from vega_datasets import data
 import pandas as pd
-import functions
+import sys
 
-# read in dummy data for layout
-cars = pd.read_csv('board_game.csv')
+from functions import *
+
+
+
+# read in data
+data = pd.read_csv('board_game.csv')
+
+
+
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+
+#subsetting categories
+
+category_ratings_df = data.copy()
+category_ratings_df['category'] = category_ratings_df['category'].str.split(",")
+category_ratings_df = category_ratings_df.explode('category')
+list_categories=list(category_ratings_df.category.unique())
+
+list_cat=['Economic', 'Political','Ancient']
+
+
+#subsetting mechanics
+
+mechanic_ratings_df = data.copy()
+mechanic_ratings_df['mechanic'] = mechanic_ratings_df['mechanic'].str.split(",")
+mechanic_df = mechanic_ratings_df.explode('mechanic')
+
+list_mechanics=list(mechanic_df.mechanic.unique())
+
+list_mech=['Area Control', 'Risk-taking']
+
+#subsetting publishers
+
+publisher_ratings_df = data.copy()
+publisher_ratings_df['publisher'] = publisher_ratings_df['publisher'].str.split(",")
+publisher_df = publisher_ratings_df.explode('publisher')
+
+list_publisher=list(publisher_df.publisher.unique())
+
+list_pub=['3M', 'KOSMOS']
 
 # layout components
 
@@ -48,21 +87,21 @@ def generate_control_card():
             html.P("Select a Category"),
             dcc.Dropdown(
                 id='category-widget',
-                value='Horsepower',  
-                options=[{'label': col, 'value': col} for col in cars.columns],multi=True),
+                value='Economic',  
+                options=[{'label': name, 'value': name} for name in list_cat]),
             html.Br(),
             html.P("Select Mechanics" ),
             dcc.Dropdown(
                 id='mechanics-widget',
-                value='Displacement',  
-                options=[{'label': col, 'value': col} for col in cars.columns]),
+                value='Trick-taking',  
+                options=[{'label': name, 'value': name} for name in list_mech]),
             html.Br(),
             html.Br(),
             html.P("Select Pulishers"),
             dcc.Dropdown(
                 id='publisher-widget',
-                value='Displacement',  
-                options=[{'label': col, 'value': col} for col in cars.columns]),
+                value='3M',  
+                options=[{'label': name, 'value': name} for name in list_pub]),
             html.Br(),
             html.Div(
                 id="reset-btn-outer",
@@ -133,31 +172,25 @@ dbc.Row([dbc.Col([html.Div(id="bottom left row",
     
     Output('scatter', 'srcDoc'),
     Input('category-widget', 'value'),
+    Input('publisher-widget', 'value'),
     Input('mechanics-widget', 'value')
-    # add for publisher widget
-    #,Input('publisher-widget', 'value')
+    
     )
-def plot_altair(xcol, ycol):
-    chart = alt.Chart(cars).mark_point().encode(
-        x=xcol,
-        y=ycol,
-        tooltip='Horsepower').interactive()
+def call_scatter(c,m,p):
+    chart=scatter_plot_dates(cat=c,mech=m,pub=p)
     return chart.to_html()
 
 # histogram of counts annual published counts 
 @app.callback(
     Output('count', 'srcDoc'),
     Input('category-widget', 'value'),
+    Input('publisher-widget', 'value'),
     Input('mechanics-widget', 'value')
-    # add for publisher widget
-    #,Input('publisher-widget', 'value')
+    
     )
-def plot_altair(xcol, ycol):
-    chart = alt.Chart(cars).mark_bar().encode(
-        x=xcol,
-        y=ycol,
-        tooltip='Horsepower').interactive()
-    return chart.to_html()
+def call_counts(c,m,p):
+    chart2=count_plot_dates(cat=c,mech=m,pub=p)
+    return chart2.to_html()
 
 #run
 if __name__ == '__main__':
