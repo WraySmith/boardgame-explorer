@@ -9,28 +9,67 @@ import dash_bootstrap_components as dbc
 # read in dummy data for layout
 cars = data.cars()
 
-# Setup app and layout/frontend
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.layout = dbc.Container([
-    html.H1('Boardgames Dashboard'),
-    dbc.Row([
-        dbc.Col([
-            # will be Category
+# create the dash components using functions
+
+def description_card():
+    """
+    :return: A Div containing dashboard title & descriptions.
+    """
+    return html.Div(
+        id="description-card",
+        children=[
+            html.H5("Boardgames Dashboard"),
+            html.H3("Welcome to our Boardgames Dashboard"),
+            html.Div(
+                id="intro",
+                children="Explore ..................................",
+            ),
+        ],
+    )
+
+
+def generate_control_card():
+    """
+    :return: A Div containing controls for graphs.
+    """
+    return html.Div(
+        id="control-card",
+        children=[
+            html.P("Select a Category"),
             dcc.Dropdown(
                 id='category-widget',
                 value='Horsepower',  
                 options=[{'label': col, 'value': col} for col in cars.columns],multi=True),
-                # will be Mechanics
+            html.Br(),
+            html.P("Select Mechanics" ),
             dcc.Dropdown(
                 id='mechanics-widget',
                 value='Displacement',  
                 options=[{'label': col, 'value': col} for col in cars.columns]),
-                dcc.Dropdown(
+            html.Br(),
+            html.Br(),
+            html.P("Select Pulishers"),
+            dcc.Dropdown(
                 id='publisher-widget',
                 value='Displacement',  
-                options=[{'label': col, 'value': col} for col in cars.columns])
-                ],
-            md=4),
+                options=[{'label': col, 'value': col} for col in cars.columns]),
+            html.Br(),
+            html.Div(
+                id="reset-btn-outer",
+                children=html.Button(id="reset-btn", children="Reset", n_clicks=0),
+            ),
+        ])
+
+# Setup app and layout/frontend
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.layout = dbc.Container([# Left column
+        html.Div(
+            id="left-column",
+            className="four columns",
+            children=[description_card(), generate_control_card()], style={'border-width': '0', 'width': '200px', 'height': '400px'}
+            
+        ),
+    
         dbc.Col([ html.H4('Title'), html.P('Description for user interaction'),
             html.Iframe(
                 id='scatter',
@@ -70,7 +109,7 @@ html.Iframe(
                 style={'border-width': '0', 'width': '100%', 'height': '400px'})])]),
                 
                 
-                ])
+                
 # Set up callbacks/backend
 # will be the scatteplot of average game ratings
 @app.callback(
