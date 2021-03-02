@@ -3,7 +3,7 @@ contains graph calls for dashboard
 """
 
 import altair as alt
-from wrangling.py import call_boardgame_data
+from wrangling import call_boardgame_data
 
 
 def scatter_plot_dates(cat=None, mech=None, pub=None):
