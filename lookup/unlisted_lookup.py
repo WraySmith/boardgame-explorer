@@ -123,7 +123,7 @@ if __name__ == "__main__":
     type_of_ids = "family"
 
     # get list of missing thing
-    path_to_save = "./{}_lookup".format(type_of_ids)
+    path_to_save = "./{}_lookup.json".format(type_of_ids)
 
     df = pd.read_csv("../data/bgg_GameItem.csv")
     df = df[["bgg_id", type_of_ids]]

@@ -15,9 +15,50 @@ def apply_lookup(dataframe, group_type):
 
     returns : df
     """
+    df = dataframe.copy(deep=True)
+    df[group_type] = (
+        df[group_type].astype("str", copy=False).dropna(inplace=False)
+    )  # some columns were mixed type
+
+    # load the lookup table
+    path_to_save = "./{}_lookup.json".format(group_type)
+    with open(path_to_save) as f:
+        lookup = json.load(f)
+    lookup["nan"] = "None"
+
+    # explode by group_type
+    df[group_type] = df[group_type].map(lambda x: x.split(","))
+    df_exp = df.explode(group_type)
+
+    # apply lookup
+    df_exp[group_type] = df_exp[group_type].map(lambda x: lookup[x])
+    print(df_exp[["bgg_id", group_type]])
+
+    # implode
+    df_imp = (
+        df_exp[["bgg_id", group_type]]
+        .groupby("bgg_id")
+        .agg(lambda x: ",".join(x))
+        .reset_index()
+    )
+    print(df_imp[["bgg_id", group_type]])
+
+    # join back
+    df[group_type] = df_imp[group_type]
+
+    # return
+    return df
 
 
 if __name__ == "__main__":
 
+    group_types = ["category", "artist", "designer", "family", "mechanic", "publisher"]
+
     df = pd.read_csv("../data/bgg_GameItem.csv")
-    print(df.head())
+
+    df_copy = df.copy(deep=True)
+    for group_type in group_types:
+        df_copy = apply_lookup(df_copy, group_type)
+        print(df_copy[["bgg_id", group_type]].head())
+
+    df_copy.to_csv("../data/bgg_with_names.csv")
