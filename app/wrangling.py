@@ -19,8 +19,7 @@ def call_boardgame_data(cat, mech, pub):
     """
 
     # reads csv
-    boardgame_data = pd.read_csv(
-        "../data/board_game.csv", parse_dates=["year_published"]
+    boardgame_data = pd.read_csv("board_game.csv", parse_dates=["year_published"]
     )
     boardgame_data["year_published"] = pd.to_datetime(
         boardgame_data["year_published"], format="%Y"
@@ -68,7 +67,7 @@ def bool_generator(cat, mech, pub, boardgame_data):
 
     if mech is not None:
         mech = list_to_string(mech)
-        mech_bool = boardgame_data["mechanics"].str.match(mech)
+        mech_bool = boardgame_data["mechanic"].str.match(mech)
     else:
         mech_bool = False
 

@@ -6,6 +6,7 @@ import altair as alt
 from vega_datasets import data
 import dash_bootstrap_components as dbc
 
+
 # read in dummy data for layout
 cars = data.cars()
 

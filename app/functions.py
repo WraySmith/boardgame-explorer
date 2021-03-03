@@ -52,10 +52,7 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
         .mark_line(color="#1f77b4", size=3)
         .encode(
             x="year_published",
-            y="mean(average_rating)",
-            opacity=alt.Opacity(
-                "Linelabel", legend=alt.Legend(title=None, orient="top-left")
-            ),
+            y="mean(average_rating)"
         )
     )
 
