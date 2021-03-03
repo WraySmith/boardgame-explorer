@@ -51,11 +51,8 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
         alt.Chart(call_boardgame_data(cat, mech, pub))
         .mark_line(color="#1f77b4", size=3)
         .encode(
-            x="year_published:Q",
-            y="mean(average_rating):Q",
-            opacity=alt.Opacity(
-                "Linelabel", legend=alt.Legend(title=None, orient="top-left")
-            ),
+            x="year_published",
+            y="mean(average_rating)"
         )
     )
 
