@@ -111,7 +111,7 @@ def rank_plot_dates(col="category", year_in=1900, year_out=2020, color_="#ff7f0e
                     titleFontWeight=600,
                 ),
             ),
-            alt.Y("average_rating:Q", sort="-x"),
+            alt.Y("average_rating:Q", sort="-x", axis=alt.Axis(title="Average Rating")),
         )
         .properties(width=700, height=200)
     )
