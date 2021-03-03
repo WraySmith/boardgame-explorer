@@ -45,21 +45,6 @@ def create_chunks(id_list, n):
         yield id_list[i : i + n]
 
 
-def subtract_old_ids(old_ids, new_ids):
-    """
-    removes ids from look up list if they have already been saved to the lookup table
-
-    old_ids : dictionary
-    new_ids : list
-
-    returns : list
-    """
-
-    old_id_list = old_ids.keys()
-
-    return
-
-
 if __name__ == "__main__":
 
     # artist, publisher,

@@ -120,7 +120,7 @@ def parse_boardgame_id(id_list, group_type):
 if __name__ == "__main__":
 
     # one of category, mechanic, or family
-    type_of_ids = "family"
+    type_of_ids = "designer"
 
     # get list of missing thing
     path_to_save = "./{}_lookup.json".format(type_of_ids)
