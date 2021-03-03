@@ -15,6 +15,7 @@ def apply_lookup(dataframe, group_type):
 
     returns : df
     """
+    print("working with {}".format(group_type))
     df = dataframe.copy(deep=True)
     df[group_type] = (
         df[group_type].astype("str", copy=False).dropna(inplace=False)
@@ -31,6 +32,9 @@ def apply_lookup(dataframe, group_type):
     df_exp = df.explode(group_type)
 
     # apply lookup
+    # import pdb
+
+    # pdb.set_trace()
     df_exp[group_type] = df_exp[group_type].map(lambda x: lookup[x])
     print(df_exp[["bgg_id", group_type]])
 
@@ -46,6 +50,7 @@ def apply_lookup(dataframe, group_type):
     # join back
     df[group_type] = df_imp[group_type]
 
+    print("finished with {}".format(group_type))
     # return
     return df
 
