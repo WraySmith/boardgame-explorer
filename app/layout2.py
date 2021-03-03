@@ -15,6 +15,8 @@ from functions import *
 
 # read in data
 data = pd.read_csv('board_game.csv')
+values = {'category': 'Unknown', 'family': 'Unknown', 'mechanic': 'Unknown', 'publisher': 'Unknown'}
+data.fillna(value = values, inplace = True)
 
 
 
@@ -28,9 +30,8 @@ category_ratings_df['category'] = category_ratings_df['category'].str.split(",")
 category_ratings_df = category_ratings_df.explode('category')
 list_categories=list(category_ratings_df.category.unique())
 
-list_cat=['Economic', 'Political','Ancient']
 
-
+cat=['Economic', 'Negotiation', 'Political', 'Card Game', 'Fantasy', 'Abstract Strategy']
 #subsetting mechanics
 
 mechanic_ratings_df = data.copy()
@@ -39,7 +40,7 @@ mechanic_df = mechanic_ratings_df.explode('mechanic')
 
 list_mechanics=list(mechanic_df.mechanic.unique())
 
-list_mech=['Area Control', 'Risk-taking']
+
 
 #subsetting publishers
 
@@ -49,7 +50,7 @@ publisher_df = publisher_ratings_df.explode('publisher')
 
 list_publisher=list(publisher_df.publisher.unique())
 
-list_pub=['3M', 'KOSMOS']
+
 
 # layout components
 
@@ -88,20 +89,20 @@ def generate_control_card():
             dcc.Dropdown(
                 id='category-widget',
                 value='Economic',  
-                options=[{'label': name, 'value': name} for name in list_cat]),
+                options=[{'label': name, 'value': name} for name in list_categories], multi=True),
             html.Br(),
             html.P("Select Mechanics" ),
             dcc.Dropdown(
                 id='mechanics-widget',
                 value='Trick-taking',  
-                options=[{'label': name, 'value': name} for name in list_mech]),
+                options=[{'label': name, 'value': name} for name in list_mechanics],multi=True),
             html.Br(),
             html.Br(),
             html.P("Select Pulishers"),
             dcc.Dropdown(
                 id='publisher-widget',
                 value='3M',  
-                options=[{'label': name, 'value': name} for name in list_pub]),
+                options=[{'label': name, 'value': name} for name in list_publisher],multi=True),
             html.Br(),
             html.Div(
                 id="reset-btn-outer",
