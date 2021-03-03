@@ -67,7 +67,7 @@ def bool_generator(cat, mech, pub, boardgame_data):
 
     if mech is not None:
         mech = list_to_string(mech)
-        mech_bool = boardgame_data["mechanics"].str.match(mech)
+        mech_bool = boardgame_data["mechanic"].str.match(mech)
     else:
         mech_bool = False
 
