@@ -19,9 +19,7 @@ def call_boardgame_data():
     """
 
     # reads csv
-    boardgame_data = pd.read_csv(
-        "board_game.csv", parse_dates=["year_published"]
-    )
+    boardgame_data = pd.read_csv("board_game.csv", parse_dates=["year_published"])
     boardgame_data["year_published"] = pd.to_datetime(
         boardgame_data["year_published"], format="%Y"
     )
@@ -60,7 +58,7 @@ def list_to_string(list_):
     returns: string
     """
     if type(list_) is list:
-        list_=str(list_).strip("[']").replace(", ", "").replace("''", "|")
+        list_ = str(list_).strip("[']").replace(", ", "").replace("''", "|")
         return list_
     else:
         return list_

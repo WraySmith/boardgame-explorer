@@ -48,18 +48,14 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
         )
     )
     
-    p=(
+    p= (
         alt.Chart(call_boardgame_filter(cat, mech, pub))
         .mark_line(color="#1f77b4", size=3)
-        .encode(
-            x="year_published",
-            y="mean(average_rating)"
-            ))
-        
-    scatter_plot = scatter_plot + p
-        
-        
+        .encode(x="year_published", y="mean(average_rating)")
+    )
 
+
+    scatter_plot = scatter_plot + p
     return scatter_plot
 
 
@@ -111,15 +107,16 @@ def rank_plot_dates(col="category", year_in=None, year_out=None, color_="#ff7f0e
         alt.Chart(call_boardgame_top(col, year_in, year_out))
         .mark_bar(color=color_)
         .encode(
-            alt.X("year_published", axis=alt.Axis(title=None)),
-            alt.Y(
+            alt.X(
                 str(col),
                 axis=alt.Axis(
                     titleFontSize=12,
                     titleFontWeight=600,
                 ),
             ),
+            alt.Y("average_rating:Q", sort="-x", axis=alt.Axis(title="Average Rating")),
         )
         .properties(width=700, height=200)
     )
     return rank_plot
+
