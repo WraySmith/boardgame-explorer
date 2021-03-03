@@ -102,16 +102,16 @@ def rank_plot_dates(col="category", year_in=1900, year_out=2020, color_="#ff7f0e
     """
     rank_plot = (
         alt.Chart(call_boardgame_top(col, year_in, year_out))
-        .mark_bar(color_)
+        .mark_bar(color=color_)
         .encode(
-            alt.X("year_published", axis=alt.Axis(title=None)),
-            alt.Y(
+            alt.X(
                 str(col),
                 axis=alt.Axis(
                     titleFontSize=12,
                     titleFontWeight=600,
                 ),
             ),
+            alt.Y("average_rating:Q", sort="-x"),
         )
         .properties(width=700, height=200)
     )
