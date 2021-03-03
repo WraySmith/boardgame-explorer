@@ -94,10 +94,10 @@ def bool_generator(cat, mech, pub, boardgame_data):
     else:
         pub_bool = False
 
-    if (cat_bool + mech_bool + pub_bool).sum() == 0:
+    if (cat_bool | mech_bool | pub_bool).sum() == 0:
         return ~boardgame_data["game_id"].isna()
     else:
-        return cat_bool + mech_bool + pub_bool
+        return cat_bool | mech_bool | pub_bool
 
 
 def call_boardgame_top(col, year_in, year_out):

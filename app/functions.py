@@ -47,13 +47,12 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
             height=200,
         )
     )
-    
-    p= (
+
+    p = (
         alt.Chart(call_boardgame_filter(cat, mech, pub))
         .mark_line(color="#1f77b4", size=3)
         .encode(x="year_published", y="mean(average_rating)")
     )
-
 
     scatter_plot = scatter_plot + p
     return scatter_plot
@@ -93,7 +92,7 @@ def count_plot_dates(cat=None, mech=None, pub=None):
     return count_plot
 
 
-def rank_plot_dates(col="category", year_in=None, year_out=None, color_="#ff7f0e"):
+def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e"):
     """
     Creates altair graph of set column for set years
 
@@ -119,4 +118,3 @@ def rank_plot_dates(col="category", year_in=None, year_out=None, color_="#ff7f0e
         .properties(width=700, height=200)
     )
     return rank_plot
-
