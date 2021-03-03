@@ -50,11 +50,7 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
     scatter_plot = scatter_plot + (
         alt.Chart(call_boardgame_filter(cat, mech, pub))
         .mark_line(color="#1f77b4", size=3)
-        .encode(
-            x="year_published",
-            y="mean(average_rating)"
-            ),
-        )
+        .encode(x="year_published", y="mean(average_rating)"),
     )
 
     return scatter_plot
