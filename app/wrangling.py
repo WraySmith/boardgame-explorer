@@ -59,8 +59,8 @@ def list_to_string(list_):
 
     returns: string
     """
-    if list_ is list:
-        str(list_).strip("[']").replace(", ", "").replace("''", "|")
+    if type(list_) is list:
+        list_=str(list_).strip("[']").replace(", ", "").replace("''", "|")
         return list_
     else:
         return list_

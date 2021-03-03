@@ -97,7 +97,7 @@ def count_plot_dates(cat=None, mech=None, pub=None):
     return count_plot
 
 
-def rank_plot_dates(col="category", year_in=1900, year_out=2020, color_="#ff7f0e"):
+def rank_plot_dates(col="category", year_in=None, year_out=None, color_="#ff7f0e"):
     """
     Creates altair graph of set column for set years
 
@@ -109,7 +109,7 @@ def rank_plot_dates(col="category", year_in=1900, year_out=2020, color_="#ff7f0e
     """
     rank_plot = (
         alt.Chart(call_boardgame_top(col, year_in, year_out))
-        .mark_bar(color_)
+        .mark_bar(color=color_)
         .encode(
             alt.X("year_published", axis=alt.Axis(title=None)),
             alt.Y(

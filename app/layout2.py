@@ -85,20 +85,20 @@ def generate_control_card():
     return html.Div(
         id="control-card",
         children=[
-            html.P("Select a Category"),
+            html.P("Please select Categories:"),
             dcc.Dropdown(
                 id='category-widget',
                 value='Economic',  
                 options=[{'label': name, 'value': name} for name in list_categories], multi=True),
             html.Br(),
-            html.P("Select Mechanics" ),
+            html.P("Please select Mechanics:" ),
             dcc.Dropdown(
                 id='mechanics-widget',
                 value='Trick-taking',  
                 options=[{'label': name, 'value': name} for name in list_mechanics],multi=True),
             html.Br(),
             html.Br(),
-            html.P("Select Pulishers"),
+            html.P("Please select Pulishers:"),
             dcc.Dropdown(
                 id='publisher-widget',
                 value='3M',  
@@ -113,9 +113,7 @@ def generate_control_card():
 
 
 def lower_description():
-     return html.Div(children=[html.H5("This is how the user withh interact with this section")])
-
-# graphs
+     return html.Div(children=[html.H5("This is how the user with interact with this section")])
 
 
 
@@ -142,27 +140,32 @@ html.Div(id="top-row",
              html.H4('Title'), html.P('Description for user interaction'),
             html.Iframe(
                 id='scatter',
-                style={'border-width': '0', 'width': '100%', 'height': '200px'}),
+                style={'border-width': '0', 'width': '100%', 'height': '250px'}),
                 html.Iframe(
                     # will be the counts graph
                 id='count',
-                style={'border-width': '0', 'width': '100%', 'height': '200px'}),
+                style={'border-width': '0', 'width': '100%', 'height': '250px'}),
         
 
 ])], width=6)]),
-dbc.Row([dbc.Col([html.Div(id="bottom left row",
+dbc.Row([(dbc.Col(id="bottom left row",
             className="four columns",
-            children=[lower_description()])
+            children=[lower_description()]
 
 
-], width=3), 
+))] , 
+), dbc.Col([dcc.RangeSlider(
+        id='non-linear-range-slider',
+        min=1950,
+        max=2016,
+        step=1,
+        value=[1990, 2010]
+    ),
+     html.Div(id='output-container-range-slider-non-linear')]
+    )    
+
 
 ])
-
-
-
-])
-        
 
 
 # Set up callbacks/backend
@@ -191,6 +194,17 @@ def call_scatter(c,m,p):
 def call_counts(c,m,p):
     chart2=count_plot_dates(cat=c,mech=m,pub=p)
     return chart2.to_html()
+
+@app.callback(
+    Output('output-container-range-slider-non-linear', 'children'),
+    Input('non-linear-range-slider', 'value'))
+   
+def update_output(value):
+    transformed_value = [v for v in value]
+    val1=transformed_value[0]
+    val2=transformed_value[1]
+    hist1=rank_plot_dates(int(val1), int(val2))
+    return hist1.to_html()
 
 #run
 if __name__ == '__main__':
