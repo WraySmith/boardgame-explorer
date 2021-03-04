@@ -32,11 +32,7 @@ def apply_lookup(dataframe, group_type):
     df_exp = df.explode(group_type)
 
     # apply lookup
-    # import pdb
-
-    # pdb.set_trace()
     df_exp[group_type] = df_exp[group_type].map(lambda x: lookup[x])
-    print(df_exp[["bgg_id", group_type]])
 
     # implode
     df_imp = (
@@ -45,7 +41,6 @@ def apply_lookup(dataframe, group_type):
         .agg(lambda x: ",".join(x))
         .reset_index()
     )
-    print(df_imp[["bgg_id", group_type]])
 
     # join back
     df[group_type] = df_imp[group_type]
@@ -64,6 +59,5 @@ if __name__ == "__main__":
     df_copy = df.copy(deep=True)
     for group_type in group_types:
         df_copy = apply_lookup(df_copy, group_type)
-        print(df_copy[["bgg_id", group_type]].head())
 
     df_copy.to_csv("../data/bgg_with_names.csv")
