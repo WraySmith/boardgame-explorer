@@ -6,57 +6,10 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 
 from functions import *
-
-
-# read in data
-data = pd.read_csv("board_game.csv")
-values = {
-    "category": "Unknown",
-    "family": "Unknown",
-    "mechanic": "Unknown",
-    "publisher": "Unknown",
-}
-data.fillna(value=values, inplace=True)
+from wrangling import subset_data
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-
-# subsetting categories
-
-category_ratings_df = data.copy()
-category_ratings_df["category"] = category_ratings_df["category"].str.split(",")
-category_ratings_df = category_ratings_df.explode("category")
-list_categories = list(category_ratings_df.category.unique())
-
-
-cat = [
-    "Economic",
-    "Negotiation",
-    "Political",
-    "Card Game",
-    "Fantasy",
-    "Abstract Strategy",
-]
-# subsetting mechanics
-
-mechanic_ratings_df = data.copy()
-mechanic_ratings_df["mechanic"] = mechanic_ratings_df["mechanic"].str.split(",")
-mechanic_df = mechanic_ratings_df.explode("mechanic")
-
-list_mechanics = list(mechanic_df.mechanic.unique())
-
-
-# subsetting publishers
-
-publisher_ratings_df = data.copy()
-publisher_ratings_df["publisher"] = publisher_ratings_df["publisher"].str.split(",")
-publisher_df = publisher_ratings_df.explode("publisher")
-
-list_publisher = list(publisher_df.publisher.unique())
-
-
-# layout components
 
 
 # left most
@@ -96,7 +49,9 @@ def generate_control_card():
             dcc.Dropdown(
                 id="category-widget",
                 value="Economic",
-                options=[{"label": name, "value": name} for name in list_categories],
+                options=[
+                    {"label": name, "value": name} for name in subset_data("category")
+                ],
                 multi=True,
             ),
             html.Br(),
@@ -105,7 +60,9 @@ def generate_control_card():
             dcc.Dropdown(
                 id="mechanics-widget",
                 value="Trick-taking",
-                options=[{"label": name, "value": name} for name in list_mechanics],
+                options=[
+                    {"label": name, "value": name} for name in subset_data("mechanic")
+                ],
                 multi=True,
             ),
             html.Br(),
@@ -114,7 +71,9 @@ def generate_control_card():
             dcc.Dropdown(
                 id="publisher-widget",
                 value="3M",
-                options=[{"label": name, "value": name} for name in list_publisher],
+                options=[
+                    {"label": name, "value": name} for name in subset_data("publisher")
+                ],
                 multi=True,
             ),
             html.Br(),

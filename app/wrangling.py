@@ -136,3 +136,18 @@ def call_boardgame_top(col, year_in, year_out):
     )
 
     return boardgame_data
+
+
+def subset_data(col="category"):
+    """
+    Creates list of categories for column
+
+    col: string
+
+    return: list
+    """
+
+    data_copy = call_boardgame_data()
+    data_copy[col] = data_copy[col].str.split(",").explode(col)
+
+    return list(data_copy[col].unique())
