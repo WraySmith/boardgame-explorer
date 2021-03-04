@@ -10,11 +10,10 @@ anything that can be accessed with the api directly
 """
 import json
 import time
-
-import pandas as pd
 import xml.etree.ElementTree as ET
 
 import id_lookup
+import pandas as pd
 import utils
 
 if __name__ == "__main__":
