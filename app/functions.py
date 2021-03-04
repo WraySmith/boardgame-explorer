@@ -44,7 +44,7 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
                 dx=20,
             ),
             width=700,
-            height=200,
+            height=150,
         )
     )
 
@@ -86,7 +86,17 @@ def count_plot_dates(cat=None, mech=None, pub=None):
                 ),
             ),
         )
-        .properties(width=700, height=200)
+        .properties(
+            title=alt.TitleParams(
+                text="Figure 2: Game Count based on Published Year",
+                anchor="start",
+                fontSize=20,
+                dy=-20,
+                dx=20,
+            ),
+            width=700,
+            height=150,
+        )
     )
 
     return count_plot
@@ -115,6 +125,6 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
             ),
             alt.Y("average_rating:Q", sort="-x", axis=alt.Axis(title="Average Rating")),
         )
-        .properties(width=700, height=200)
+        .properties(width=200, height=100)
     )
     return rank_plot

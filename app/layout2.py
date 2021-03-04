@@ -67,7 +67,7 @@ list_publisher = list(publisher_df.publisher.unique())
 
 
 def title():
-    return html.Div(children=[html.H2("Boardgames Dashboard")])
+    return html.Div(children=[html.H1("Boardgames Trends Dashboard")])
 
 
 def description_card():
@@ -77,10 +77,10 @@ def description_card():
     return html.Div(
         id="description-card",
         children=[
-            html.H4("Welcome to our Boardgames Dashboard"),
+            html.H5("Welcome to our Boardgames Dashboard"),
             html.Div(
                 id="intro",
-                children="Explore ..................................",
+                children="Explore boardgame trends over time based on category, mechanics and publisher selection below. Also visualize the top categories, mechanics and publishers by year using our interactive features.",
             ),
         ],
     )
@@ -94,15 +94,19 @@ def generate_control_card():
     return html.Div(
         id="control-card",
         children=[
-            html.P("Please select Categories:"),
+             html.Br(),
+            html.Br(),
+            html.P("Please select categories:"),
+            
             dcc.Dropdown(
                 id="category-widget",
                 value="Economic",
                 options=[{"label": name, "value": name} for name in list_categories],
                 multi=True,
             ),
+             html.Br(),
             html.Br(),
-            html.P("Please select Mechanics:"),
+            html.P("Please select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget",
                 value="Trick-taking",
@@ -111,7 +115,7 @@ def generate_control_card():
             ),
             html.Br(),
             html.Br(),
-            html.P("Please select Pulishers:"),
+            html.P("Please select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget",
                 value="3M",
@@ -119,22 +123,30 @@ def generate_control_card():
                 multi=True,
             ),
             html.Br(),
-            html.Div(
-                id="reset-btn-outer",
-                children=html.Button(id="reset-btn", children="Reset", n_clicks=0),
-            ),
+             html.Br(),
+            
         ],
     )
 
 
 def lower_description():
     return html.Div(
-        children=[html.H5("This is how the user with interact with this section")]
+        children=[html.H4("Top 5 categories, mechanics and publishers by rating"),
+                                html.P("Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods")]
+    )
+
+def data_set_descirption():
+    return html.Div(
+        children=[html.H4("Description of Dataset"),
+                                html.P(" This dataset comes from the Board Game Geek website and includes boardgames with descriptions, general game details, publisher, and user ratings for 10,000 boardgames published between 1950 and 2021")]
     )
 
 
+
 # layout
-app.layout = dbc.Container(
+app.layout = html.Div([
+    dcc.Tabs([
+        dcc.Tab(label='Tab one', children=[dbc.Container(
     [  # top column
         dbc.Row(
             [
@@ -144,10 +156,10 @@ app.layout = dbc.Container(
                             id="top-row", className="four columns", children=[title()]
                         )
                     ],
-                    width=16,
+                    width=12,
                 )
             ]
-        ),
+        ) ,html.Br(),
         dbc.Row(
             [
                 dbc.Col(
@@ -164,8 +176,8 @@ app.layout = dbc.Container(
                     [
                         html.Div(
                             [
-                                html.H4("Title"),
-                                html.P("Description for user interaction"),
+                                html.H4("Board game ratings and counts from 1950 to 2016"),
+                                html.P("Select multiple categories, mechanics and publishers on the left hand side dropdown menus to view..."),
                                 html.Iframe(
                                     id="scatter",
                                     style={
@@ -186,7 +198,7 @@ app.layout = dbc.Container(
                             ]
                         )
                     ],
-                    width=6,
+                    width=9,
                 ),
             ]
         ),
@@ -196,21 +208,10 @@ app.layout = dbc.Container(
                     dbc.Col(
                         id="bottom left row",
                         className="four columns",
-                        children=[lower_description()],
+                        children=[lower_description()]
                     )
                 )
-            ],
-        ),
-        dbc.Col(
-            [
-                dcc.RangeSlider(
-                    id="non-linear-range-slider",
-                    min=1950,
-                    max=2016,
-                    step=1,
-                    value=[1990, 2010],
-                ),
-                html.Div(
+           , html.Div(
                     html.Iframe(
                         id="output-container-range-slider-non-linear",
                         style={
@@ -219,11 +220,144 @@ app.layout = dbc.Container(
                             "height": "250px",
                         },
                     ),
-                ),
+                ), html.Div(
+                    html.Iframe(
+                        id="output-container-range-slider-non-linear2",
+                        style={
+                            "border-width": "0",
+                            "width": "100%",
+                            "height": "250px",
+                        },
+                    ),
+                ), html.Div(
+                    html.Iframe(
+                        id="output-container-range-slider-non-linear3",
+                        style={
+                            "border-width": "0",
+                            "width": "100%",
+                            "height": "250px",
+                        },
+                    ),
+                ) ],
+            
+
+
+
+        ),
+        dbc.Row(
+            [dbc.Col(
+                        id="bbc",
+                        className="four columns",
+                        children=[()], width=3
+                    ),
+                    
+                 dbc.Col([
+                dcc.RangeSlider(
+                    id="non-linear-range-slider",
+                    min=1950,
+                    max=2016,
+                    step=1,
+                    value=[1990, 2010],
+                    marks={
+        1950: '1950',
+        1955: '1955',
+1960: '1960',
+1965: '1965',
+1970: '1970',
+1975: '1975',
+1980: '1980',
+1985: '1985',
+1990: '1990',
+1995: '1995',
+2000: '2000',
+2005: '2005',
+2010: '2010',
+2015: '2015'
+
+    }
+                )
+            ]
+        ),
+    ]
+),
+dbc.Row(
+            [
+                (
+                    dbc.Col(
+                        id="bb",
+                        className="four columns",
+                        children=[data_set_descirption()]
+                    )
+                )
+           , html.Div(
+                    html.Iframe(
+                        id="output-container-range-slider-non-linear4",
+                        style={
+                            "border-width": "0",
+                            "width": "100%",
+                            "height": "250px",
+                        },
+                    ),
+                ), html.Div(
+                    html.Iframe(
+                        id="output-container-range-slider-non-linear5",
+                        style={
+                            "border-width": "0",
+                            "width": "100%",
+                            "height": "250px",
+                        },
+                    ),
+                ), html.Div(
+                    html.Iframe(
+                        id="output-container-range-slider-non-linear6",
+                        style={
+                            "border-width": "0",
+                            "width": "100%",
+                            "height": "250px",
+                        },
+                    ),
+                ) ],
+            
+
+
+
+        ),
+        dbc.Row(
+            [dbc.Col(
+                        id="bbcc",
+                        className="four columns",
+                        children=[()], width=3
+                    ), dbc.Col([
+                dcc.RangeSlider(
+                    id="non-linear-range-slider2",
+                    min=1950,
+                    max=2016,
+                    step=1,
+                    value=[1990, 2010],
+                    marks={
+        1950: '1950',
+        1955: '1955',
+1960: '1960',
+1965: '1965',
+1970: '1970',
+1975: '1975',
+1980: '1980',
+1985: '1985',
+1990: '1990',
+1995: '1995',
+2000: '2000',
+2005: '2005',
+2010: '2010',
+2015: '2015'
+
+    }
+                )
             ]
         ),
     ]
 )
+
+])]),  dcc.Tab(label='Tab two', children=[])])])
 
 
 # Set up callbacks/backend
@@ -260,9 +394,75 @@ def update_output(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist1 = rank_plot_dates(
-        col="mechanic", year_in=int(val1), year_out=int(val2), color_="#ff7f0e"
+        col="category", year_in=int(val1), year_out=int(val2), color_="#ff7f0e"
     )
     return hist1.to_html()
+@app.callback(
+    Output("output-container-range-slider-non-linear2", "srcDoc"),
+    Input("non-linear-range-slider", "value"),
+)
+def update_output2(value):
+    transformed_value = [v for v in value]
+    val1 = transformed_value[0]
+    val2 = transformed_value[1]
+    hist2 = rank_plot_dates(
+        col="mechanic", year_in=int(val1), year_out=int(val2), color_="#17becf"
+    )
+    return hist2.to_html()
+
+
+@app.callback(
+    Output("output-container-range-slider-non-linear3", "srcDoc"),
+    Input("non-linear-range-slider", "value"),
+)
+def update_output3(value):
+    transformed_value = [v for v in value]
+    val1 = transformed_value[0]
+    val2 = transformed_value[1]
+    hist3 = rank_plot_dates(
+        col="publisher", year_in=int(val1), year_out=int(val2), color_="#e377c2"
+    )
+    return hist3.to_html()
+
+
+@app.callback(
+    Output("output-container-range-slider-non-linear4", "srcDoc"),
+    Input("non-linear-range-slider2", "value"),
+)
+def update_output4(value):
+    transformed_value = [v for v in value]
+    val1 = transformed_value[0]
+    val2 = transformed_value[1]
+    hist4 = rank_plot_dates(
+        col="category", year_in=int(val1), year_out=int(val2), color_="#ff7f0e"
+    )
+    return hist4.to_html()
+@app.callback(
+    Output("output-container-range-slider-non-linear5", "srcDoc"),
+    Input("non-linear-range-slider2", "value"),
+)
+def update_output5(value):
+    transformed_value = [v for v in value]
+    val1 = transformed_value[0]
+    val2 = transformed_value[1]
+    hist5 = rank_plot_dates(
+        col="mechanic", year_in=int(val1), year_out=int(val2), color_="#17becf"
+    )
+    return hist5.to_html()
+
+
+@app.callback(
+    Output("output-container-range-slider-non-linear6", "srcDoc"),
+    Input("non-linear-range-slider2", "value"),
+)
+def update_output6(value):
+    transformed_value = [v for v in value]
+    val1 = transformed_value[0]
+    val2 = transformed_value[1]
+    hist6 = rank_plot_dates(
+        col="publisher", year_in=int(val1), year_out=int(val2), color_="#e377c2"
+    )
+    return hist6.to_html()
 
 
 # run
