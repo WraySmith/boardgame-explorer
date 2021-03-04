@@ -80,24 +80,24 @@ def bool_generator(cat, mech, pub, boardgame_data):
         cat = list_to_string(cat)
         cat_bool = boardgame_data["category"].str.match(cat)
     else:
-        cat_bool = False
+        cat_bool = boardgame_data["game_id"] == "zzzz"
 
     if mech is not None:
         mech = list_to_string(mech)
         mech_bool = boardgame_data["mechanic"].str.match(mech)
     else:
-        mech_bool = False
+        mech_bool = boardgame_data["game_id"] == "zzzz"
 
     if pub is not None:
         pub = list_to_string(pub)
         pub_bool = boardgame_data["publisher"].str.match(pub)
     else:
-        pub_bool = False
+        pub_bool = boardgame_data["game_id"] == "zzzz"
 
-    if (cat_bool + mech_bool + pub_bool).sum() == 0:
-        return ~boardgame_data["game_id"].isna()
+    if (cat_bool | mech_bool | pub_bool).sum() == 0:
+        return ~(boardgame_data["game_id"] == "zzzz")
     else:
-        return cat_bool + mech_bool + pub_bool
+        return cat_bool | mech_bool | pub_bool
 
 
 def call_boardgame_top(col, year_in, year_out):
