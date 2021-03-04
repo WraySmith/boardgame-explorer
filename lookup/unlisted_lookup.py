@@ -7,13 +7,13 @@ this is a row wise operation
 works by finding requested information inside a boardgame's api response
 """
 
-import time
 import json
-import requests
-
-import pandas as pd
+import time
 import xml.etree.ElementTree as ET
 
+import pandas as pd
+
+import requests
 import utils
 
 
