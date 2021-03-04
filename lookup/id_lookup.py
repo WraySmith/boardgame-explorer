@@ -4,8 +4,9 @@ eg:
 https://www.boardgamegeek.com/xmlapi/boardgame/13,150
 """
 
-import requests
 import xml.etree.ElementTree as ET
+
+import requests
 
 
 def group_id_to_name(id_list, group_name):
