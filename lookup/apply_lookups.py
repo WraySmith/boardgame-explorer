@@ -1,5 +1,5 @@
 """
-convert columns with ids to names via scrapped lookup tables
+convert columns with ids to names via lookup tables
 """
 
 import json

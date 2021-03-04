@@ -38,37 +38,6 @@ def make_list_and_explode(input_df, column_name):
     return list(set(df["bgg_id"].values))
 
 
-def group_id_to_name(id_list, group_name):
-    """
-    asks the api for names to ids then collects into a dict
-    for one group at a time
-
-    id_list : list of ids given as ints
-    group_name : string (one of [artist, publisher,
-                                 designer, game])
-
-    returns : dictionary
-
-    eg:
-    group_id_to_name([100, 150], "publisher")
-    """
-    id_name_dict = {}
-    id_string = [str(x) for x in id_list]
-    id_string = ",".join(id_string)
-    url = "https://www.boardgamegeek.com/xmlapi/boardgame"
-    if group_name != "game":
-        url = url + group_name
-    url += "/{}".format(id_string)
-    print(url)
-    resp = requests.get(url)
-    tree = ET.fromstring(resp.content)
-    for idx, val in enumerate(list(tree)):
-        name = val.find("name").text
-        id = id_list[idx]
-        id_name_dict[id] = name
-    return id_name_dict
-
-
 def parse_boardgame_id(id_list, group_type):
     id_name_dict = {}
     id_string = [str(x) for x in id_list]
@@ -96,7 +65,6 @@ if __name__ == "__main__":
     # one of category, mechanic, or family
     type_of_ids = "designer"
 
-    # get list of missing thing
     path_to_save = "./{}_lookup.json".format(type_of_ids)
 
     df = pd.read_csv("../data/bgg_GameItem.csv")
