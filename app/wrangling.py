@@ -19,9 +19,7 @@ def call_boardgame_data():
     """
 
     # reads csv
-    boardgame_data = pd.read_csv(
-        "board_game.csv", parse_dates=["year_published"]
-    )
+    boardgame_data = pd.read_csv("board_game.csv", parse_dates=["year_published"])
     boardgame_data["year_published"] = pd.to_datetime(
         boardgame_data["year_published"], format="%Y"
     )
@@ -59,8 +57,8 @@ def list_to_string(list_):
 
     returns: string
     """
-    if list_ is list:
-        str(list_).strip("[']").replace(", ", "").replace("''", "|")
+    if type(list_) is list:
+        list_ = str(list_).strip("[']").replace(", ", "").replace("''", "|")
         return list_
     else:
         return list_
@@ -96,10 +94,10 @@ def bool_generator(cat, mech, pub, boardgame_data):
     else:
         pub_bool = False
 
-    if (cat_bool + mech_bool + pub_bool).sum() == 0:
+    if (cat_bool | mech_bool | pub_bool).sum() == 0:
         return ~boardgame_data["game_id"].isna()
     else:
-        return cat_bool + mech_bool + pub_bool
+        return cat_bool | mech_bool | pub_bool
 
 
 def call_boardgame_top(col, year_in, year_out):

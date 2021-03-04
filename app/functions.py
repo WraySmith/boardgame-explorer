@@ -44,22 +44,17 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
                 dx=20,
             ),
             width=700,
-            height=200,
+            height=150,
         )
     )
-    
-    p=(
+
+    p = (
         alt.Chart(call_boardgame_filter(cat, mech, pub))
         .mark_line(color="#1f77b4", size=3)
-        .encode(
-            x="year_published",
-            y="mean(average_rating)"
-            ))
-        
-    scatter_plot = scatter_plot + p
-        
-        
+        .encode(x="year_published", y="mean(average_rating)")
+    )
 
+    scatter_plot = scatter_plot + p
     return scatter_plot
 
 
@@ -91,13 +86,23 @@ def count_plot_dates(cat=None, mech=None, pub=None):
                 ),
             ),
         )
-        .properties(width=700, height=200)
+        .properties(
+            title=alt.TitleParams(
+                text="Figure 2: Game Count based on Published Year",
+                anchor="start",
+                fontSize=20,
+                dy=-20,
+                dx=20,
+            ),
+            width=700,
+            height=150,
+        )
     )
 
     return count_plot
 
 
-def rank_plot_dates(col="category", year_in=1900, year_out=2020, color_="#ff7f0e"):
+def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e"):
     """
     Creates altair graph of set column for set years
 
@@ -109,17 +114,17 @@ def rank_plot_dates(col="category", year_in=1900, year_out=2020, color_="#ff7f0e
     """
     rank_plot = (
         alt.Chart(call_boardgame_top(col, year_in, year_out))
-        .mark_bar(color_)
+        .mark_bar(color=color_)
         .encode(
-            alt.X("year_published", axis=alt.Axis(title=None)),
-            alt.Y(
+            alt.X(
                 str(col),
                 axis=alt.Axis(
                     titleFontSize=12,
                     titleFontWeight=600,
                 ),
             ),
+            alt.Y("average_rating:Q", sort="-x", axis=alt.Axis(title="Average Rating")),
         )
-        .properties(width=700, height=200)
+        .properties(width=200, height=100)
     )
     return rank_plot
