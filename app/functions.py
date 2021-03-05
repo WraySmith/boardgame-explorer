@@ -3,7 +3,7 @@ contains graph calls for dashboard
 """
 
 import altair as alt
-from wrangling import call_boardgame_filter, call_boardgame_top
+from wrangling import call_boardgame_filter, call_boardgame_top, call_boardgame_data
 
 
 def scatter_plot_dates(cat=None, mech=None, pub=None):
@@ -17,9 +17,9 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
 
     returns: altair plot
     """
-
+    alt.data_transformers.disable_max_rows()
     scatter_plot = (
-        alt.Chart(call_boardgame_filter(cat, mech, pub))
+        alt.Chart(call_boardgame_data())
         .mark_circle(size=60, opacity=0.1, color="grey")
         .encode(
             alt.X(
@@ -49,12 +49,31 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
     )
 
     line_plot = (
-        alt.Chart(call_boardgame_filter(cat, mech, pub))
-        .mark_line(color="#1f77b4", size=3)
+        alt.Chart(call_boardgame_data())
+        .mark_line(color="black", size=3)
         .encode(x="year_published", y="mean(average_rating)")
     )
 
-    scatter_plot = scatter_plot + line_plot
+    color_plot = (
+        alt.Chart(call_boardgame_filter(cat, mech, pub))
+        .mark_circle(size=60, opacity=0.5, color="orange")
+        .encode(
+            alt.X(
+                "year_published", axis=alt.Axis(title=None), scale=alt.Scale(zero=False)
+            ),
+            alt.Y(
+                "average_rating",
+                axis=alt.Axis(
+                    title="Average Rating",
+                    titleFontSize=12,
+                    offset=14,
+                    titleFontWeight=600,
+                ),
+            ),
+        )
+    )
+
+    scatter_plot = scatter_plot + line_plot + color_plot
     return scatter_plot
 
 
@@ -85,6 +104,7 @@ def count_plot_dates(cat=None, mech=None, pub=None):
                     titleFontWeight=600,
                 ),
             ),
+            color=alt.Color("category"),
         )
         .properties(
             title=alt.TitleParams(
@@ -118,13 +138,52 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
         .encode(
             alt.X(
                 str(col),
+                sort="-y",
                 axis=alt.Axis(
                     titleFontSize=12,
                     titleFontWeight=600,
                 ),
             ),
-            alt.Y("average_rating:Q", sort="-x", axis=alt.Axis(title="Average Rating")),
+            alt.Y(
+                "average_rating:Q",
+                axis=alt.Axis(title="Average Rating"),
+                scale=alt.Scale(domain=(5, 10)),
+            ),
         )
         .properties(width=200, height=100)
     )
-    return rank_plot
+
+    rank_text = rank_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
+        text=alt.Text("average_rating:Q", format=",.2r")
+    )
+    return rank_plot + rank_text
+
+
+def top_n_plot(cat=None, mech=None, pub=None, n=5):
+    """
+    Creates altair graph for top "n" games with filtered data
+
+    cat: list
+    mech: list
+    pub: list
+    n: int
+
+    return: altair plot
+    """
+    top_plot = alt.Chart(
+        call_boardgame_filter(cat, mech, pub, n)
+        .mark_bar()
+        .encode(
+            alt.X(
+                "name",
+                sort="-y",
+                axis=alt.Axis(
+                    titleFontSize=12,
+                    titleFontWeight=600,
+                ),
+            ),
+            alt.Y("average_rating:Q", axis=alt.Axis(title="Average Rating")),
+        )
+        .properties(width=200, height=100)
+    )
+    return top_plot

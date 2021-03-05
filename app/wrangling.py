@@ -31,19 +31,24 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(cat, mech, pub):
+def call_boardgame_filter(cat, mech, pub, n=None):
     """
     Returns filtered data from board_game.csv
 
     cat: list
     mech: list
     pub: list
+    n: int
 
     return: pandas dataframe
     """
     boardgame_data = call_boardgame_data()
 
     boardgame_data = boardgame_data[bool_generator(cat, mech, pub, boardgame_data)]
+
+    # sorts by average rating and returns top "n" games
+    if n is not None:
+        boardgame_data = boardgame_data.sort("average_rating", ascending=False)[:n]
 
     return boardgame_data
 
