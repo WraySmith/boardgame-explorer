@@ -1,5 +1,6 @@
 import dash
 import dash_html_components as html
+import dash_table
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
@@ -34,24 +35,24 @@ def description_card():
 
 
 # left most
-def generate_control_card():
+def generate_control_card_tab1():
     """
     :return: A Div containing controls for graphs.
     """
     return html.Div(
-        id="control-card",
+        id="control-card1",
         children=[
+            
             html.Br(),
-            html.Br(),
-            html.Label('Select what you want to view:'),
+            html.Label('Select elements:'),
 dcc.RadioItems(id='radio-selection',
     options=[
         {'label': 'Categories', 'value': 'category'},
-        {'label': 'Mehcanics', 'value': 'mechanic'},
+        {'label': 'Mechanics', 'value': 'mechanic'},
         {'label': 'Publishers', 'value': 'publisher'}
     ],
-    value='mech'
-) , html.Label('Select your:'),dcc.Dropdown(id='radio-dependent', options=[], multi=True)
+    value='mechanic',labelStyle={'display': 'block'}
+) , html.Label('Select your filters:'),dcc.Dropdown(id='radio-dependent', options=[], multi=True)
 
 
  ,
@@ -59,13 +60,57 @@ dcc.RadioItems(id='radio-selection',
         ]
     )
 
+def generate_control_card_tab2():
+    """
+    :return: A Div containing controls for graphs.
+    """
+    return html.Div(
+        id="control-card2",
+        children=[
+            html.P('Please select any combination of categories, mechanics, publishers and number of games to show'),
+            html.Br(),
+            html.P("Please select categories:"),
+            dcc.Dropdown(
+                id="category-widget",
+                value="Economic",
+                options=[
+                    {"label": name, "value": name} for name in subset_data("category")
+                ],
+                multi=True,
+            ),
+            html.Br(),
+            html.Br(),
+            html.P("Please select mechanics:"),
+            dcc.Dropdown(
+                id="mechanics-widget",
+                value="Trick-taking",
+                options=[
+                    {"label": name, "value": name} for name in subset_data("mechanic")
+                ],
+                multi=True,
+            ),
+            html.Br(),
+            html.Br(),
+            html.P("Please select publishers:"),
+            dcc.Dropdown(
+                id="publisher-widget",
+                value="3M",
+                options=[
+                    {"label": name, "value": name} for name in subset_data("publisher")
+                ],
+                multi=True,
+            ),
+            html.Br(),
+            html.Br(),
+        ],
+    )
 
 def lower_description():
     return html.Div(
         children=[
             html.H4("Top 5 categories, mechanics and publishers by rating"),
             html.P(
-                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods..........                                                  "
+                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods"
             ),
         ]
     )
@@ -74,7 +119,7 @@ def lower_description():
 def data_set_descirption():
     return html.Div(
         children=[
-            html.H4("Description of Dataset"),
+            html.H5("Description of Dataset"),
             html.P(
                 " This dataset comes from the Board Game Geek website and includes boardgames with descriptions, general game details, publisher, and user ratings for 10,000 boardgames published between 1950 and 2021"
             ),
@@ -84,13 +129,14 @@ def data_set_descirption():
 
 # cards
 
+
 first_card = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
                 id="left-column",
                 className="four columns",
-                children=[description_card(), html.Br(),generate_control_card()]
+                children=[description_card(), html.Br(),generate_control_card_tab1()]
             )
         ]
     )
@@ -128,9 +174,6 @@ second_card = dbc.Card(
     )
 )
 
-# pop overs
-
-
 
 third_card = dbc.Card(
     dbc.CardBody(
@@ -151,7 +194,7 @@ third_card = dbc.Card(
         ),
     ]
 )],
-                                            )
+     )
            
         ]
     )
@@ -270,7 +313,80 @@ fifth_card = dbc.Card(
             )
         ]
     )]))
-        
+
+
+sixth_card= dbc.Card(
+    dbc.CardBody(
+        [  generate_control_card_tab2(),html.Label('Select number of games to show:'),
+    dcc.Slider(
+        id='my-slider',
+        min=2,
+        max=20,
+        step=1,
+        value=10,
+        marks={
+        2: "2",
+        4: "4",
+        6: "6",
+        8: "8",
+        10: "10",
+        12: "12",
+        14: "14",
+        16: "16",
+        18: "18",
+        20: "20"}
+    ),  html.Div(id='slider-output-container')
+                                            
+           
+        ]
+    )
+
+)
+
+
+
+
+
+
+ninth_card= dbc.Card(
+    dbc.CardBody(
+        [html.Div(
+                                            
+           
+          html.Iframe(
+                        id="top-n-games",
+                        style={
+                            "border-width": "0",
+                            "width": "100%",
+                            "height": "250px",
+                        },
+                )        )
+        ]
+    )
+    
+)
+
+
+          
+# tab styling
+tabs_styles = {
+    'height': '44px'
+    ''
+}
+tab_style = {
+    'borderBottom': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold'
+}
+
+tab_selected_style = {
+    'borderTop': '1px solid #d6d6d6',
+    'borderBottom': '1px solid #d6d6d6',
+    'backgroundColor': '#119DFF',
+    'color': 'white',
+    'padding': '6px'
+}
+
     # options
 
 options = [
@@ -286,7 +402,7 @@ app.layout = html.Div(
         dcc.Tabs(
             [
                 dcc.Tab(
-                    label="Tab one",
+                    label="Game dynamics over time",
                     children=[
                         dbc.Container(
                             [  # top column
@@ -311,14 +427,11 @@ app.layout = html.Div(
                                 dbc.Col(first_card, width=3),
                                 dbc.Col(second_card, width=9),
                             ]
-                        ),dbc.Row([dbc.Col(third_card, width=3), dbc.Col( [dbc.Row([(fourth_card), dbc.Row(fifth_card) ])
+                        ),dbc.Row([dbc.Col(third_card, width=3), dbc.Col([(fourth_card),(fifth_card)], width=9)
                         
                         
                     ],
-                )]),
-                
-            ]
-        ), dcc.Tab(label="Tab two", children=[dbc.Container(
+                )],style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Top Games", children=[dbc.Container(
                             [  # top column
                                 dbc.Row(
                                     [
@@ -333,9 +446,12 @@ app.layout = html.Div(
                                             width=12,
                                         )
                                     ]
-                                )
+                                ), dbc.Row([dbc.Col(sixth_card, width=3), dbc.Col(ninth_card, width=9)]),
                             ]
-                        ),]),])])
+                        ),], style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Nathans Tab", style=tab_style, selected_style=tab_selected_style)
+                
+            ]
+        )])
  
 
 # Set up callbacks/backend
@@ -450,13 +566,14 @@ def update_output6(value):
     dash.dependencies.Output('output-container-range-slider', 'children'),
     dash.dependencies.Input('non-linear-range-slider', 'value'))
 def range_slider_select(value):
-    return 'You have selected "{}"'.format(value)
+     
+    return 'You have selected {}  to  {}'.format(value[0], value[1])
 
 @app.callback(
     dash.dependencies.Output('output-container-range-slider2', 'children'),
     dash.dependencies.Input('non-linear-range-slider2', 'value'))
 def range_slider_select2(value):
-    return 'You have selected "{}"'.format(value)
+    return 'You have selected {}  to  {}'.format(value[0], value[1])
 
 @app.callback(
     Output("collapse", "is_open"),
@@ -478,8 +595,23 @@ def update_options(chosen_selection):
 
 
 
+@app.callback(
+    dash.dependencies.Output('slider-output-container', 'children'),
+    [dash.dependencies.Input('my-slider', 'value')])
+def n_games_slider(value):
+    return '{} games'.format(value)
 
+@app.callback(
+    Output("top-n-games", "srcDoc"),
+    Input("category-widget", "value"),
+    Input("mechanics-widget", "value"),
+    Input("publisher-widget", "value"),
+    Input("my-slider", "value")
 
+)
+def call_top_n_games(c, m, p, n):
+    n_games = top_n_plot(cat=c, mech=m, pub=p, n=5)
+    return n_games.to_html()
 
 
 

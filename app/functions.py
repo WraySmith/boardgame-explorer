@@ -184,6 +184,6 @@ def top_n_plot(cat=None, mech=None, pub=None, n=5):
             ),
             alt.Y("average_rating:Q", axis=alt.Axis(title="Average Rating")),
         )
-        .properties(width=40, height=100)
+        .properties(width=200, height=100)
     )
     return top_plot

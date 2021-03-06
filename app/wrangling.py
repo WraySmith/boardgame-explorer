@@ -31,7 +31,7 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(cat, mech, pub, n=None):
+def call_boardgame_filter(cat, mech, pub, n=5):
     """
     Returns filtered data from board_game.csv
 
@@ -48,7 +48,7 @@ def call_boardgame_filter(cat, mech, pub, n=None):
 
     # sorts by average rating and returns top "n" games
     if n is not None:
-        boardgame_data = boardgame_data.sort("average_rating", ascending=False)[:n]
+        boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)[:n]
 
     return boardgame_data
 
