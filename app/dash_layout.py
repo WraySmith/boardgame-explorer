@@ -1,9 +1,9 @@
 import dash
 import dash_html_components as html
-import dash_table
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
+import dash_table
 
 
 from functions import *
@@ -34,47 +34,33 @@ def description_card():
 
 
 # left most
-def generate_control_card_tab1():
+def generate_control_card():
     """
     :return: A Div containing controls for graphs.
     """
     return html.Div(
-        id="control-card1",
+        id="control-card",
         children=[
-            
             html.Br(),
-<<<<<<< HEAD
-            html.Label('Select elements:'),
-dcc.RadioItems(id='radio-selection',
-    options=[
-        {'label': 'Categories', 'value': 'category'},
-        {'label': 'Mechanics', 'value': 'mechanic'},
-        {'label': 'Publishers', 'value': 'publisher'}
-    ],
-    value='mechanic',labelStyle={'display': 'block'}
-) , html.Label('Select your filters:'),dcc.Dropdown(id='radio-dependent', options=[], multi=True)
-
-
- ,
-            
-        ]
-=======
             html.Br(),
             html.Label("Select what you want to view:"),
+            html.Br(),
             dcc.RadioItems(
                 id="radio-selection",
                 options=[
                     {"label": "Categories", "value": "category"},
+                      
                     {"label": "Mechanics", "value": "mechanic"},
+                     
                     {"label": "Publishers", "value": "publisher"},
                 ],
-                value="mechanic",
+                value="mechanic",labelStyle={'display': 'block'}
             ),
             html.Label("Select your:"),
             dcc.Dropdown(id="radio-dependent", options=[], multi=True, value=[None]),
         ],
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
     )
+
 
 def generate_control_card_tab2():
     """
@@ -121,12 +107,14 @@ def generate_control_card_tab2():
         ],
     )
 
+
+
 def lower_description():
     return html.Div(
         children=[
             html.H4("Top 5 categories, mechanics and publishers by rating"),
             html.P(
-                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods"
+                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods..........                                                  "
             ),
         ]
     )
@@ -135,7 +123,7 @@ def lower_description():
 def data_set_descirption():
     return html.Div(
         children=[
-            html.H5("Description of Dataset"),
+            html.H4("Description of Dataset"),
             html.P(
                 " This dataset comes from the Board Game Geek website and includes boardgames with descriptions, general game details, publisher, and user ratings for 10,000 boardgames published between 1950 and 2021"
             ),
@@ -145,18 +133,13 @@ def data_set_descirption():
 
 # cards
 
-
 first_card = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
                 id="left-column",
                 className="four columns",
-<<<<<<< HEAD
-                children=[description_card(), html.Br(),generate_control_card_tab1()]
-=======
                 children=[description_card(), html.Br(), generate_control_card()],
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
             )
         ]
     )
@@ -194,30 +177,6 @@ second_card = dbc.Card(
     )
 )
 
-<<<<<<< HEAD
-
-third_card = dbc.Card(
-    dbc.CardBody(
-        [dbc.Col(
-                                                id="bottom left row",
-                                                className="four columns",
-                                                children=[lower_description(),  html.Div(
-    [
-        dbc.Button(
-            "Click here to view dataset description",
-            id="collapse-button",
-            className="mb-3",
-            color="primary",
-        ),
-        dbc.Collapse(
-            dbc.Card(dbc.CardBody(data_set_descirption())),
-            id="collapse",
-        ),
-    ]
-)],
-     )
-           
-=======
 # pop overs
 
 
@@ -245,7 +204,6 @@ third_card = dbc.Card(
                     ),
                 ],
             )
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
         ]
     )
 )
@@ -373,8 +331,8 @@ fifth_card = dbc.Card(
                 ]
             )
         ]
-<<<<<<< HEAD
-    )]))
+    )
+)
 
 
 sixth_card= dbc.Card(
@@ -405,18 +363,41 @@ sixth_card= dbc.Card(
 
 )
 
+sixth_card= dbc.Card(
+    dbc.CardBody(
+        [  generate_control_card_tab2(),html.Label('Select number of games to show:'),
+    dcc.Slider(
+        id='my-slider',
+        min=2,
+        max=20,
+        step=1,
+        value=10,
+        marks={
+        2: "2",
+        4: "4",
+        6: "6",
+        8: "8",
+        10: "10",
+        12: "12",
+        14: "14",
+        16: "16",
+        18: "18",
+        20: "20"}
+    ),  html.Div(id='slider-output-container')
+                                            
+           
+        ]
+    )
 
+)
 
-
-
-
-ninth_card= dbc.Card(
+seventh_card= dbc.Card(
     dbc.CardBody(
         [html.Div(
                                             
            
           html.Iframe(
-                        id="top-n-games",
+                        id="top_n_games",
                         style={
                             "border-width": "0",
                             "width": "100%",
@@ -429,7 +410,34 @@ ninth_card= dbc.Card(
 )
 
 
-          
+
+eigth_card=dbc.Card(dbc.CardBody(
+dash_table.DataTable(
+    id='top_n_games_datatable',
+    style_cell={
+        
+        
+        'maxWidth': 100
+    }
+    
+      
+)
+)
+)
+
+
+
+
+
+# options
+
+options = [
+    {"label": "Categories", "value": "cat"},
+    {"label": "Mechanics", "value": "mech"},
+    {"label": "Publisher", "value": "pub"},
+]
+
+
 # tab styling
 tabs_styles = {
     'height': '44px'
@@ -450,12 +458,6 @@ tab_selected_style = {
 }
 
     # options
-=======
-    )
-)
-
-# options
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
 
 options = [
     {"label": "Categories", "value": "cat"},
@@ -463,15 +465,8 @@ options = [
     {"label": "Publisher", "value": "pub"},
 ]
 
-
 app.layout = html.Div(
-    [
-        dcc.Tabs(
-            [
-                dcc.Tab(
-                    label="Game dynamics over time",
-                    children=[
-                        dbc.Container(
+    [dbc.Container(
                             [  # top column
                                 dbc.Row(
                                     [
@@ -489,34 +484,23 @@ app.layout = html.Div(
                                 )
                             ]
                         ),
+        dcc.Tabs(
+            [
+                dcc.Tab(
+                    label="Game dynamics over time",
+                    children=[
+                        
+                        html.Br(),html.Br(),html.Br(),
                         dbc.Row(
                             [
                                 dbc.Col(first_card, width=3),
-                                dbc.Col(second_card, width=9),
+                                dbc.Col(second_card, width=9),html.Br(),html.Br(),html.Br(),
                             ]
-<<<<<<< HEAD
                         ),dbc.Row([dbc.Col(third_card, width=3), dbc.Col([(fourth_card),(fifth_card)], width=9)
                         
                         
                     ],
                 )],style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Top Games", children=[dbc.Container(
-=======
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(third_card, width=3),
-                                dbc.Col(
-                                    [dbc.Row([(fourth_card), dbc.Row(fifth_card)])],
-                                ),
-                            ]
-                        ),
-                    ],
-                ),
-                dcc.Tab(
-                    label="Tab two",
-                    children=[
-                        dbc.Container(
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
                             [  # top column
                                 dbc.Row(
                                     [
@@ -531,24 +515,16 @@ app.layout = html.Div(
                                             width=12,
                                         )
                                     ]
-                                ), dbc.Row([dbc.Col(sixth_card, width=3), dbc.Col(ninth_card, width=9)]),
+                                ), dbc.Row([dbc.Col(sixth_card, width=3), dbc.Col([(seventh_card),(eigth_card)], width=9),
                             ]
-<<<<<<< HEAD
-                        ),], style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Nathans Tab", style=tab_style, selected_style=tab_selected_style)
+                        ),], 
+                        #place holder for enhancements
+                        #style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Nathans Tab", style=tab_style, selected_style=tab_selected_style)
                 
-            ]
-        )])
+            
+        )])])])
  
-=======
-                        ),
-                    ],
-                ),
-            ]
-        )
-    ]
-)
 
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
 
 # Set up callbacks/backend
 # will be the scatteplot of average game ratings
@@ -662,8 +638,8 @@ def update_output6(value):
     dash.dependencies.Input("non-linear-range-slider", "value"),
 )
 def range_slider_select(value):
-     
-    return 'You have selected {}  to  {}'.format(value[0], value[1])
+    transformed_value = [v for v in value]
+    return '{} to {}'.format(transformed_value[0], transformed_value[1])
 
 
 @app.callback(
@@ -671,7 +647,8 @@ def range_slider_select(value):
     dash.dependencies.Input("non-linear-range-slider2", "value"),
 )
 def range_slider_select2(value):
-    return 'You have selected {}  to  {}'.format(value[0], value[1])
+    transformed_value = [v for v in value]
+    return '{} to {}'.format(transformed_value[0], transformed_value[1])
 
 
 @app.callback(
@@ -690,31 +667,6 @@ def toggle_collapse(n, is_open):
     [dash.dependencies.Input("radio-selection", "value")],
 )
 def update_options(chosen_selection):
-<<<<<<< HEAD
-    col=chosen_selection
-    return [{'label':c, 'value':c, } for c in subset_data(col)]
-
-
-
-@app.callback(
-    dash.dependencies.Output('slider-output-container', 'children'),
-    [dash.dependencies.Input('my-slider', 'value')])
-def n_games_slider(value):
-    return '{} games'.format(value)
-
-@app.callback(
-    Output("top-n-games", "srcDoc"),
-    Input("category-widget", "value"),
-    Input("mechanics-widget", "value"),
-    Input("publisher-widget", "value"),
-    Input("my-slider", "value")
-
-)
-def call_top_n_games(c, m, p, n):
-    n_games = top_n_plot(cat=c, mech=m, pub=p, n=5)
-    return n_games.to_html()
-
-=======
     col = chosen_selection
     return [
         {
@@ -723,8 +675,37 @@ def call_top_n_games(c, m, p, n):
         }
         for c in subset_data(col)
     ]
->>>>>>> 63c50a5138f44229d34f51d6cd323237d082fa8a
 
+@app.callback(
+    Output("top_n_games", "srcDoc"),
+    Input("category-widget", "value"),
+    Input("mechanics-widget", "value"),
+    Input("publisher-widget", "value"),
+    Input("my-slider", "value")
+    
+    
+)
+def call_top_n_games(c,m,p,n):
+    top_n_games = top_n_plot(cat=c, mech=m, pub=p, n=n)
+    return top_n_games.to_html()
+
+
+@app.callback(
+   Output("top_n_games_datatable", "data"),
+Output(component_id='top_n_games_datatable', component_property='columns'),
+    Input("category-widget", "value"),
+    Input("mechanics-widget", "value"),
+    Input("publisher-widget", "value"),
+    Input("my-slider", "value")
+    
+
+)
+def update_table(c,m,p,n):
+    list_cols=['name','min_players' , 'max_players', 'playing_time']
+    table=call_boardgame_filter(cat=c, mech=m, pub=p, n=n)    
+    columns = [{'name': col, 'id': col} for col in list_cols]
+    data = table.to_dict('rows')
+    return data, columns
 
 # run
 if __name__ == "__main__":
