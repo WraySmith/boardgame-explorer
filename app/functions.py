@@ -215,10 +215,8 @@ def top_n_plot(cat=[None], mech=[None], pub=[None], n=5):
     """
     alt.data_transformers.disable_max_rows()
     top_plot = alt.Chart(
-        call_boardgame_filter(cat, mech, pub, n)
-        .mark_bar()
-        .encode(
-            alt.X(
+        call_boardgame_filter(cat, mech, pub, n)).mark_bar().encode(
+        alt.X(
                 "name",
                 sort="-y",
                 axis=alt.Axis(
@@ -227,7 +225,16 @@ def top_n_plot(cat=[None], mech=[None], pub=[None], n=5):
                 ),
             ),
             alt.Y("average_rating:Q", axis=alt.Axis(title="Average Rating")),
-        )
-        .properties(width=40, height=100)
-    )
+        ).properties(
+                title=alt.TitleParams(
+                    text="Figure 1: Top n games based on user selection",
+                    anchor="start",
+                    fontSize=20,
+                    dy=-20,
+                    dx=20,
+                ),
+                width=500,
+                height=100,
+            )
+    
     return top_plot
