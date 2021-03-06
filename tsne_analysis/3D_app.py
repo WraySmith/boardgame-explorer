@@ -14,18 +14,20 @@ tsne_df = pd.read_csv("nodes.csv")
 data = []
 for idx, val in tsne_df.groupby(tsne_df.highlight):
     if idx == "none":
-        continue
-    highlight = idx
+        marker_style = dict(size=2.5, symbol="circle", opacity=0.1, color="grey")
+    else:
+        marker_style = dict(size=2.5, symbol="circle", opacity=0.4)
 
     scatter = go.Scatter3d(
-        name=f"Class {highlight}",
+        name=idx,
         x=val["x"],
         y=val["y"],
         z=val["z"],
         mode="markers",
-        marker=dict(size=val["average_rating"], symbol="circle", opacity=0.5),
+        marker=marker_style,
     )
     data.append(scatter)
+
 
 # Layout for the t-SNE graph
 tsne_layout = go.Layout(margin=dict(l=0, r=0, b=0, t=0), title=dict(text="test"))
