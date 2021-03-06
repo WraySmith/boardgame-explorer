@@ -44,13 +44,51 @@ def call_boardgame_filter(cat, mech, pub, n=5):
     """
     boardgame_data = call_boardgame_data()
 
-    boardgame_data = boardgame_data[bool_generator(cat, mech, pub, boardgame_data)]
+    columns = {"category": cat, "mechanic": mech, "publisher": pub}
+
+    column_bool = [bool_generator(key, columns[key], boardgame_data) for key in columns]
+    if (column_bool[0] | column_bool[1] | column_bool[2]).sum() != 0:
+        boardgame_data = boardgame_data[
+            (column_bool[0] | column_bool[1] | column_bool[2])
+        ]
 
     # sorts by average rating and returns top "n" games
     if n is not None:
         boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)[:n]
 
     return boardgame_data
+
+
+def call_boardgame_radio(col, list_):
+    """
+    Returns filtered data from board_game.csv
+
+    col: string
+    list_: list
+
+    return: pandas dataframe
+    """
+    boardgame_data = call_boardgame_data()
+
+    boardgame_data = boardgame_data[bool_generator(col, list_, boardgame_data)]
+
+    return boardgame_data
+
+
+def create_groups(col, list_, boardgame_data):
+    """
+    Takes in boardgame data and creates groups
+
+    col: string
+    list_: list
+    boardgame_data: pandas dataframe
+
+    return: pandas dataframe
+    """
+
+    # boardgame_data[col].str.match(element) for element in list_
+
+    return list_
 
 
 def list_to_string(list_):
@@ -69,40 +107,37 @@ def list_to_string(list_):
         return list_
 
 
-def bool_generator(cat, mech, pub, boardgame_data):
+def dict_to_list(dict_):
+    """
+    This takes in a dictionary and changes its format to a
+    list.
+
+    col: string
+    dict_: dictionary
+
+    returns: list
+    """
+    list_ = []
+    for element in dict_:
+        list_.append(list(element.values())[0])
+
+    return list_
+
+
+def bool_generator(col, list_, boardgame_data):
     """
     Takes filters entries and creates bool table to filter
 
-    cat: list
-    mech: list
-    pub: list
+    col: string
+    list_: list
     boardgame_data: pandas dataframe
 
     returns: bool series
     """
-    # This can probably be simplified into a lambda function
-    if cat is not None:
-        cat = list_to_string(cat)
-        cat_bool = boardgame_data["category"].str.match(cat)
-    else:
-        cat_bool = boardgame_data["game_id"] == "zzzz"
+    list_ = list_to_string(list_)
+    list_bool = boardgame_data[col].str.match(list_)
 
-    if mech is not None:
-        mech = list_to_string(mech)
-        mech_bool = boardgame_data["mechanic"].str.match(mech)
-    else:
-        mech_bool = boardgame_data["game_id"] == "zzzz"
-
-    if pub is not None:
-        pub = list_to_string(pub)
-        pub_bool = boardgame_data["publisher"].str.match(pub)
-    else:
-        pub_bool = boardgame_data["game_id"] == "zzzz"
-
-    if (cat_bool | mech_bool | pub_bool).sum() == 0:
-        return ~(boardgame_data["game_id"] == "zzzz")
-    else:
-        return cat_bool | mech_bool | pub_bool
+    return list_bool
 
 
 def call_boardgame_top(col, year_in, year_out):
