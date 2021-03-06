@@ -1,7 +1,6 @@
 import dash
 import pandas as pd
 
-# import dash_cytoscape as cyto
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -15,37 +14,22 @@ tsne_df = pd.read_csv("nodes.csv")
 
 data = []
 for idx, val in tsne_df.groupby(tsne_df.highlight):
+    if idx == "none":
+        continue
     highlight = idx
 
     scatter = go.Scatter3d(
         name=f"Class {highlight}",
-        x=val["z"],
+        x=val["x"],
         y=val["y"],
-        z=val["x"],
+        z=val["z"],
         mode="markers",
-        marker=dict(size=2.5, symbol="circle"),
+        marker=dict(size=val["average_rating"], symbol="circle", opacity=0.5),
     )
     data.append(scatter)
 
 # Layout for the t-SNE graph
-tsne_layout = go.Layout(margin=dict(l=0, r=0, b=0, t=0))
-# startup_elm_list = startup_elms["elm_list"]
-
-# col_swatch = px.colors.qualitative.Dark24
-# def_stylesheet = [
-#     {
-#         "selector": "." + str(i),
-#         "style": {"background-color": col_swatch[i], "line-color": col_swatch[i]},
-#     }
-#     for i in range(len(network_df["topic_id"].unique()))
-# ]
-# def_stylesheet += [
-#     {
-#         "selector": "node",
-#         "style": {"width": "data(node_size)", "height": "data(node_size)"},
-#     },
-#     {"selector": "edge", "style": {"width": 1, "curve-style": "bezier"}},
-# ]
+tsne_layout = go.Layout(margin=dict(l=0, r=0, b=0, t=0), title=dict(text="test"))
 
 app = dash.Dash(__name__)
 
@@ -55,16 +39,6 @@ app.layout = html.Div(
         # Main app
         html.Div(
             [
-                html.H2(
-                    "t-SNE Explorer",
-                    id="title",
-                    style={
-                        "float": "left",
-                        "margin-top": "20px",
-                        "margin-bottom": "0",
-                        "margin-left": "20px",
-                    },
-                ),
                 html.Div(
                     [
                         # The graph
