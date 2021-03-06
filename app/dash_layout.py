@@ -415,9 +415,8 @@ eigth_card=dbc.Card(dbc.CardBody(
 dash_table.DataTable(
     id='top_n_games_datatable',
     style_cell={
-        
-        
-        'maxWidth': 100
+        'whiteSpace': 'normal',
+        'height': 'auto',
     }
     
       
@@ -701,7 +700,7 @@ Output(component_id='top_n_games_datatable', component_property='columns'),
 
 )
 def update_table(c,m,p,n):
-    list_cols=['name','min_players' , 'max_players', 'playing_time']
+    list_cols=['name','min_players' , 'max_players', 'playing_time', 'artist']
     table=call_boardgame_filter(cat=c, mech=m, pub=p, n=n)    
     columns = [{'name': col, 'id': col} for col in list_cols]
     data = table.to_dict('rows')
