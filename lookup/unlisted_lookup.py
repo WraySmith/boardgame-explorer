@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     path_to_save = "./{}_lookup.json".format(type_of_ids)
 
-    df = pd.read_csv("../data/bgg_GameItem.csv")
+    df = pd.read_csv("../data/raw/bgg_GameItem.csv")
     df = df[["bgg_id", type_of_ids]]
 
     ids = make_list_and_explode(df, type_of_ids)
