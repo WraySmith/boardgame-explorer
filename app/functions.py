@@ -3,20 +3,23 @@ contains graph calls for dashboard
 """
 
 import altair as alt
-from wrangling import call_boardgame_filter, call_boardgame_top, call_boardgame_data
+from wrangling import *
 
 
-def scatter_plot_dates(cat=None, mech=None, pub=None):
+def scatter_plot_dates(col="category", list_=[None]):
     """
     Takes in inputs filtering data and creates scatter plot
     for comparison of user ratings over time
 
-    cat: list of strings input
-    mech: list of strings input
-    pub: list of strings input
+    col: string
+    dict_: dictionary
 
     returns: altair plot
     """
+
+    # list_ = dict_to_list(dict_)
+    # print(list_)
+
     alt.data_transformers.disable_max_rows()
     scatter_plot = (
         alt.Chart(call_boardgame_data())
@@ -55,7 +58,7 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
     )
 
     color_plot = (
-        alt.Chart(call_boardgame_filter(cat, mech, pub))
+        alt.Chart(call_boardgame_radio(col, list_))
         .mark_circle(size=60, opacity=0.5, color="orange")
         .encode(
             alt.X(
@@ -77,49 +80,89 @@ def scatter_plot_dates(cat=None, mech=None, pub=None):
     return scatter_plot
 
 
-def count_plot_dates(cat=None, mech=None, pub=None):
+def count_plot_dates(col="category", list_=[None]):
     """
     Takes input filtering data and creates
     a plot counting how many game occurances
 
-    cat: list of strings input
-    mech: list of strings input
-    pub: list of strings input
+    col: string
+    list_: list of strings input
 
     return: altair plot
     """
-    count_plot = (
-        alt.Chart(call_boardgame_filter(cat, mech, pub))
-        .mark_bar(color="#2ca02c")
-        .encode(
-            alt.X(
-                "year_published", axis=alt.Axis(title=None), scale=alt.Scale(zero=False)
-            ),
-            alt.Y(
-                "count()",
-                axis=alt.Axis(
-                    title="Count of Games Published",
-                    titleFontSize=12,
-                    offset=8,
-                    titleFontWeight=600,
-                ),
-            ),
-            color=alt.Color("category"),
-        )
-        .properties(
-            title=alt.TitleParams(
-                text="Figure 2: Game Count based on Published Year",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
-            width=700,
-            height=150,
-        )
-    )
+    # list_ = dict_to_list(dict_)
 
-    return count_plot
+    if list_ != [None]:
+        alt.data_transformers.disable_max_rows()
+        count_plot = (
+            alt.Chart(call_boardgame_radio(col, list_))
+            .mark_bar(color="#2ca02c")
+            .encode(
+                alt.X(
+                    "year_published",
+                    axis=alt.Axis(title=None),
+                    scale=alt.Scale(zero=False),
+                ),
+                alt.Y(
+                    "count()",
+                    axis=alt.Axis(
+                        title="Count of Games Published",
+                        titleFontSize=12,
+                        offset=8,
+                        titleFontWeight=600,
+                    ),
+                ),
+                color=alt.Color(col),
+            )
+            .properties(
+                title=alt.TitleParams(
+                    text="Figure 2: Game Count based on Published Year",
+                    anchor="start",
+                    fontSize=20,
+                    dy=-20,
+                    dx=20,
+                ),
+                width=700,
+                height=150,
+            )
+        )
+
+        return count_plot
+    else:
+        alt.data_transformers.disable_max_rows()
+        count_plot = (
+            alt.Chart(call_boardgame_data())
+            .mark_bar(color="#2ca02c")
+            .encode(
+                alt.X(
+                    "year_published",
+                    axis=alt.Axis(title=None),
+                    scale=alt.Scale(zero=False),
+                ),
+                alt.Y(
+                    "count()",
+                    axis=alt.Axis(
+                        title="Count of Games Published",
+                        titleFontSize=12,
+                        offset=8,
+                        titleFontWeight=600,
+                    ),
+                ),
+            )
+            .properties(
+                title=alt.TitleParams(
+                    text="Figure 2: Game Count based on Published Year",
+                    anchor="start",
+                    fontSize=20,
+                    dy=-20,
+                    dx=20,
+                ),
+                width=700,
+                height=150,
+            )
+        )
+
+        return count_plot
 
 
 def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e"):
@@ -159,7 +202,7 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
     return rank_plot + rank_text
 
 
-def top_n_plot(cat=None, mech=None, pub=None, n=5):
+def top_n_plot(cat=[None], mech=[None], pub=[None], n=5):
     """
     Creates altair graph for top "n" games with filtered data
 
@@ -170,6 +213,7 @@ def top_n_plot(cat=None, mech=None, pub=None, n=5):
 
     return: altair plot
     """
+    alt.data_transformers.disable_max_rows()
     top_plot = alt.Chart(
         call_boardgame_filter(cat, mech, pub, n)
         .mark_bar()
