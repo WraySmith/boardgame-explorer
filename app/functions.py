@@ -205,7 +205,7 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
                 scale=alt.Scale(domain=(5, 10)),
             ),
         )
-        .properties(width=200, height=100)
+        .properties(width=250, height=100)
     )
 
     rank_text = rank_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
@@ -214,7 +214,7 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
     return rank_plot + rank_text
 
 
-def top_n_plot(cat=[None], mech=[None], pub=[None], n=5):
+def top_n_plot(cat=[None], mech=[None], pub=[None], n=20):
     """
     Creates altair graph for top "n" games with filtered data
 
@@ -251,7 +251,7 @@ def top_n_plot(cat=[None], mech=[None], pub=[None], n=5):
                 dx=20,
             ),
             width=500,
-            height=150,
+            height=200,
         )
     )
     top_text = top_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
