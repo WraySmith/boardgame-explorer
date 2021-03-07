@@ -7,26 +7,29 @@ from dash.dependencies import Input, Output, State
 import dash_table
 
 # import functions from .py files
-from functions import *
-from wrangling import subset_data
+from app_graphing import *
+from app_wrangling import call_boardgame_data, subset_data
+
+# load board game data
+boardgame_data = call_boardgame_data()
 
 # dictionary for tab 1 sliders
-slider_dict={
-                                    1950: "1950",
-                                    1955: "1955",
-                                    1960: "1960",
-                                    1965: "1965",
-                                    1970: "1970",
-                                    1975: "1975",
-                                    1980: "1980",
-                                    1985: "1985",
-                                    1990: "1990",
-                                    1995: "1995",
-                                    2000: "2000",
-                                    2005: "2005",
-                                    2010: "2010",
-                                    2015: "2015",
-                                }
+slider_dict = {
+    1950: "1950",
+    1955: "1955",
+    1960: "1960",
+    1965: "1965",
+    1970: "1970",
+    1975: "1975",
+    1980: "1980",
+    1985: "1985",
+    1990: "1990",
+    1995: "1995",
+    2000: "2000",
+    2005: "2005",
+    2010: "2010",
+    2015: "2015",
+}
 
 #  set up app stylesheet
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -37,6 +40,7 @@ def title():
     :return: A Div containing dashboard title.
     """
     return html.Div(children=[html.H1("Board Game Trends Dashboard")])
+
 
 # description card tab 1
 def description_card():
@@ -50,7 +54,7 @@ def description_card():
             html.Div(
                 id="intro",
                 children="Explore board game trends over time based on category, mechanics and publisher selection below.\
-                Also visualize the top categories, mechanics and publishers by year using our interactive features."
+                Also visualize the top categories, mechanics and publishers by year using our interactive features.",
             ),
         ],
     )
@@ -64,7 +68,6 @@ def generate_control_card():
     return html.Div(
         id="control-card",
         children=[
-            
             html.Label("Select what you want to view:"),
             html.Br(),
             html.Br(),
@@ -77,8 +80,11 @@ def generate_control_card():
                 ],
                 value="mechanic",
                 labelStyle={"display": "block"},
-            ),html.Br(),
-            html.Label("Select elements to view:"),html.Br(),html.Br(),
+            ),
+            html.Br(),
+            html.Label("Select elements to view:"),
+            html.Br(),
+            html.Br(),
             dcc.Dropdown(id="radio-dependent", options=[], multi=True, value=[None]),
         ],
     )
@@ -101,31 +107,32 @@ def generate_control_card_tab2():
                 id="category-widget",
                 value="Economic",
                 options=[
-                    {"label": name, "value": name} for name in subset_data("category")
+                    {"label": name, "value": name}
+                    for name in subset_data(boardgame_data, "category")
                 ],
                 multi=True,
             ),
-            
             html.Br(),
             html.P("Please select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget",
                 value="Trick-taking",
                 options=[
-                    {"label": name, "value": name} for name in subset_data("mechanic")
+                    {"label": name, "value": name}
+                    for name in subset_data(boardgame_data, "mechanic")
                 ],
                 multi=True,
             ),
-            
             html.Br(),
             html.P("Please select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget",
                 value="3M",
                 options=[
-                    {"label": name, "value": name} for name in subset_data("publisher")
+                    {"label": name, "value": name}
+                    for name in subset_data(boardgame_data, "publisher")
                 ],
-                multi=True
+                multi=True,
             ),
             html.Br(),
             html.Br(),
@@ -143,10 +150,12 @@ def lower_description():
             html.H4("Top 5 Categories, Mechanics and Publishers by Rating"),
             html.P(
                 "Two sets of bar charts with year range sliders are provided to allow comparison for two different periods.",
-
-            ), html.Br(),
-            html.P("Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers \
-                    between time periods.")
+            ),
+            html.Br(),
+            html.P(
+                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers \
+                    between time periods."
+            ),
         ]
     )
 
@@ -221,7 +230,9 @@ second_card = dbc.Card(
                         },
                     ),
                 ]
-            ), html.Br(), html.Br()
+            ),
+            html.Br(),
+            html.Br(),
         ]
     )
 )
@@ -236,7 +247,6 @@ third_card = dbc.Card(
                 className="four columns",
                 children=[
                     lower_description(),
-                    
                 ],
             )
         ]
@@ -342,14 +352,7 @@ fifth_card = dbc.Card(
 )
 
 # card 6 containing the control card and the silder for number of games for tab 2
-sixth_card = dbc.Card(
-    dbc.CardBody(
-        [
-            generate_control_card_tab2()
-            
-        ]
-    )
-)
+sixth_card = dbc.Card(dbc.CardBody([generate_control_card_tab2()]))
 
 # card 7 containing the top 10 games bar chart for tab 2
 seventh_card = dbc.Card(
@@ -362,7 +365,7 @@ seventh_card = dbc.Card(
                         "border-width": "0",
                         "width": "100%",
                         "height": "300px",
-                    }
+                    },
                 )
             )
         ]
@@ -380,9 +383,7 @@ eigth_card = dbc.Card(
                     "whiteSpace": "normal",
                     "height": "auto",
                 },
-                style_table={
-        'overflowY': 'scroll'
-    },
+                style_table={"overflowY": "scroll"},
                 sort_action="native",
             ),
         ]
@@ -392,20 +393,21 @@ eigth_card = dbc.Card(
 # card 9 for data set description tab 1
 ninth_card = dbc.Card(
     dbc.CardBody(
-        [html.Div(
-                        [
-                            dbc.Button(
-                                "Click here to view dataset description",
-                                id="collapse-button",
-                                className="mb-3",
-                                color="primary",
-                            ),
-                            dbc.Collapse(
-                                dbc.Card(dbc.CardBody(data_set_descirption())),
-                                id="collapse",
-                            ),
-                        ]
-                    )
+        [
+            html.Div(
+                [
+                    dbc.Button(
+                        "Click here to view dataset description",
+                        id="collapse-button",
+                        className="mb-3",
+                        color="primary",
+                    ),
+                    dbc.Collapse(
+                        dbc.Card(dbc.CardBody(data_set_descirption())),
+                        id="collapse",
+                    ),
+                ]
+            )
         ]
     )
 )
@@ -466,8 +468,10 @@ app.layout = html.Div(
                         html.Br(),
                         dbc.Row(
                             [
-                                dbc.Col([third_card,html.Br(), ninth_card] ,width=3),
-                                dbc.Col([(fourth_card), html.Br(), (fifth_card)], width=9),
+                                dbc.Col([third_card, html.Br(), ninth_card], width=3),
+                                dbc.Col(
+                                    [(fourth_card), html.Br(), (fifth_card)], width=9
+                                ),
                             ],
                         ),
                     ],
@@ -478,15 +482,17 @@ app.layout = html.Div(
                     label="Top Games",
                     children=[
                         dbc.Container(
-                            [ html.Br(),
-                        html.Br(),
-                        html.Br(),
-                                
+                            [
+                                html.Br(),
+                                html.Br(),
+                                html.Br(),
                                 dbc.Row(
                                     [
                                         dbc.Col(sixth_card, width=3),
                                         dbc.Col(
-                                            [(seventh_card),  html.Br(), (eigth_card)], width=9,style={'height':'100vh'}
+                                            [(seventh_card), html.Br(), (eigth_card)],
+                                            width=9,
+                                            style={"height": "100vh"},
                                         ),
                                     ]
                                 ),
@@ -511,7 +517,7 @@ app.layout = html.Div(
     Input("radio-dependent", "value"),
 )
 def call_scatter(col, list_):
-    chart = scatter_plot_dates(col, list_)
+    chart = scatter_plot_dates(boardgame_data, col, list_)
     return chart.to_html()
 
 
@@ -522,7 +528,7 @@ def call_scatter(col, list_):
     Input("radio-dependent", "value"),
 )
 def call_counts(col, list_):
-    chart2 = count_plot_dates(col, list_)
+    chart2 = count_plot_dates(boardgame_data, col, list_)
     return chart2.to_html()
 
 
@@ -538,7 +544,11 @@ def update_output(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist1 = rank_plot_dates(
-        col="category", year_in=int(val1), year_out=int(val2), color_="#ff7f0e"
+        data=boardgame_data,
+        col="category",
+        year_in=int(val1),
+        year_out=int(val2),
+        color_="#ff7f0e",
     )
     return hist1.to_html()
 
@@ -553,7 +563,11 @@ def update_output2(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist2 = rank_plot_dates(
-        col="mechanic", year_in=int(val1), year_out=int(val2), color_="#17becf"
+        data=boardgame_data,
+        col="mechanic",
+        year_in=int(val1),
+        year_out=int(val2),
+        color_="#17becf",
     )
     return hist2.to_html()
 
@@ -568,7 +582,11 @@ def update_output3(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist3 = rank_plot_dates(
-        col="publisher", year_in=int(val1), year_out=int(val2), color_="#e377c2"
+        data=boardgame_data,
+        col="publisher",
+        year_in=int(val1),
+        year_out=int(val2),
+        color_="#e377c2",
     )
     return hist3.to_html()
 
@@ -585,7 +603,11 @@ def update_output4(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist4 = rank_plot_dates(
-        col="category", year_in=int(val1), year_out=int(val2), color_="#ff7f0e"
+        data=boardgame_data,
+        col="category",
+        year_in=int(val1),
+        year_out=int(val2),
+        color_="#ff7f0e",
     )
     return hist4.to_html()
 
@@ -600,7 +622,11 @@ def update_output5(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist5 = rank_plot_dates(
-        col="mechanic", year_in=int(val1), year_out=int(val2), color_="#17becf"
+        data=boardgame_data,
+        col="mechanic",
+        year_in=int(val1),
+        year_out=int(val2),
+        color_="#17becf",
     )
     return hist5.to_html()
 
@@ -615,7 +641,11 @@ def update_output6(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist6 = rank_plot_dates(
-        col="publisher", year_in=int(val1), year_out=int(val2), color_="#e377c2"
+        data=boardgame_data,
+        col="publisher",
+        year_in=int(val1),
+        year_out=int(val2),
+        color_="#e377c2",
     )
     return hist6.to_html()
 
@@ -668,7 +698,7 @@ def update_options(chosen_selection):
             "label": c,
             "value": c,
         }
-        for c in subset_data(col)
+        for c in subset_data(boardgame_data, col)
     ]
 
 
@@ -677,11 +707,10 @@ def update_options(chosen_selection):
     Output("top_n_games", "srcDoc"),
     Input("category-widget", "value"),
     Input("mechanics-widget", "value"),
-    Input("publisher-widget", "value")
-    
+    Input("publisher-widget", "value"),
 )
 def call_top_n_games(c, m, p, n=10):
-    top_n_games = top_n_plot(cat=c, mech=m, pub=p, n=10)
+    top_n_games = top_n_plot(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
     return top_n_games.to_html()
 
 
@@ -691,29 +720,41 @@ def call_top_n_games(c, m, p, n=10):
     Output(component_id="top_n_games_datatable", component_property="columns"),
     Input("category-widget", "value"),
     Input("mechanics-widget", "value"),
-    Input("publisher-widget", "value")
-    
+    Input("publisher-widget", "value"),
 )
 def update_table(c, m, p, n=10):
-    list_cols = ["name", "min_players", "max_players", 'min_playtime', 'max_playtime',"playing_time", 'year_published','category','mechanic','family', "artist", 'designer','publisher', 'average_rating', 'users_rated']
-    table = call_boardgame_filter(cat=c, mech=m, pub=p, n=10)
+    list_cols = [
+        "name",
+        "min_players",
+        "max_players",
+        "min_playtime",
+        "max_playtime",
+        "playing_time",
+        "year_published",
+        "category",
+        "mechanic",
+        "artist",
+        "designer",
+        "publisher",
+        "average_rating",
+        "users_rated",
+    ]
+    table = call_boardgame_filter(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
     columns = [{"name": col, "id": col} for col in list_cols]
     columns[0]["name"] = ("Game name",)
-    columns[1]["name"] = ("Minumum number of players")
-    columns[2]["name"] = ("Minumum number of playerss")
-    columns[3]["name"] = ("Minimum Playtime")
-    columns[4]["name"] = ("Maximum Playtime")
-    columns[5]["name"] = ('Playing time')
-    columns[6]["name"] = ('Year published')
-    columns[7]["name"] = ("Game category")
-    columns[8]["name"] = ("Game mechanic")
-    columns[9]["name"] = ("Game family")
-    columns[10]["name"] = ("Game artist")
-    columns[11]["name"] = ("Game designer")
-    columns[12]["name"] = ("Game publisher")
-    columns[13]["name"] =("Average game rating")
-    columns[14]["name"] = ("User rating")
-
+    columns[1]["name"] = "Min Players"
+    columns[2]["name"] = "Max Players"
+    columns[3]["name"] = "Min Playtime"
+    columns[4]["name"] = "Max Playtime"
+    columns[5]["name"] = "Playing time"
+    columns[6]["name"] = "Year published"
+    columns[7]["name"] = "Game category"
+    columns[8]["name"] = "Game mechanic"
+    columns[9]["name"] = "Game artist"
+    columns[10]["name"] = "Game designer"
+    columns[11]["name"] = "Game publisher"
+    columns[12]["name"] = "Average game rating"
+    columns[13]["name"] = "User rating"
 
     data = table.to_dict("rows")
     return data, columns
