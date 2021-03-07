@@ -99,31 +99,18 @@ def wrangle_df(dataframe):
 
 
 if __name__ == "__main__":
+
+    # load data
     df_to_wrangle = pd.read_csv("../data/raw/bgg_GameItem.csv")
-    # df_to_wrangle = pd.read_csv("../data/processed/bgg_with_names.csv")
+
+    # filter, subset, etc
     wrangled = wrangle_df(df_to_wrangle)
 
+    # apply look up tables
     group_types = ["category", "artist", "designer", "family", "mechanic", "publisher"]
-
     df_copy = wrangled.copy(deep=True)
     for group_type in group_types:
         df_copy = apply_lookup(df_copy, group_type)
 
+    # save processed df
     df_copy.to_csv("../data/processed/bgg_with_names.csv")
-
-# Index(['Unnamed: 0', 'bgg_id', 'name', 'year', 'game_type', 'designer',
-#        'artist', 'publisher', 'min_players', 'max_players', 'min_players_rec',
-#        'max_players_rec', 'min_players_best', 'max_players_best', 'min_age',
-#        'min_age_rec', 'min_time', 'max_time', 'category', 'mechanic',
-#        'cooperative', 'compilation', 'compilation_of', 'family',
-#        'implementation', 'integration', 'rank', 'num_votes', 'avg_rating',
-#        'stddev_rating', 'bayes_rating', 'complexity', 'language_dependency',
-#        'bga_id', 'dbpedia_id', 'luding_id', 'spielen_id', 'wikidata_id',
-#        'wikipedia_id'],
-#       dtype='object')
-# Index(['game_id', 'description', 'image', 'max_players', 'max_playtime',
-#        'min_age', 'min_players', 'min_playtime', 'name', 'playing_time',
-#        'thumbnail', 'year_published', 'artist', 'category', 'compilation',
-#        'designer', 'expansion', 'family', 'mechanic', 'publisher',
-#        'average_rating', 'users_rated'],
-#       dtype='object')
