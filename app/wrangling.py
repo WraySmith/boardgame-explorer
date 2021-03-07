@@ -4,12 +4,6 @@ takes data from board_games.csv and changes it to a usable format
 
 import pandas as pd
 
-"""
-Returns data from board_game.csv
-
-return: panda dataframe
-"""
-
 
 def call_boardgame_data():
     """
@@ -31,9 +25,12 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(cat, mech, pub, n=5):
+def call_boardgame_filter(cat, mech, pub, n):
     """
-    Returns filtered data from board_game.csv
+    Wraps call_boardgame_data
+    Returns filtered data based on list of
+    values in 'category', 'mechanic', and
+    'publisher' columns.
 
     cat: list
     mech: list
@@ -43,10 +40,13 @@ def call_boardgame_filter(cat, mech, pub, n=5):
     return: pandas dataframe
     """
     boardgame_data = call_boardgame_data()
-
+    # create dictionary based on inputted lists.
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
-
-    column_bool = [bool_generator(key, columns[key], boardgame_data) for key in columns]
+    # creates a list of bool series for each column
+    column_bool = [
+        call_bool_series(key, columns[key], boardgame_data) for key in columns
+    ]
+    # checks if no input was provided and returns entirety of data
     if (column_bool[0] | column_bool[1] | column_bool[2]).sum() != 0:
         boardgame_data = boardgame_data[
             (column_bool[0] | column_bool[1] | column_bool[2])
@@ -63,7 +63,10 @@ def call_boardgame_filter(cat, mech, pub, n=5):
 
 def call_boardgame_radio(col, list_):
     """
-    Returns filtered data from board_game.csv
+    Wraps call_boardgame_data
+    Returns filtered data based on selecting
+    'category','mechanic', or 'publisher' column
+    and a list of values.
 
     col: string
     list_: list
@@ -72,27 +75,11 @@ def call_boardgame_radio(col, list_):
     """
     boardgame_data = call_boardgame_data()
 
-    boardgame_data = boardgame_data[bool_generator(col, list_, boardgame_data)]
+    boardgame_data = boardgame_data[call_bool_series(col, list_, boardgame_data)]
 
     boardgame_data = form_group(col, list_, boardgame_data)
 
     return boardgame_data
-
-
-def create_groups(col, list_, boardgame_data):
-    """
-    Takes in boardgame data and creates groups
-
-    col: string
-    list_: list
-    boardgame_data: pandas dataframe
-
-    return: pandas dataframe
-    """
-
-    # boardgame_data[col].str.match(element) for element in list_
-
-    return list_
 
 
 def list_to_string(list_):
@@ -116,26 +103,30 @@ def form_group(col, list_, boardgame_data):
     This takes the selected filter and forms
     appropriate groups column.
 
+    col: string
     list_: list
+    boardgame_data: pandas dataframe
 
     returns: pandas dataframe
     """
-    column = []
-    for line in boardgame_data[col]:
-        string_ = "/"
-        for element in line.split(","):
-            if element in list_:
-                string_ += str(element) + " / "
-        string_ = string_.strip(" / ")
-        column.append(string_)
-    boardgame_data["group"] = column
+    # takes column and forms new one with appropriate groups
+    boardgame_data[col] = boardgame_data[col].map(lambda x: x.split(","))
+    boardgame_data["group"] = boardgame_data[col].apply(
+        lambda x: list(set(x).intersection(set(list_)))
+    )
+    boardgame_data["group"] = [",".join(map(str, l)) for l in boardgame_data["group"]]
+
+    # replaces cross product groups with generic group
+    boardgame_data.loc[
+        boardgame_data["group"].apply(lambda x: x not in list_), "group"
+    ] = "Multiple Selections"
 
     return boardgame_data
 
 
-def bool_generator(col, list_, boardgame_data):
+def call_bool_series(col, list_, boardgame_data):
     """
-    Takes filters entries and creates bool table to filter
+    Takes filters entries and creates bool series to filter
 
     col: string
     list_: list
