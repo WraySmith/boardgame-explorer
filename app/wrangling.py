@@ -44,12 +44,12 @@ def call_boardgame_filter(cat, mech, pub, n):
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
     # creates a list of bool series for each column
     column_bool = [
-        call_bool_series(key, columns[key], boardgame_data) for key in columns
+        call_bool_series_and(key, columns[key], boardgame_data) for key in columns
     ]
     # checks if no input was provided and returns entirety of data
     if (column_bool[0] | column_bool[1] | column_bool[2]).sum() != 0:
         boardgame_data = boardgame_data[
-            (column_bool[0] | column_bool[1] | column_bool[2])
+            (column_bool[0] & column_bool[1] & column_bool[2])
         ]
 
     # sorts by average rating and returns top "n" games
@@ -75,7 +75,7 @@ def call_boardgame_radio(col, list_):
     """
     boardgame_data = call_boardgame_data()
 
-    boardgame_data = boardgame_data[call_bool_series(col, list_, boardgame_data)]
+    boardgame_data = boardgame_data[call_bool_series_or(col, list_, boardgame_data)]
 
     boardgame_data = form_group(col, list_, boardgame_data)
 
@@ -116,15 +116,21 @@ def form_group(col, list_, boardgame_data):
     )
     boardgame_data["group"] = [",".join(map(str, l)) for l in boardgame_data["group"]]
 
-    # replaces cross product groups with generic group
-    boardgame_data.loc[
-        boardgame_data["group"].apply(lambda x: x not in list_), "group"
-    ] = "Multiple Selections"
+    # replaces cross product groups containing all items with generic group
+    if len(list_) > 1:
+        boardgame_data.loc[
+            boardgame_data["group"].apply(lambda x: all(item in x for item in list_)),
+            "group",
+        ] = "All Selected"
+        # removes cross products with not all items
+        boardgame_data = boardgame_data[
+            ~boardgame_data["group"].apply(lambda x: x not in list_ + ["All Selected"])
+        ]
 
     return boardgame_data
 
 
-def call_bool_series(col, list_, boardgame_data):
+def call_bool_series_or(col, list_, boardgame_data):
     """
     Takes filters entries and creates bool series to filter
 
@@ -136,6 +142,24 @@ def call_bool_series(col, list_, boardgame_data):
     """
     list_ = list_to_string(list_)
     list_bool = boardgame_data[col].str.match(list_)
+
+    return list_bool
+
+
+def call_bool_series_and(col, list_, boardgame_data):
+    """
+    Takes filters entries and creates bool series to filter
+
+    col: string
+    list_: list
+    boardgame_data: pandas dataframe
+
+    returns: bool series
+    """
+    list_bool = boardgame_data[col].apply(lambda x: all(item in x for item in list_))
+
+    if list_bool.sum() == 0:
+        list_bool = ~list_bool
 
     return list_bool
 
