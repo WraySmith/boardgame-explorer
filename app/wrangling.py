@@ -54,7 +54,9 @@ def call_boardgame_filter(cat, mech, pub, n=5):
 
     # sorts by average rating and returns top "n" games
     if n is not None:
-        boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)[:n]
+        boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)[
+            :n
+        ]
 
     return boardgame_data
 
@@ -71,6 +73,8 @@ def call_boardgame_radio(col, list_):
     boardgame_data = call_boardgame_data()
 
     boardgame_data = boardgame_data[bool_generator(col, list_, boardgame_data)]
+
+    boardgame_data = form_group(col, list_, boardgame_data)
 
     return boardgame_data
 
@@ -107,21 +111,26 @@ def list_to_string(list_):
         return list_
 
 
-def dict_to_list(dict_):
+def form_group(col, list_, boardgame_data):
     """
-    This takes in a dictionary and changes its format to a
-    list.
+    This takes the selected filter and forms
+    appropriate groups column.
 
-    col: string
-    dict_: dictionary
+    list_: list
 
-    returns: list
+    returns: pandas dataframe
     """
-    list_ = []
-    for element in dict_:
-        list_.append(list(element.values())[0])
+    column = []
+    for line in boardgame_data[col]:
+        string_ = "/"
+        for element in line.split(","):
+            if element in list_:
+                string_ += str(element) + " / "
+        string_ = string_.strip(" / ")
+        column.append(string_)
+    boardgame_data["group"] = column
 
-    return list_
+    return boardgame_data
 
 
 def bool_generator(col, list_, boardgame_data):

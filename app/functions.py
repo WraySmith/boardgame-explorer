@@ -16,11 +16,8 @@ def scatter_plot_dates(col="category", list_=[None]):
 
     returns: altair plot
     """
-
-    # list_ = dict_to_list(dict_)
-    # print(list_)
-
     alt.data_transformers.disable_max_rows()
+
     scatter_plot = (
         alt.Chart(call_boardgame_data())
         .mark_circle(size=60, opacity=0.1, color="grey")
@@ -46,14 +43,14 @@ def scatter_plot_dates(col="category", list_=[None]):
                 dy=-20,
                 dx=20,
             ),
-            width=700,
+            width=650,
             height=150,
         )
     )
 
     line_plot = (
         alt.Chart(call_boardgame_data())
-        .mark_line(color="black", size=3)
+        .mark_line(color="dark grey", size=3)
         .encode(x="year_published", y="mean(average_rating)")
     )
 
@@ -73,10 +70,25 @@ def scatter_plot_dates(col="category", list_=[None]):
                     titleFontWeight=600,
                 ),
             ),
+            color=alt.Color("group", title="Group"),
+        )
+        .properties(
+            title=alt.TitleParams(
+                text="Figure 1: Game Popularity based on Published Year",
+                anchor="start",
+                fontSize=20,
+                dy=-20,
+                dx=20,
+            ),
+            width=650,
+            height=150,
         )
     )
 
-    scatter_plot = scatter_plot + line_plot + color_plot
+    if list_ == [None]:
+        scatter_plot = scatter_plot + line_plot
+    else:
+        scatter_plot = color_plot + line_plot
     return scatter_plot
 
 
@@ -112,7 +124,7 @@ def count_plot_dates(col="category", list_=[None]):
                         titleFontWeight=600,
                     ),
                 ),
-                color=alt.Color(col),
+                color=alt.Color("group", title="Group"),
             )
             .properties(
                 title=alt.TitleParams(
@@ -122,7 +134,7 @@ def count_plot_dates(col="category", list_=[None]):
                     dy=-20,
                     dx=20,
                 ),
-                width=700,
+                width=650,
                 height=150,
             )
         )
@@ -157,7 +169,7 @@ def count_plot_dates(col="category", list_=[None]):
                     dy=-20,
                     dx=20,
                 ),
-                width=700,
+                width=650,
                 height=150,
             )
         )
@@ -214,27 +226,36 @@ def top_n_plot(cat=[None], mech=[None], pub=[None], n=5):
     return: altair plot
     """
     alt.data_transformers.disable_max_rows()
-    top_plot = alt.Chart(
-        call_boardgame_filter(cat, mech, pub, n)).mark_bar().encode(
-        alt.X(
+    top_plot = (
+        alt.Chart(call_boardgame_filter(cat, mech, pub, n))
+        .mark_bar()
+        .encode(
+            alt.X(
                 "name",
                 sort="-y",
-                axis=alt.Axis(
-                    titleFontSize=12,
-                    titleFontWeight=600,
-                ),
+                axis=alt.Axis(title=None, labels=False),
             ),
-            alt.Y("average_rating:Q", axis=alt.Axis(title="Average Rating")),
-        ).properties(
-                title=alt.TitleParams(
-                    text="Figure 1: Top n games based on user selection",
-                    anchor="start",
-                    fontSize=20,
-                    dy=-20,
-                    dx=20,
-                ),
-                width=500,
-                height=100,
-            )
-    
-    return top_plot
+            alt.Y(
+                "average_rating:Q",
+                axis=alt.Axis(title="Average Rating"),
+                scale=alt.Scale(domain=(0, 10)),
+            ),
+            color=alt.Color("name", title="Boardgame Name"),
+        )
+        .properties(
+            title=alt.TitleParams(
+                text="Figure 1: Top n games based on user selection",
+                anchor="start",
+                fontSize=20,
+                dy=-20,
+                dx=20,
+            ),
+            width=500,
+            height=150,
+        )
+    )
+    top_text = top_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
+        text=alt.Text("average_rating:Q", format=",.2r")
+    )
+
+    return top_plot + top_text
