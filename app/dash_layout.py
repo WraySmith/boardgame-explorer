@@ -1,3 +1,4 @@
+# import functions needed
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -5,21 +6,26 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import dash_table
 
-
+# import functions from Ryans .py files
 from functions import *
 from wrangling import subset_data
 
 
+#  set up app stylesheet 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+# title 
 
 def title():
+    """
+    :return: A Div containing dashboard title.
+    """
     return html.Div(children=[html.H1("Boardgames Trends Dashboard")])
 
-
+# description card tab 1
 def description_card():
     """
-    :return: A Div containing dashboard title & descriptions.
+    :return: A Div containing welcome message and descriptions.
     """
     return html.Div(
         id="description-card",
@@ -33,10 +39,10 @@ def description_card():
     )
 
 
-# left most
+# control card for tab 1
 def generate_control_card():
     """
-    :return: A Div containing controls for graphs.
+    :return: A Div containing controls for graphs on tab 1.
     """
     return html.Div(
         id="control-card",
@@ -56,15 +62,16 @@ def generate_control_card():
                 ],
                 value="mechanic",labelStyle={'display': 'block'}
             ),
-            html.Label("Select your:"),
+            html.Label("Select up to 5 elements to view:"),
             dcc.Dropdown(id="radio-dependent", options=[], multi=True, value=[None]),
         ],
     )
 
 
+# control card for tab 2
 def generate_control_card_tab2():
     """
-    :return: A Div containing controls for graphs.
+    :return: A Div containing controls for graphs on tab 2.
     """
     return html.Div(
         id="control-card2",
@@ -108,42 +115,53 @@ def generate_control_card_tab2():
     )
 
 
+# lower description for tab 1
 
 def lower_description():
+    """
+    :return: A Div containing descritption for lower portion of tab 1.
+    """
     return html.Div(
         children=[
             html.H4("Top 5 categories, mechanics and publishers by rating"),
             html.P(
-                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods..........                                                  "
+                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers between time periods."
             ),
         ]
     )
 
 
+# data set description for tab 1
 def data_set_descirption():
+    """
+    :return: A Div containing descritption of the data set for tab 1.
+    """
     return html.Div(
         children=[
             html.H4("Description of Dataset"),
             html.P(
-                " This dataset comes from the Board Game Geek website and includes boardgames with descriptions, general game details, publisher, and user ratings for 10,000 boardgames published between 1950 and 2021"
+                " This dataset comes from the Board Game Geek website and includes boardgames with descriptions, general game details, publisher, and user ratings for 10,000 boardgames published between 1950 and 2021."
             ),
         ]
     )
 
 
-# cards
+# below are the cards that are used in the layout
 
+
+# card 1 containing the description and control card for tab 1
 first_card = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
                 id="left-column",
                 className="four columns",
-                children=[description_card(), html.Br(), generate_control_card()],
+                children=[description_card(), html.Br(), generate_control_card(), html.Br(),html.Br(),html.Br(),html.Br()],
             )
         ]
     )
 )
+# card 2 containing the two plots on upper portion of tab 1, the scatter plot and the counts stacked histogram
 
 second_card = dbc.Card(
     dbc.CardBody(
@@ -152,9 +170,10 @@ second_card = dbc.Card(
                 [
                     html.H4("Board game ratings and counts from 1950 to 2016"),
                     html.P(
-                        "Select multiple categories, mechanics and publishers on the left hand side dropdown menus to view..."
+                        "Select either categories, mechanics or publishers. Then select up to 5 different elements to view on figure 1 and 2."
                     ),
                     html.Iframe(
+                        # scatter plot
                         id="scatter",
                         style={
                             "border-width": "0",
@@ -163,22 +182,22 @@ second_card = dbc.Card(
                         },
                     ),
                     html.Iframe(
-                        # will be the counts graph
+                        # stacked histogram
                         id="count",
                         style={
                             "border-width": "0",
                             "width": "100%",
                             "height": "250px",
                         },
-                    ),
+                    )
                 ]
             )
         ]
     )
 )
 
-# pop overs
 
+# card 3 containing the lowe description and collapsable data set description for tab 1
 
 third_card = dbc.Card(
     dbc.CardBody(
@@ -207,6 +226,8 @@ third_card = dbc.Card(
         ]
     )
 )
+
+# card 4 containing the top slider and bar charts to view top categories, mechanics and publishers for selected time periods from the slider for tab 1 
 
 fourth_card = dbc.Card(
     dbc.CardBody(
@@ -271,6 +292,9 @@ fourth_card = dbc.Card(
     )
 )
 
+# card 5 containing the bottom slider and bar charts to view top categories, mechanics and publishers for selected time periods from the slider for tab 1
+
+
 fifth_card = dbc.Card(
     dbc.CardBody(
         [
@@ -334,27 +358,25 @@ fifth_card = dbc.Card(
     )
 )
 
+# card 6 containing the control card and the silder for number of games for tab 2
+
 
 sixth_card= dbc.Card(
     dbc.CardBody(
         [  generate_control_card_tab2(),html.Label('Select number of games to show:'),
     dcc.Slider(
         id='my-slider',
-        min=2,
-        max=20,
+        min=1,
+        max=25,
         step=1,
         value=10,
         marks={
-        2: "2",
-        4: "4",
-        6: "6",
-        8: "8",
+        5: "5",
         10: "10",
-        12: "12",
-        14: "14",
-        16: "16",
-        18: "18",
-        20: "20"}
+        15: "15",
+        20: "20",
+        25: "25",
+        }
     ),  html.Div(id='slider-output-container')
                                             
            
@@ -363,34 +385,7 @@ sixth_card= dbc.Card(
 
 )
 
-sixth_card= dbc.Card(
-    dbc.CardBody(
-        [  generate_control_card_tab2(),html.Label('Select number of games to show:'),
-    dcc.Slider(
-        id='my-slider',
-        min=2,
-        max=20,
-        step=1,
-        value=10,
-        marks={
-        2: "2",
-        4: "4",
-        6: "6",
-        8: "8",
-        10: "10",
-        12: "12",
-        14: "14",
-        16: "16",
-        18: "18",
-        20: "20"}
-    ),  html.Div(id='slider-output-container')
-                                            
-           
-        ]
-    )
-
-)
-
+# card 7 containing the top n games bar chart for tab 2
 seventh_card= dbc.Card(
     dbc.CardBody(
         [html.Div(
@@ -409,36 +404,27 @@ seventh_card= dbc.Card(
     
 )
 
+# card 8 containing the data table for the top n games for tab 2 
 
-
-eigth_card=dbc.Card(dbc.CardBody(
+eigth_card=dbc.Card(dbc.CardBody([
+    html.H5("Top games facts table:"),
 dash_table.DataTable(
     id='top_n_games_datatable',
     style_cell={
-        
-        
-        'maxWidth': 100
-    }
+        'whiteSpace': 'normal',
+        'height': 'auto',
+    },
+     sort_action="native",
     
       
+)]
 )
 )
-)
 
 
 
 
-
-# options
-
-options = [
-    {"label": "Categories", "value": "cat"},
-    {"label": "Mechanics", "value": "mech"},
-    {"label": "Publisher", "value": "pub"},
-]
-
-
-# tab styling
+# tab styling features for layout
 tabs_styles = {
     'height': '44px'
     ''
@@ -457,17 +443,11 @@ tab_selected_style = {
     'padding': '6px'
 }
 
-    # options
-
-options = [
-    {"label": "Categories", "value": "cat"},
-    {"label": "Mechanics", "value": "mech"},
-    {"label": "Publisher", "value": "pub"},
-]
+    # app layout
 
 app.layout = html.Div(
     [dbc.Container(
-                            [  # top column
+                            [  # dashboard title
                                 dbc.Row(
                                     [
                                         dbc.Col(
@@ -486,22 +466,24 @@ app.layout = html.Div(
                         ),
         dcc.Tabs(
             [
+                # tab 1
                 dcc.Tab(
                     label="Game dynamics over time",
                     children=[
                         
                         html.Br(),html.Br(),html.Br(),
+                        
                         dbc.Row(
                             [
                                 dbc.Col(first_card, width=3),
-                                dbc.Col(second_card, width=9),html.Br(),html.Br(),html.Br(),
+                                dbc.Col(second_card, width=9)
                             ]
-                        ),dbc.Row([dbc.Col(third_card, width=3), dbc.Col([(fourth_card),(fifth_card)], width=9)
+                        ), html.Br(),dbc.Row([dbc.Col(third_card, width=3), dbc.Col([(fourth_card),(fifth_card)], width=9)
                         
                         
                     ],
                 )],style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Top Games", children=[dbc.Container(
-                            [  # top column
+                            [  
                                 dbc.Row(
                                     [
                                         dbc.Col(
@@ -517,17 +499,19 @@ app.layout = html.Div(
                                     ]
                                 ), dbc.Row([dbc.Col(sixth_card, width=3), dbc.Col([(seventh_card),(eigth_card)], width=9),
                             ]
-                        ),], 
-                        #place holder for enhancements
-                        #style=tab_style, selected_style=tab_selected_style),dcc.Tab(label="Nathans Tab", style=tab_style, selected_style=tab_selected_style)
+                        )] 
+                        
+                       
+                        
                 
             
-        )])])])
+        )],  style=tab_style, selected_style=tab_selected_style),])])
  
 
 
 # Set up callbacks/backend
-# will be the scatteplot of average game ratings
+
+# scatter plot tab 1
 @app.callback(
     Output("scatter", "srcDoc"),
     Input("radio-selection", "value"),
@@ -538,7 +522,7 @@ def call_scatter(col, list_):
     return chart.to_html()
 
 
-# histogram of counts annual published counts
+# stacked histogram of counts annual published counts
 @app.callback(
     Output("count", "srcDoc"),
     Input("radio-selection", "value"),
@@ -548,7 +532,7 @@ def call_counts(col, list_):
     chart2 = count_plot_dates(col, list_)
     return chart2.to_html()
 
-
+# 1st catergory bar chart tab 1
 @app.callback(
     Output("output-container-range-slider-non-linear", "srcDoc"),
     Input("non-linear-range-slider", "value"),
@@ -562,7 +546,7 @@ def update_output(value):
     )
     return hist1.to_html()
 
-
+# 1st mechanics bar chart tab 1
 @app.callback(
     Output("output-container-range-slider-non-linear2", "srcDoc"),
     Input("non-linear-range-slider", "value"),
@@ -577,6 +561,7 @@ def update_output2(value):
     return hist2.to_html()
 
 
+# 1st publisher bar chart tab 1
 @app.callback(
     Output("output-container-range-slider-non-linear3", "srcDoc"),
     Input("non-linear-range-slider", "value"),
@@ -590,6 +575,7 @@ def update_output3(value):
     )
     return hist3.to_html()
 
+# 2nd catergory bar chart tab 1
 
 @app.callback(
     Output("output-container-range-slider-non-linear4", "srcDoc"),
@@ -604,7 +590,7 @@ def update_output4(value):
     )
     return hist4.to_html()
 
-
+# 2nd mechanics bar chart tab 1
 @app.callback(
     Output("output-container-range-slider-non-linear5", "srcDoc"),
     Input("non-linear-range-slider2", "value"),
@@ -618,7 +604,7 @@ def update_output5(value):
     )
     return hist5.to_html()
 
-
+# 2nd publishers bar chart tab 1
 @app.callback(
     Output("output-container-range-slider-non-linear6", "srcDoc"),
     Input("non-linear-range-slider2", "value"),
@@ -632,6 +618,7 @@ def update_output6(value):
     )
     return hist6.to_html()
 
+# 1st year range slider output tab 1
 
 @app.callback(
     dash.dependencies.Output("output-container-range-slider", "children"),
@@ -641,6 +628,7 @@ def range_slider_select(value):
     transformed_value = [v for v in value]
     return '{} to {}'.format(transformed_value[0], transformed_value[1])
 
+# 2nd year range slider output tab 1
 
 @app.callback(
     dash.dependencies.Output("output-container-range-slider2", "children"),
@@ -650,7 +638,7 @@ def range_slider_select2(value):
     transformed_value = [v for v in value]
     return '{} to {}'.format(transformed_value[0], transformed_value[1])
 
-
+# collapsable data set description 
 @app.callback(
     Output("collapse", "is_open"),
     [Input("collapse-button", "n_clicks")],
@@ -661,7 +649,7 @@ def toggle_collapse(n, is_open):
         return not is_open
     return is_open
 
-
+# radio button selection options to populate drop down
 @app.callback(
     dash.dependencies.Output("radio-dependent", "options"),
     [dash.dependencies.Input("radio-selection", "value")],
@@ -676,6 +664,8 @@ def update_options(chosen_selection):
         for c in subset_data(col)
     ]
 
+
+# top n games bar chart tab 2
 @app.callback(
     Output("top_n_games", "srcDoc"),
     Input("category-widget", "value"),
@@ -690,6 +680,7 @@ def call_top_n_games(c,m,p,n):
     return top_n_games.to_html()
 
 
+# data table top n games bar chart tab 2
 @app.callback(
    Output("top_n_games_datatable", "data"),
 Output(component_id='top_n_games_datatable', component_property='columns'),
@@ -701,9 +692,16 @@ Output(component_id='top_n_games_datatable', component_property='columns'),
 
 )
 def update_table(c,m,p,n):
-    list_cols=['name','min_players' , 'max_players', 'playing_time']
+    list_cols=['name','min_players' , 'max_players', 'playing_time', 'artist']
     table=call_boardgame_filter(cat=c, mech=m, pub=p, n=n)    
     columns = [{'name': col, 'id': col} for col in list_cols]
+    columns[0]["name"] = "Game name" ,
+    columns[1]["name"] = "Minimum number of players" ,
+    columns[2]["name"] = "Maximum number of players" ,
+    columns[3]["name"] = "Playing time in minutes" ,
+    columns[4]["name"] = "Game artist" 
+    
+    
     data = table.to_dict('rows')
     return data, columns
 
