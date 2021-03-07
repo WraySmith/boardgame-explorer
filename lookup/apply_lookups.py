@@ -61,4 +61,4 @@ if __name__ == "__main__":
     for group_type in group_types:
         df_copy = apply_lookup(df_copy, group_type)
 
-    df_copy.to_csv("../data/processed/bgg_with_names.csv")
+    df_copy.to_csv("../data//bgg_with_names.csv")
