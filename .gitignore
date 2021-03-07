@@ -138,3 +138,6 @@ dmypy.json
 cython_debug/
 
 .vscode/
+
+# mac stuff
+.DS_Store
