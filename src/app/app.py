@@ -31,8 +31,9 @@ slider_dict = {
     2015: "2015",
 }
 
-#  set up app stylesheet
+#  set up app stylesheet and server
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 
 # title
 def title():

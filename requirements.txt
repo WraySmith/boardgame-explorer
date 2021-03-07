@@ -1,0 +1,6 @@
+numpy
+pandas
+altair
+dash==1.19.0
+dash-bootstrap-components
+gunicorn
