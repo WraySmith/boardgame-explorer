@@ -4,10 +4,6 @@ import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
 
-# from dash.dependencies import Input, Output, State
-# import json
-# import plotly.express as px
-
 # Read in global data
 tsne_df = pd.read_csv("nodes.csv")
 
