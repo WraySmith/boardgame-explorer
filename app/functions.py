@@ -37,7 +37,7 @@ def scatter_plot_dates(col="category", list_=[None]):
         )
         .properties(
             title=alt.TitleParams(
-                text="Figure 1: Game Popularity based on Published Year",
+                text="Game Popularity based on Published Year",
                 anchor="start",
                 fontSize=20,
                 dy=-20,
@@ -74,7 +74,7 @@ def scatter_plot_dates(col="category", list_=[None]):
         )
         .properties(
             title=alt.TitleParams(
-                text="Figure 1: Game Popularity based on Published Year",
+                text="Game Popularity based on Published Year",
                 anchor="start",
                 fontSize=20,
                 dy=-20,
@@ -128,7 +128,7 @@ def count_plot_dates(col="category", list_=[None]):
             )
             .properties(
                 title=alt.TitleParams(
-                    text="Figure 2: Game Count based on Published Year",
+                    text="Game Count based on Published Year",
                     anchor="start",
                     fontSize=20,
                     dy=-20,
@@ -163,7 +163,7 @@ def count_plot_dates(col="category", list_=[None]):
             )
             .properties(
                 title=alt.TitleParams(
-                    text="Figure 2: Game Count based on Published Year",
+                    text="Game Count based on Published Year",
                     anchor="start",
                     fontSize=20,
                     dy=-20,
@@ -214,7 +214,7 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
     return rank_plot + rank_text
 
 
-def top_n_plot(cat=[None], mech=[None], pub=[None], n=20):
+def top_n_plot(cat=[None], mech=[None], pub=[None], n=10):
     """
     Creates altair graph for top "n" games with filtered data
 
@@ -244,7 +244,7 @@ def top_n_plot(cat=[None], mech=[None], pub=[None], n=20):
         )
         .properties(
             title=alt.TitleParams(
-                text="Figure 1: Top n games based on user selection",
+                text="Top 10 games based on user selection",
                 anchor="start",
                 fontSize=20,
                 dy=-20,

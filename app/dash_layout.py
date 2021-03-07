@@ -64,8 +64,7 @@ def generate_control_card():
     return html.Div(
         id="control-card",
         children=[
-            html.Br(),
-            html.Br(),
+            
             html.Label("Select what you want to view:"),
             html.Br(),
             html.Br(),
@@ -79,7 +78,7 @@ def generate_control_card():
                 value="mechanic",
                 labelStyle={"display": "block"},
             ),html.Br(),
-            html.Label("Select up to 5 elements to view:"),html.Br(),html.Br(),
+            html.Label("Select elements to view:"),html.Br(),html.Br(),
             dcc.Dropdown(id="radio-dependent", options=[], multi=True, value=[None]),
         ],
     )
@@ -106,7 +105,7 @@ def generate_control_card_tab2():
                 ],
                 multi=True,
             ),
-            html.Br(),
+            
             html.Br(),
             html.P("Please select mechanics:"),
             dcc.Dropdown(
@@ -117,7 +116,7 @@ def generate_control_card_tab2():
                 ],
                 multi=True,
             ),
-            html.Br(),
+            
             html.Br(),
             html.P("Please select publishers:"),
             dcc.Dropdown(
@@ -126,7 +125,7 @@ def generate_control_card_tab2():
                 options=[
                     {"label": name, "value": name} for name in subset_data("publisher")
                 ],
-                multi=True,
+                multi=True
             ),
             html.Br(),
             html.Br(),
@@ -186,6 +185,8 @@ first_card = dbc.Card(
                     html.Br(),
                     html.Br(),
                     html.Br(),
+                    html.Br(),
+                    html.Br(),
                 ],
             )
         ]
@@ -199,7 +200,7 @@ second_card = dbc.Card(
                 [
                     html.H4("Board Game Ratings and Counts from 1950 to 2016"),
                     html.P(
-                        "Select either categories, mechanics or publishers. Then select up to 5 different elements to view on the following two figures."
+                        "Select either categories, mechanics or publishers. Then select different elements to view on the following two figures."
                     ),
                     html.Iframe(
                         # scatter plot
@@ -350,7 +351,7 @@ sixth_card = dbc.Card(
     )
 )
 
-# card 7 containing the top 20 games bar chart for tab 2
+# card 7 containing the top 10 games bar chart for tab 2
 seventh_card = dbc.Card(
     dbc.CardBody(
         [
@@ -360,7 +361,7 @@ seventh_card = dbc.Card(
                     style={
                         "border-width": "0",
                         "width": "100%",
-                        "height": "400px",
+                        "height": "300px",
                     }
                 )
             )
@@ -372,7 +373,7 @@ seventh_card = dbc.Card(
 eigth_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Top 20 games facts table:"),
+            html.H5("Top 10 Games Facts Table:"),
             dash_table.DataTable(
                 id="top_n_games_datatable",
                 style_cell={
@@ -679,8 +680,8 @@ def update_options(chosen_selection):
     Input("publisher-widget", "value")
     
 )
-def call_top_n_games(c, m, p, n=20):
-    top_n_games = top_n_plot(cat=c, mech=m, pub=p, n=20)
+def call_top_n_games(c, m, p, n=10):
+    top_n_games = top_n_plot(cat=c, mech=m, pub=p, n=10)
     return top_n_games.to_html()
 
 
@@ -693,9 +694,9 @@ def call_top_n_games(c, m, p, n=20):
     Input("publisher-widget", "value")
     
 )
-def update_table(c, m, p, n=20):
+def update_table(c, m, p, n=10):
     list_cols = ["name", "min_players", "max_players", 'min_playtime', 'max_playtime',"playing_time", 'year_published','category','mechanic','family', "artist", 'designer','publisher', 'average_rating', 'users_rated']
-    table = call_boardgame_filter(cat=c, mech=m, pub=p, n=20)
+    table = call_boardgame_filter(cat=c, mech=m, pub=p, n=10)
     columns = [{"name": col, "id": col} for col in list_cols]
     columns[0]["name"] = ("Game name",)
     columns[1]["name"] = ("Minumum number of players")
