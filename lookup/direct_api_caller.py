@@ -51,7 +51,7 @@ def group_id_to_name(id_list, group_name):
 if __name__ == "__main__":
 
     # one of artist, publisher, designer,
-    type_of_ids = "family"
+    type_of_ids = "artist"
     path_to_save = "./{}_lookup.json".format(type_of_ids)
 
     df = pd.read_csv("../data/bgg_GameItem.csv")
