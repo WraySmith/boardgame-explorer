@@ -379,6 +379,9 @@ eigth_card = dbc.Card(
                     "whiteSpace": "normal",
                     "height": "auto",
                 },
+                style_table={
+        'overflowY': 'scroll'
+    },
                 sort_action="native",
             ),
         ]
@@ -691,15 +694,25 @@ def call_top_n_games(c, m, p, n=20):
     
 )
 def update_table(c, m, p, n=20):
-    list_cols = ["name", "min_players", "max_players", "playing_time", "artist", 'designer']
+    list_cols = ["name", "min_players", "max_players", 'min_playtime', 'max_playtime',"playing_time", 'year_published','category','mechanic','family', "artist", 'designer','publisher', 'average_rating', 'users_rated']
     table = call_boardgame_filter(cat=c, mech=m, pub=p, n=20)
     columns = [{"name": col, "id": col} for col in list_cols]
     columns[0]["name"] = ("Game name",)
-    columns[1]["name"] = ("Minimum number of players")
-    columns[2]["name"] = ("Maximum number of players")
-    columns[3]["name"] = ("Playing time in minutes")
-    columns[4]["name"] = "Game artist",
-    columns[5]["name"] = "Game designer"
+    columns[1]["name"] = ("Minumum number of players")
+    columns[2]["name"] = ("Minumum number of playerss")
+    columns[3]["name"] = ("Minimum Playtime")
+    columns[4]["name"] = ("Maximum Playtime")
+    columns[5]["name"] = ('Playing time')
+    columns[6]["name"] = ('Year published')
+    columns[7]["name"] = ("Game category")
+    columns[8]["name"] = ("Game mechanic")
+    columns[9]["name"] = ("Game family")
+    columns[10]["name"] = ("Game artist")
+    columns[11]["name"] = ("Game designer")
+    columns[12]["name"] = ("Game publisher")
+    columns[13]["name"] =("Average game rating")
+    columns[14]["name"] = ("User rating")
+
 
     data = table.to_dict("rows")
     return data, columns
