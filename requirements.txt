@@ -1,4 +1,3 @@
-numpy
 pandas
 altair
 dash==1.19.0
