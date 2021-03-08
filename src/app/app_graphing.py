@@ -246,11 +246,15 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
                 axis=alt.Axis(title="Average Rating"),
                 scale=alt.Scale(domain=(0, 10)),
             ),
-            color=alt.Color("name", title="Boardgame Name"),
+            color=alt.Color(
+                "name",
+                title="Boardgame Name",
+                sort=alt.EncodingSortField("-y", order="descending"),
+            ),
         )
         .properties(
             title=alt.TitleParams(
-                text="Top 10 games based on user selection",
+                text="Top 10 Games Based on User Selection",
                 anchor="start",
                 fontSize=20,
                 dy=-20,
