@@ -106,7 +106,7 @@ def generate_control_card_tab2():
             html.P("Please select categories:"),
             dcc.Dropdown(
                 id="category-widget",
-                value="Economic",
+                value="Card Game",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "category")
@@ -117,7 +117,7 @@ def generate_control_card_tab2():
             html.P("Please select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget",
-                value="Trick-taking",
+                value="Dice Rolling",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "mechanic")
@@ -128,7 +128,7 @@ def generate_control_card_tab2():
             html.P("Please select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget",
-                value="3M",
+                value="Milton Bradley",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "publisher")
@@ -220,7 +220,7 @@ second_card = dbc.Card(
                             "width": "100%",
                             "height": "250px",
                         },
-                    ),
+                    ), html.P("Annual average rating for all board games shown by grey line."),
                     html.Iframe(
                         # stacked histogram
                         id="count",
@@ -734,7 +734,6 @@ def update_table(c, m, p, n=10):
         "year_published",
         "category",
         "mechanic",
-        "artist",
         "designer",
         "publisher",
         "average_rating",
@@ -751,11 +750,10 @@ def update_table(c, m, p, n=10):
     columns[6]["name"] = "Year published"
     columns[7]["name"] = "Game category"
     columns[8]["name"] = "Game mechanic"
-    columns[9]["name"] = "Game artist"
-    columns[10]["name"] = "Game designer"
-    columns[11]["name"] = "Game publisher"
-    columns[12]["name"] = "Average game rating"
-    columns[13]["name"] = "User rating"
+    columns[9]["name"] = "Game designer"
+    columns[10]["name"] = "Game publisher"
+    columns[11]["name"] = "Average game rating"
+    columns[12]["name"] = "User rating"
 
     data = table.to_dict("rows")
     return data, columns
