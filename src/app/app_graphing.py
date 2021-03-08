@@ -38,6 +38,10 @@ def scatter_plot_dates(data, col="category", list_=[None]):
                         titleFontWeight=600,
                     ),
                 ),
+                tooltip=[
+                    alt.Tooltip("name", title="Name"),
+                    alt.Tooltip("year_published", title="Year Published", format="%Y"),
+                ],
             )
             .properties(
                 title=alt.TitleParams(
@@ -71,6 +75,10 @@ def scatter_plot_dates(data, col="category", list_=[None]):
                     ),
                 ),
                 color=alt.Color("group", title="Group"),
+                tooltip=[
+                    alt.Tooltip("name", title="Name"),
+                    alt.Tooltip("year_published", title="Year Published", format="%Y"),
+                ],
             )
             .properties(
                 title=alt.TitleParams(
@@ -254,6 +262,10 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
                 title="Boardgame Name",
                 sort=alt.EncodingSortField("-y", order="descending"),
             ),
+            tooltip=[
+                alt.Tooltip("name", title="Name"),
+                alt.Tooltip("users_rated", title="# of Ratings"),
+            ],
         )
         .properties(
             title=alt.TitleParams(
