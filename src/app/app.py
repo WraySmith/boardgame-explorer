@@ -162,7 +162,7 @@ def lower_description():
 
 
 # data set description for tab 1
-def data_set_descirption():
+def data_set_description():
     """
     :return: A Div containing descritption of the data set for tab 1.
     """
@@ -407,7 +407,7 @@ ninth_card = dbc.Card(
                         color="primary",
                     ),
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(data_set_descirption())),
+                        dbc.Card(dbc.CardBody(data_set_description())),
                         id="collapse",
                     ),
                 ]
