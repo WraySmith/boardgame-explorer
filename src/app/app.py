@@ -117,7 +117,7 @@ def generate_control_card_tab2():
             html.P("Please select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget",
-                value="Dice Rolling",
+                value="Trading",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "mechanic")
@@ -128,7 +128,7 @@ def generate_control_card_tab2():
             html.P("Please select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget",
-                value="Milton Bradley",
+                value="999 Games",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "publisher")
