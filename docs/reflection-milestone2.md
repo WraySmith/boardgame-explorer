@@ -2,7 +2,7 @@
 
 ## General
 
-The Board Game Analysis Dashboard is currently at a stage where it includes the functionality discussed in the proposal. However, it still requires layout and aesthetic optimization, additional in-app user documentation, and code clean-up to provide a polished product.
+The Board Game Analysis Dashboard is currently at a stage where it includes the functionality discussed in the proposal. However, it still requires layout and aesthetic optimization, additional in-app user documentation, and code clean-up/optimization to provide a polished product.
 
 ### Features Implemented
 
@@ -10,9 +10,9 @@ The current dashboard includes the following:
 
 - Allows the user to select a category, mechanic, and or publisher and display counts of games and user ratings over the range of available published years.
 - Provides bar charts that displays the top 5 categories, mechanics, and or publishers based on a selected year range. Two of these bar chart series are provided to allow a comparison of different periods.
-- The user can filter on multiple selections of category, mechanic, publisher and date range and the the top 20 board games by user rating will be displayed graphically and in table format.
+- The user can filter on multiple selections of category, mechanic, publisher and date range and the the top 10 board games by user rating will be displayed graphically and in table format.
 
-These features perform well although there may be minor changes (such as changes to filtering or selection logic) implemented as part of Milestone 4.
+These features are implemented although there may changes as part of Milestone 4. Performance for the top two figures on the first tab will also need to be improved for Milestone 4.
 
 ### Additional Work
 

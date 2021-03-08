@@ -75,9 +75,9 @@ def generate_control_card():
             dcc.RadioItems(
                 id="radio-selection",
                 options=[
-                    {"label": "Categories", "value": "category"},
-                    {"label": "Mechanics", "value": "mechanic"},
-                    {"label": "Publishers", "value": "publisher"},
+                    {"label": " Categories", "value": "category"},
+                    {"label": " Mechanics", "value": "mechanic"},
+                    {"label": " Publishers", "value": "publisher"},
                 ],
                 value="mechanic",
                 labelStyle={"display": "block"},
