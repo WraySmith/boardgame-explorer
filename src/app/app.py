@@ -106,7 +106,7 @@ def generate_control_card_tab2():
             html.P("Please select categories:"),
             dcc.Dropdown(
                 id="category-widget",
-                value="Card Game",
+                value="",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "category")
@@ -117,7 +117,7 @@ def generate_control_card_tab2():
             html.P("Please select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget",
-                value="Trading",
+                value="",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "mechanic")
@@ -128,7 +128,7 @@ def generate_control_card_tab2():
             html.P("Please select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget",
-                value="999 Games",
+                value="",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "publisher")
@@ -220,7 +220,10 @@ second_card = dbc.Card(
                             "width": "100%",
                             "height": "250px",
                         },
-                    ), html.P("Annual average rating for all board games shown by grey line."),
+                    ),
+                    html.P(
+                        "Annual average rating for all board games shown by grey line."
+                    ),
                     html.Iframe(
                         # stacked histogram
                         id="count",
