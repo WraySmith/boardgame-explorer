@@ -13,7 +13,11 @@ def call_boardgame_data():
     """
 
     # reads csv
-    boardgame_data = pd.read_csv("board_game.csv", parse_dates=["year_published"])
+    # note that the path is relative to the root folder due to deployment
+    # files located in root
+    boardgame_data = pd.read_csv(
+        "src/app/board_game.csv", parse_dates=["year_published"]
+    )
     boardgame_data["year_published"] = pd.to_datetime(
         boardgame_data["year_published"], format="%Y"
     )
