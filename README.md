@@ -4,7 +4,7 @@
 
 **Team:** Nathan Smith, Mitch Harris, Ryan Koenig, Sophia Bulcock
 
-**The Board Game Dashboard can be found [here](placeholder)!**
+**The Board Game Dashboard can be found [here](https://boardgame-dashboard-data551.herokuapp.com/)!**
 
 ## Description
 

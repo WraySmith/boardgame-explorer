@@ -13,7 +13,11 @@ def call_boardgame_data():
     """
 
     # reads csv
-    boardgame_data = pd.read_csv("board_game.csv", parse_dates=["year_published"])
+    # note that the path is relative to the root folder due to deployment
+    # files located in root
+    boardgame_data = pd.read_csv(
+        "src/app/board_game.csv", parse_dates=["year_published"]
+    )
     boardgame_data["year_published"] = pd.to_datetime(
         boardgame_data["year_published"], format="%Y"
     )
@@ -25,13 +29,14 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(cat, mech, pub, n):
+def call_boardgame_filter(data, cat, mech, pub, n):
     """
     Wraps call_boardgame_data
     Returns filtered data based on list of
     values in 'category', 'mechanic', and
     'publisher' columns.
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     cat: list
     mech: list
     pub: list
@@ -39,7 +44,7 @@ def call_boardgame_filter(cat, mech, pub, n):
 
     return: pandas dataframe
     """
-    boardgame_data = call_boardgame_data()
+    boardgame_data = data.copy(deep=True)
     # create dictionary based on inputted lists.
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
     # creates a list of bool series for each column
@@ -61,19 +66,20 @@ def call_boardgame_filter(cat, mech, pub, n):
     return boardgame_data
 
 
-def call_boardgame_radio(col, list_):
+def call_boardgame_radio(data, col, list_):
     """
     Wraps call_boardgame_data
     Returns filtered data based on selecting
     'category','mechanic', or 'publisher' column
     and a list of values.
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     list_: list
 
     return: pandas dataframe
     """
-    boardgame_data = call_boardgame_data()
+    boardgame_data = data.copy(deep=True)
 
     boardgame_data = boardgame_data[call_bool_series_or(col, list_, boardgame_data)]
 
@@ -164,11 +170,12 @@ def call_bool_series_and(col, list_, boardgame_data):
     return list_bool
 
 
-def call_boardgame_top(col, year_in, year_out):
+def call_boardgame_top(data, col, year_in, year_out):
     """
     Creates pandas dataframe with top 5
     categories based on user rating
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     year_in: int
     year_in: int
@@ -180,7 +187,7 @@ def call_boardgame_top(col, year_in, year_out):
     year_out = pd.to_datetime(year_out, format="%Y")
 
     # call in boardgame dataframe
-    boardgame_data = call_boardgame_data()
+    boardgame_data = data.copy(deep=True)
 
     # create a boolean series to filter by start + end year
     year_filter = (boardgame_data["year_published"] >= year_in) & (
@@ -202,16 +209,17 @@ def call_boardgame_top(col, year_in, year_out):
     return boardgame_data
 
 
-def subset_data(col="category"):
+def subset_data(data, col="category"):
     """
     Creates list of categories for column
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
 
     return: list
     """
 
-    data_copy = call_boardgame_data()
+    data_copy = data.copy(deep=True)
     data_copy[col] = data_copy[col].str.split(",").explode(col)
 
     return list(data_copy[col].unique())

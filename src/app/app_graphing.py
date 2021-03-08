@@ -3,14 +3,15 @@ contains graph calls for dashboard
 """
 
 import altair as alt
-from wrangling import *
+from app_wrangling import *
 
 
-def scatter_plot_dates(col="category", list_=[None]):
+def scatter_plot_dates(data, col="category", list_=[None]):
     """
     Takes in inputs filtering data and creates scatter plot
     for comparison of user ratings over time
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     dict_: dictionary
 
@@ -19,7 +20,7 @@ def scatter_plot_dates(col="category", list_=[None]):
     alt.data_transformers.disable_max_rows()
 
     scatter_plot = (
-        alt.Chart(call_boardgame_data())
+        alt.Chart(data)
         .mark_circle(size=60, opacity=0.1, color="grey")
         .encode(
             alt.X(
@@ -49,13 +50,13 @@ def scatter_plot_dates(col="category", list_=[None]):
     )
 
     line_plot = (
-        alt.Chart(call_boardgame_data())
+        alt.Chart(data)
         .mark_line(color="dark grey", size=3)
         .encode(x="year_published", y="mean(average_rating)")
     )
 
     color_plot = (
-        alt.Chart(call_boardgame_radio(col, list_))
+        alt.Chart(call_boardgame_radio(data, col, list_))
         .mark_circle(size=60, opacity=0.5, color="orange")
         .encode(
             alt.X(
@@ -92,11 +93,12 @@ def scatter_plot_dates(col="category", list_=[None]):
     return scatter_plot
 
 
-def count_plot_dates(col="category", list_=[None]):
+def count_plot_dates(data, col="category", list_=[None]):
     """
     Takes input filtering data and creates
-    a plot counting how many game occurances
+    a plot counting how many game occurrences
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     list_: list of strings input
 
@@ -107,7 +109,7 @@ def count_plot_dates(col="category", list_=[None]):
     if list_ != [None]:
         alt.data_transformers.disable_max_rows()
         count_plot = (
-            alt.Chart(call_boardgame_radio(col, list_))
+            alt.Chart(call_boardgame_radio(data, col, list_))
             .mark_bar(color="#2ca02c")
             .encode(
                 alt.X(
@@ -143,7 +145,7 @@ def count_plot_dates(col="category", list_=[None]):
     else:
         alt.data_transformers.disable_max_rows()
         count_plot = (
-            alt.Chart(call_boardgame_data())
+            alt.Chart(data)
             .mark_bar(color="#2ca02c")
             .encode(
                 alt.X(
@@ -177,10 +179,13 @@ def count_plot_dates(col="category", list_=[None]):
         return count_plot
 
 
-def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e"):
+def rank_plot_dates(
+    data, col="category", year_in=1990, year_out=2010, color_="#ff7f0e"
+):
     """
     Creates altair graph of set column for set years
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     year_in: int
     year_out: int
@@ -188,7 +193,7 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
     return: altair plot
     """
     rank_plot = (
-        alt.Chart(call_boardgame_top(col, year_in, year_out))
+        alt.Chart(call_boardgame_top(data, col, year_in, year_out))
         .mark_bar(color=color_)
         .encode(
             alt.X(
@@ -214,10 +219,11 @@ def rank_plot_dates(col="category", year_in=1990, year_out=2010, color_="#ff7f0e
     return rank_plot + rank_text
 
 
-def top_n_plot(cat=[None], mech=[None], pub=[None], n=10):
+def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     """
     Creates altair graph for top "n" games with filtered data
 
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
     cat: list
     mech: list
     pub: list
@@ -227,7 +233,7 @@ def top_n_plot(cat=[None], mech=[None], pub=[None], n=10):
     """
     alt.data_transformers.disable_max_rows()
     top_plot = (
-        alt.Chart(call_boardgame_filter(cat, mech, pub, n))
+        alt.Chart(call_boardgame_filter(data, cat, mech, pub, n))
         .mark_bar()
         .encode(
             alt.X(
