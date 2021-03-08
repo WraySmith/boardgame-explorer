@@ -514,6 +514,22 @@ app.layout = html.Div(
 
 # Set up callbacks/backend
 
+# radio button selection options to populate drop down
+@app.callback(
+    dash.dependencies.Output("radio-dependent", "options"),
+    [dash.dependencies.Input("radio-selection", "value")],
+)
+def update_options(chosen_selection):
+    col = chosen_selection
+    return [
+        {
+            "label": c,
+            "value": c,
+        }
+        for c in subset_data(boardgame_data, col)
+    ]
+
+
 # scatter plot tab 1
 @app.callback(
     Output("scatter", "srcDoc"),
@@ -688,22 +704,6 @@ def toggle_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
-
-
-# radio button selection options to populate drop down
-@app.callback(
-    dash.dependencies.Output("radio-dependent", "options"),
-    [dash.dependencies.Input("radio-selection", "value")],
-)
-def update_options(chosen_selection):
-    col = chosen_selection
-    return [
-        {
-            "label": c,
-            "value": c,
-        }
-        for c in subset_data(boardgame_data, col)
-    ]
 
 
 # top n games bar chart tab 2
