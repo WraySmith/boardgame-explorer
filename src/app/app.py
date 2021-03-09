@@ -7,11 +7,11 @@ from dash.dependencies import Input, Output, State
 import dash_table
 
 # import functions from .py files
-from app_graphing import *
-from app_wrangling import call_boardgame_data, subset_data
+import app_graphing as app_gr
+import app_wrangling as app_wr
 
 # load board game data
-boardgame_data = call_boardgame_data()
+boardgame_data = app_wr.call_boardgame_data()
 
 # dictionary for tab 1 sliders
 slider_dict = {
@@ -31,9 +31,16 @@ slider_dict = {
     2015: "2015",
 }
 
+# dictionary for dropdowns
+col_key_list = ["category", "mechanic", "publisher"]
+col_value_list = [app_wr.subset_data(boardgame_data, v) for v in col_key_list]
+col_dict = dict(zip(col_key_list, col_value_list))
+
+
 #  set up app stylesheet and server
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
+
 
 # title
 def title():
@@ -54,8 +61,9 @@ def description_card():
             html.H5("Welcome to our Board Games Dashboard"),
             html.Div(
                 id="intro",
-                children="Explore board game trends over time based on category, mechanics and publisher selection below.\
-                Also visualize the top categories, mechanics and publishers by year using our interactive features.",
+                children="Explore board game trends over time based on category, mechanics \
+                    and publisher selection below. Also visualize the top categories,\
+                    mechanics and publishers by year using our interactive features.",
             ),
         ],
     )
@@ -100,7 +108,8 @@ def generate_control_card_tab2():
         id="control-card2",
         children=[
             html.P(
-                "Please select any combination of categories, mechanics, publishers and number of games to show"
+                "Please select any combination of categories, mechanics, publishers\
+                     and number of games to show"
             ),
             html.Br(),
             html.P("Please select categories:"),
@@ -108,8 +117,7 @@ def generate_control_card_tab2():
                 id="category-widget",
                 value="",
                 options=[
-                    {"label": name, "value": name}
-                    for name in subset_data(boardgame_data, "category")
+                    {"label": name, "value": name} for name in col_dict["category"]
                 ],
                 multi=True,
             ),
@@ -119,8 +127,7 @@ def generate_control_card_tab2():
                 id="mechanics-widget",
                 value="",
                 options=[
-                    {"label": name, "value": name}
-                    for name in subset_data(boardgame_data, "mechanic")
+                    {"label": name, "value": name} for name in col_dict["mechanic"]
                 ],
                 multi=True,
             ),
@@ -130,8 +137,7 @@ def generate_control_card_tab2():
                 id="publisher-widget",
                 value="",
                 options=[
-                    {"label": name, "value": name}
-                    for name in subset_data(boardgame_data, "publisher")
+                    {"label": name, "value": name} for name in col_dict["publisher"]
                 ],
                 multi=True,
             ),
@@ -144,17 +150,19 @@ def generate_control_card_tab2():
 # lower description for tab 1
 def lower_description():
     """
-    :return: A Div containing descritption for lower portion of tab 1.
+    :return: A Div containing description for lower portion of tab 1.
     """
     return html.Div(
         children=[
             html.H4("Top 5 Categories, Mechanics and Publishers by Rating"),
             html.P(
-                "Two sets of bar charts with year range sliders are provided to allow comparison for two different periods.",
+                "Two sets of bar charts with year range sliders are provided \
+                    to allow comparison for two different periods.",
             ),
             html.Br(),
             html.P(
-                "Drag the year sliders below to select your year ranges and compare the top 5 categories, mechanics and publishers \
+                "Drag the year sliders below to select your year ranges and \
+                    compare the top 5 categories, mechanics and publishers \
                     between time periods."
             ),
         ]
@@ -164,14 +172,16 @@ def lower_description():
 # data set description for tab 1
 def data_set_description():
     """
-    :return: A Div containing descritption of the data set for tab 1.
+    :return: A Div containing description of the data set for tab 1.
     """
     return html.Div(
         children=[
             html.H4("Description of Dataset"),
             html.P(
-                " This dataset comes from the Board Game Geek website and includes boardgames with descriptions, general game \
-                    details, publisher, and user ratings for 10,000 boardgames published between 1950 and 2021."
+                " This dataset comes from the Board Game Geek website and \
+                    includes boardgames with descriptions, general game \
+                    details, publisher, and user ratings for 10,000 boardgames\
+                    published between 1950 and 2021."
             ),
         ]
     )
@@ -197,12 +207,14 @@ first_card = dbc.Card(
                     html.Br(),
                     html.Br(),
                     html.Br(),
+                    html.Br(),
                 ],
             )
         ]
     )
 )
-# card 2 containing the two plots on upper portion of tab 1, the scatter plot and the counts stacked histogram
+# card 2 containing the two plots on upper portion of tab 1,
+# the scatter plot and the counts stacked histogram
 second_card = dbc.Card(
     dbc.CardBody(
         [
@@ -210,7 +222,9 @@ second_card = dbc.Card(
                 [
                     html.H4("Board Game Ratings and Counts from 1950 to 2016"),
                     html.P(
-                        "Select either categories, mechanics or publishers. Then select different elements to view on the following two figures."
+                        "Select either categories, mechanics or publishers.\
+                             Then select different elements to view on the\
+                                following two figures."
                     ),
                     html.Iframe(
                         # scatter plot
@@ -220,9 +234,6 @@ second_card = dbc.Card(
                             "width": "100%",
                             "height": "250px",
                         },
-                    ),
-                    html.P(
-                        "Annual average rating for all board games shown by grey line."
                     ),
                     html.Iframe(
                         # stacked histogram
@@ -236,7 +247,6 @@ second_card = dbc.Card(
                 ]
             ),
             html.Br(),
-            html.Br(),
         ]
     )
 )
@@ -249,15 +259,14 @@ third_card = dbc.Card(
             dbc.Col(
                 id="bottom left row",
                 className="four columns",
-                children=[
-                    lower_description(),
-                ],
+                children=[lower_description()],
             )
         ]
     )
 )
 
-# card 4 containing the top slider and bar charts to view top categories, mechanics and publishers for selected time periods from the slider for tab 1
+# card 4 containing the top slider and bar charts to view top categories,
+# mechanics and publishers for selected time periods from the slider for tab 1
 fourth_card = dbc.Card(
     dbc.CardBody(
         [
@@ -265,30 +274,12 @@ fourth_card = dbc.Card(
                 [
                     html.Div(
                         [
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
+                            html.Div(
+                                id="output-container-range-slider",
+                                style={"align-items": "center"},
                             ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear2",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear3",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
+                            html.Br(),
+                            html.Br(),
                             dcc.RangeSlider(
                                 id="non-linear-range-slider",
                                 min=1950,
@@ -297,7 +288,18 @@ fourth_card = dbc.Card(
                                 value=[1990, 2010],
                                 marks=slider_dict,
                             ),
-                            html.Div(id="output-container-range-slider"),
+                            html.Br(),
+                            html.Iframe(
+                                id="output-container-range-slider-non-linear",
+                                style={
+                                    "border-width": "0",
+                                    "width": "1050px",
+                                    "height": "200px",
+                                },
+                            ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
                         ]
                     )
                 ]
@@ -306,7 +308,8 @@ fourth_card = dbc.Card(
     )
 )
 
-# card 5 containing the bottom slider and bar charts to view top categories, mechanics and publishers for selected time periods from the slider for tab 1
+# card 5 containing the bottom slider and bar charts to view top categories,
+# mechanics and publishers for selected time periods from the slider for tab 1
 fifth_card = dbc.Card(
     dbc.CardBody(
         [
@@ -314,30 +317,9 @@ fifth_card = dbc.Card(
                 [
                     html.Div(
                         [
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear4",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear5",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear6",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
+                            html.Div(id="output-container-range-slider2"),
+                            html.Br(),
+                            html.Br(),
                             dcc.RangeSlider(
                                 id="non-linear-range-slider2",
                                 min=1950,
@@ -346,7 +328,19 @@ fifth_card = dbc.Card(
                                 value=[1990, 2010],
                                 marks=slider_dict,
                             ),
-                            html.Div(id="output-container-range-slider2"),
+                            html.Br(),
+                            html.Br(),
+                            html.Iframe(
+                                id="output-container-range-slider-non-linear2",
+                                style={
+                                    "border-width": "0",
+                                    "width": "1050px",
+                                    "height": "200px",
+                                },
+                            ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
                         ]
                     )
                 ]
@@ -355,7 +349,7 @@ fifth_card = dbc.Card(
     )
 )
 
-# card 6 containing the control card and the silder for number of games for tab 2
+# card 6 containing the control card and the slider for number of games for tab 2
 sixth_card = dbc.Card(dbc.CardBody([generate_control_card_tab2()]))
 
 # card 7 containing the top 10 games bar chart for tab 2
@@ -365,11 +359,7 @@ seventh_card = dbc.Card(
             html.Div(
                 html.Iframe(
                     id="top_n_games",
-                    style={
-                        "border-width": "0",
-                        "width": "100%",
-                        "height": "300px",
-                    },
+                    style={"border-width": "0", "width": "100%", "height": "300px"},
                 )
             )
         ]
@@ -377,16 +367,13 @@ seventh_card = dbc.Card(
 )
 
 # card 8 containing the data table for the top n games for tab 2
-eigth_card = dbc.Card(
+eight_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Top 10 Games Facts Table:"),
             dash_table.DataTable(
                 id="top_n_games_datatable",
-                style_cell={
-                    "whiteSpace": "normal",
-                    "height": "auto",
-                },
+                style_cell={"whiteSpace": "normal", "height": "auto"},
                 style_table={"overflowY": "scroll"},
                 sort_action="native",
             ),
@@ -407,8 +394,7 @@ ninth_card = dbc.Card(
                         color="primary",
                     ),
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(data_set_description())),
-                        id="collapse",
+                        dbc.Card(dbc.CardBody(data_set_description())), id="collapse"
                     ),
                 ]
             )
@@ -494,7 +480,7 @@ app.layout = html.Div(
                                     [
                                         dbc.Col(sixth_card, width=3),
                                         dbc.Col(
-                                            [(seventh_card), html.Br(), (eigth_card)],
+                                            [(seventh_card), html.Br(), (eight_card)],
                                             width=9,
                                             style={"height": "100vh"},
                                         ),
@@ -521,13 +507,7 @@ app.layout = html.Div(
 )
 def update_options(chosen_selection):
     col = chosen_selection
-    return [
-        {
-            "label": c,
-            "value": c,
-        }
-        for c in subset_data(boardgame_data, col)
-    ]
+    return [{"label": c, "value": c} for c in col_dict[col]]
 
 
 # scatter plot tab 1
@@ -537,7 +517,7 @@ def update_options(chosen_selection):
     Input("radio-dependent", "value"),
 )
 def call_scatter(col, list_):
-    chart = scatter_plot_dates(boardgame_data, col, list_)
+    chart = app_gr.scatter_plot_dates(boardgame_data, col, list_)
     return chart.to_html()
 
 
@@ -548,32 +528,26 @@ def call_scatter(col, list_):
     Input("radio-dependent", "value"),
 )
 def call_counts(col, list_):
-    chart2 = count_plot_dates(boardgame_data, col, list_)
+    chart2 = app_gr.count_plot_dates(boardgame_data, col, list_)
     return chart2.to_html()
 
 
-# 1st catergory bar chart tab 1
+# 1st facet chart
 @app.callback(
     Output("output-container-range-slider-non-linear", "srcDoc"),
     Input("non-linear-range-slider", "value"),
 )
-
-# considering making general function for milestone 4
-def update_output(value):
+def update_output1(value):
     transformed_value = [v for v in value]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
-    hist1 = rank_plot_dates(
-        data=boardgame_data,
-        col="category",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#ff7f0e",
+    hist1 = app_gr.rank_plot_facet(
+        data=boardgame_data, year_in=int(val1), year_out=int(val2)
     )
     return hist1.to_html()
 
 
-# 1st mechanics bar chart tab 1
+# 2nd facet chart
 @app.callback(
     Output("output-container-range-slider-non-linear2", "srcDoc"),
     Input("non-linear-range-slider", "value"),
@@ -582,116 +556,30 @@ def update_output2(value):
     transformed_value = [v for v in value]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
-    hist2 = rank_plot_dates(
-        data=boardgame_data,
-        col="mechanic",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#17becf",
+    hist2 = app_gr.rank_plot_facet(
+        data=boardgame_data, year_in=int(val1), year_out=int(val2)
     )
     return hist2.to_html()
 
 
-# 1st publisher bar chart tab 1
-@app.callback(
-    Output("output-container-range-slider-non-linear3", "srcDoc"),
-    Input("non-linear-range-slider", "value"),
-)
-def update_output3(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist3 = rank_plot_dates(
-        data=boardgame_data,
-        col="publisher",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#e377c2",
-    )
-    return hist3.to_html()
-
-
-# 2nd catergory bar chart tab 1
-
-
-@app.callback(
-    Output("output-container-range-slider-non-linear4", "srcDoc"),
-    Input("non-linear-range-slider2", "value"),
-)
-def update_output4(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist4 = rank_plot_dates(
-        data=boardgame_data,
-        col="category",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#ff7f0e",
-    )
-    return hist4.to_html()
-
-
-# 2nd mechanics bar chart tab 1
-@app.callback(
-    Output("output-container-range-slider-non-linear5", "srcDoc"),
-    Input("non-linear-range-slider2", "value"),
-)
-def update_output5(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist5 = rank_plot_dates(
-        data=boardgame_data,
-        col="mechanic",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#17becf",
-    )
-    return hist5.to_html()
-
-
-# 2nd publishers bar chart tab 1
-@app.callback(
-    Output("output-container-range-slider-non-linear6", "srcDoc"),
-    Input("non-linear-range-slider2", "value"),
-)
-def update_output6(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist6 = rank_plot_dates(
-        data=boardgame_data,
-        col="publisher",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#e377c2",
-    )
-    return hist6.to_html()
-
-
 # 1st year range slider output tab 1
-
-
 @app.callback(
     dash.dependencies.Output("output-container-range-slider", "children"),
     dash.dependencies.Input("non-linear-range-slider", "value"),
 )
 def range_slider_select(value):
     transformed_value = [v for v in value]
-    return "{} to {}".format(transformed_value[0], transformed_value[1])
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
 # 2nd year range slider output tab 1
-
-
 @app.callback(
     dash.dependencies.Output("output-container-range-slider2", "children"),
     dash.dependencies.Input("non-linear-range-slider2", "value"),
 )
 def range_slider_select2(value):
     transformed_value = [v for v in value]
-    return "{} to {}".format(transformed_value[0], transformed_value[1])
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
 # collapsable data set description
@@ -714,7 +602,7 @@ def toggle_collapse(n, is_open):
     Input("publisher-widget", "value"),
 )
 def call_top_n_games(c, m, p, n=10):
-    top_n_games = top_n_plot(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
+    top_n_games = app_gr.top_n_plot(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
     return top_n_games.to_html()
 
 
@@ -742,7 +630,9 @@ def update_table(c, m, p, n=10):
         "average_rating",
         "users_rated",
     ]
-    table = call_boardgame_filter(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
+    table = app_wr.call_boardgame_filter(
+        data=boardgame_data, cat=c, mech=m, pub=p, n=10
+    )
     columns = [{"name": col, "id": col} for col in list_cols]
     columns[0]["name"] = ("Game name",)
     columns[1]["name"] = "Min Players"

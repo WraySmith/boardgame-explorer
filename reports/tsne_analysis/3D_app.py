@@ -42,9 +42,7 @@ app.layout = html.Div(
                         dcc.Graph(
                             id="tsne-3d-plot",
                             figure={"data": data, "layout": tsne_layout},
-                            style={
-                                "height": "80vh",
-                            },
+                            style={"height": "80vh"},
                         )
                     ],
                 ),
