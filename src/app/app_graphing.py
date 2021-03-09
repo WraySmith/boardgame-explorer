@@ -170,6 +170,41 @@ def rank_plot_dates(
     return rank_plot + rank_text
 
 
+def rank_plot_facet(data, year_in=1990, year_out=2010):
+    """
+    Facets altair graphs
+
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
+    year_in: int
+    year_out: int
+
+    return: altair plot
+    """
+    return alt.hconcat(
+        rank_plot_dates(
+            data=data,
+            col="category",
+            year_in=year_in,
+            year_out=year_out,
+            color_="#ff7f0e",
+        ),
+        rank_plot_dates(
+            data=data,
+            col="mechanic",
+            year_in=year_in,
+            year_out=year_out,
+            color_="17becf",
+        ),
+        rank_plot_dates(
+            data=data,
+            col="publisher",
+            year_in=year_in,
+            year_out=year_out,
+            color_="e377c2",
+        ),
+    )
+
+
 def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     """
     Creates altair graph for top "n" games with filtered data
