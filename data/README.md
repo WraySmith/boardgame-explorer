@@ -16,5 +16,4 @@ Data from the `raw` folder that has been processed by `wrangle_data.py`. Data in
 
 ## lookups
 
-
 json files used by `wrangle_data.py` to process raw data, i.e convert columns that contain ids into columns that contain names.
