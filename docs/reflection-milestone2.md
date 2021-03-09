@@ -20,7 +20,7 @@ The following additional work will be completed on the dashboard to create a mor
 
 - Updates to the layout and aesthetics of the dashboard. This includes adding space between sections of the dashboard and maximizing white space.
 - Additional user instructions added to the application. This may include pop-ups and hover-overs as well as ensuring the app is easily understandable.
-- The duplicated series of categorical ranking bar charts on the first tab may be merged into a single series of bar charts allowing side-by-side bar results, or an additional style of plot may be considered to replace this.
+- The duplicated series of categorical ranking bar charts on the first tab may be merged into a single series of bar charts allowing side-by-side bar results, or an additional style of plot may be considered to replace this. The bar charts also currently have an issue of vertical scrolling due to the x-axis title names which will be fixed (although may be replaced by another chart type).
 
 Code clean-up will also be required for the dashboard. Our team focused on implementing functionality during this milestone and it is recognized that an additional review of code should be completed. Github Issues [#34](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/34) and [#35](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/35) note some of the issues to be addressed in Milestone 4.
 
