@@ -269,7 +269,10 @@ fourth_card = dbc.Card(
             dbc.Row(
                 [
                     html.Div(
-                        [
+                        [html.Div(id="output-container-range-slider", style={'align-items' : 'center'}),
+                         html.Br(),
+                          html.Br(),
+
                             dcc.RangeSlider(
                                 id="non-linear-range-slider",
                                 min=1950,
@@ -277,8 +280,12 @@ fourth_card = dbc.Card(
                                 step=1,
                                 value=[1990, 2010],
                                 marks=slider_dict,
-                            ),
-                            html.Div(id="output-container-range-slider"),
+                            ), 
+                            
+                            
+    
+                            html.Br(),
+                            
                             html.Iframe(
                                 id="output-container-range-slider-non-linear",
                                 style={
@@ -287,6 +294,10 @@ fourth_card = dbc.Card(
                                     "height": "200px",
                                 },
                             ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
+                            
                             
                                 
                         
@@ -305,7 +316,11 @@ fifth_card = dbc.Card(
             dbc.Row(
                 [
                     html.Div(
-                        [dcc.RangeSlider(
+                        [html.Div(id="output-container-range-slider2"),
+                        html.Br(),
+                        html.Br(),
+                        
+                        dcc.RangeSlider(
                                 id="non-linear-range-slider2",
                                 min=1950,
                                 max=2016,
@@ -313,8 +328,9 @@ fifth_card = dbc.Card(
                                 value=[1990, 2010],
                                 marks=slider_dict,
                             ),
-                            html.Div(id="output-container-range-slider2"),
-
+                            html.Br(),
+                            html.Br(),
+                            
                             html.Iframe(
                                 id="output-container-range-slider-non-linear2",
                                 style={
@@ -325,6 +341,9 @@ fifth_card = dbc.Card(
                            
                                 
                             ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
                             
                         ]
                     )
@@ -577,7 +596,7 @@ def update_output2(value):
 )
 def range_slider_select(value):
     transformed_value = [v for v in value]
-    return "{} to {}".format(transformed_value[0], transformed_value[1])
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
 # 2nd year range slider output tab 1
@@ -588,7 +607,7 @@ def range_slider_select(value):
 )
 def range_slider_select2(value):
     transformed_value = [v for v in value]
-    return "{} to {}".format(transformed_value[0], transformed_value[1])
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
 # collapsable data set description
