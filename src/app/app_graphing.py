@@ -3,7 +3,7 @@ contains graph calls for dashboard
 """
 
 import altair as alt
-from app_wrangling import *
+import app_wrangling as app_wr
 
 
 def scatter_plot_dates(data, col="category", list_=[None]):
@@ -23,7 +23,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("grey")
     else:
-        set_data = call_boardgame_radio(data, col, list_)
+        set_data = app_wr.call_boardgame_radio(data, col, list_)
         set_color = alt.Color("group:N", title="Group")
 
     scatter_plot = (
@@ -90,7 +90,7 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("#2ca02c")
     else:
-        set_data = call_boardgame_radio(data, col, list_)
+        set_data = app_wr.call_boardgame_radio(data, col, list_)
         set_color = alt.Color("group:N", title="Group")
 
     alt.data_transformers.disable_max_rows()
@@ -144,7 +144,7 @@ def rank_plot_dates(
     return: altair plot
     """
     rank_plot = (
-        alt.Chart(call_boardgame_top(data, col, year_in, year_out))
+        alt.Chart(app_wr.call_boardgame_top(data, col, year_in, year_out))
         .mark_bar(color=color_)
         .encode(
             alt.X(
@@ -219,7 +219,7 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     """
     alt.data_transformers.disable_max_rows()
     top_plot = (
-        alt.Chart(call_boardgame_filter(data, cat, mech, pub, n))
+        alt.Chart(app_wr.call_boardgame_filter(data, cat, mech, pub, n))
         .mark_bar()
         .encode(
             alt.X(
