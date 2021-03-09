@@ -262,9 +262,7 @@ third_card = dbc.Card(
             dbc.Col(
                 id="bottom left row",
                 className="four columns",
-                children=[
-                    lower_description(),
-                ],
+                children=[lower_description()],
             )
         ]
     )
@@ -364,11 +362,7 @@ seventh_card = dbc.Card(
             html.Div(
                 html.Iframe(
                     id="top_n_games",
-                    style={
-                        "border-width": "0",
-                        "width": "100%",
-                        "height": "300px",
-                    },
+                    style={"border-width": "0", "width": "100%", "height": "300px"},
                 )
             )
         ]
@@ -382,10 +376,7 @@ eight_card = dbc.Card(
             html.H5("Top 10 Games Facts Table:"),
             dash_table.DataTable(
                 id="top_n_games_datatable",
-                style_cell={
-                    "whiteSpace": "normal",
-                    "height": "auto",
-                },
+                style_cell={"whiteSpace": "normal", "height": "auto"},
                 style_table={"overflowY": "scroll"},
                 sort_action="native",
             ),
@@ -406,8 +397,7 @@ ninth_card = dbc.Card(
                         color="primary",
                     ),
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(data_set_description())),
-                        id="collapse",
+                        dbc.Card(dbc.CardBody(data_set_description())), id="collapse"
                     ),
                 ]
             )
@@ -555,9 +545,7 @@ def update_output1(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist1 = app_gr.rank_plot_facet(
-        data=boardgame_data,
-        year_in=int(val1),
-        year_out=int(val2),
+        data=boardgame_data, year_in=int(val1), year_out=int(val2)
     )
     return hist1.to_html()
 
@@ -572,9 +560,7 @@ def update_output2(value):
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     hist2 = app_gr.rank_plot_facet(
-        data=boardgame_data,
-        year_in=int(val1),
-        year_out=int(val2),
+        data=boardgame_data, year_in=int(val1), year_out=int(val2)
     )
     return hist2.to_html()
 

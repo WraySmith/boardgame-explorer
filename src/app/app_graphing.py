@@ -47,6 +47,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
             color=set_color,
             tooltip=[
                 alt.Tooltip("name:N", title="Name"),
+                alt.Tooltip("average_rating:Q", title="Average Rating"),
                 alt.Tooltip("year_published:T", title="Year Published", format="%Y"),
             ],
         )
@@ -116,7 +117,7 @@ def count_plot_dates(data, col="category", list_=[None]):
             tooltip=[
                 alt.Tooltip("group:N", title="Group"),
                 alt.Tooltip("count():Q", title="Number of Games"),
-                alt.Tooltip("year(year_published:T)", title="Year_Published"),
+                alt.Tooltip("year_published:T", title="Year_Published", format="%Y"),
             ],
         )
         .properties(
@@ -155,10 +156,7 @@ def rank_plot_dates(
             alt.X(
                 str(col) + ":N",
                 sort="-y",
-                axis=alt.Axis(
-                    titleFontSize=12,
-                    titleFontWeight=600,
-                ),
+                axis=alt.Axis(titleFontSize=12, titleFontWeight=600),
             ),
             alt.Y(
                 "average_rating:Q",
@@ -227,11 +225,7 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
         alt.Chart(app_wr.call_boardgame_filter(data, cat, mech, pub, n))
         .mark_bar()
         .encode(
-            alt.X(
-                "name:N",
-                sort="-y",
-                axis=alt.Axis(title=None, labels=False),
-            ),
+            alt.X("name:N", sort="-y", axis=alt.Axis(title=None, labels=False)),
             alt.Y(
                 "average_rating:Q",
                 axis=alt.Axis(title="Average Rating"),
