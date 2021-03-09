@@ -198,7 +198,7 @@ def call_boardgame_top(data, col, year_in, year_out):
     boardgame_data = boardgame_data[year_filter]
 
     # split up column into categorical values
-    boardgame_data[col] = boardgame_data[col].str.split(",")
+    boardgame_data[col] = boardgame_data[col].str.split(r",(?![+ ])")
     board_game_exp = boardgame_data.explode(col)
     # find the average rating for the top 5 categories
     board_game_exp = (
@@ -223,6 +223,6 @@ def subset_data(data, col="category"):
     """
 
     data_copy = data.copy(deep=True)
-    exp_series = data_copy[col].str.split(",").explode()
+    exp_series = data_copy[col].str.split(r",(?![+ ])").explode()
 
     return list(exp_series.unique())
