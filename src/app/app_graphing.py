@@ -161,7 +161,7 @@ def rank_plot_dates(
                 scale=alt.Scale(domain=(5, 10)),
             ),
         )
-        .properties(width=250, height=100)
+        .properties(width=250, height=75)
     )
 
     rank_text = rank_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
