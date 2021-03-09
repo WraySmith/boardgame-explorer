@@ -113,6 +113,11 @@ def count_plot_dates(data, col="category", list_=[None]):
                 ),
             ),
             color=set_color,
+            tooltip=[
+                alt.Tooltip("group:N", title="Group"),
+                alt.Tooltip("count():Q", title="Number of Games"),
+                alt.Tooltip("year(year_published:T)", title="Year_Published"),
+            ],
         )
         .properties(
             title=alt.TitleParams(
