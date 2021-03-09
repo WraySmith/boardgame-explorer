@@ -120,7 +120,9 @@ def form_group(col, list_, boardgame_data):
     boardgame_data["group"] = boardgame_data[col].apply(
         lambda x: list(set(x).intersection(set(list_)))
     )
-    boardgame_data["group"] = [",".join(map(str, l)) for l in boardgame_data["group"]]
+    boardgame_data["group"] = [
+        ",".join(map(str, item)) for item in boardgame_data["group"]
+    ]
 
     # replaces cross product groups containing all items with generic group
     if len(list_) > 1:
