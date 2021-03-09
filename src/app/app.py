@@ -635,7 +635,6 @@ def update_table(c, m, p, n=10):
     columns[2]["name"] = "Max Players"
     columns[3]["name"] = "Min Playtime"
     columns[4]["name"] = "Max Playtime"
-    # columns[5]["name"] = "Playing time"
     columns[5]["name"] = "Year published"
     columns[6]["name"] = "Game category"
     columns[7]["name"] = "Game mechanic"
