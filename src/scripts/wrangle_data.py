@@ -26,7 +26,7 @@ def apply_lookup(dataframe, group_type):
     )  # some columns were mixed type
 
     # load the lookup table
-    path_to_save = "./{}_lookup.json".format(group_type)
+    path_to_save = "./data/lookups/{}_lookup.json".format(group_type)
     with open(path_to_save) as f:
         lookup = json.load(f)
     lookup["nan"] = "None"
