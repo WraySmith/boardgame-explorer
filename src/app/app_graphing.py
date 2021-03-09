@@ -64,13 +64,15 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         )
     )
 
-    line_plot = (
-        alt.Chart(data)
-        .mark_line(color="dark grey", size=3)
-        .encode(x="year_published:T", y="mean(average_rating)")
-    )
+    # THIS IS TEMPORARILY REMOVED AS IT IS IMPACTING PERFORMANCE
+    # WILL BE FIXED FOR MILESTONE 4
+    # line_plot = (
+    #    alt.Chart(data)
+    #    .mark_line(color="dark grey", size=3)
+    #    .encode(x="year_published:T", y="mean(average_rating)")
+    # )
 
-    scatter_plot = scatter_plot + line_plot
+    scatter_plot = scatter_plot  # + line_plot
     return scatter_plot
 
 

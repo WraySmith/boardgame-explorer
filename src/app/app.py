@@ -235,9 +235,6 @@ second_card = dbc.Card(
                             "height": "250px",
                         },
                     ),
-                    html.P(
-                        "Annual average rating for all board games shown by grey line."
-                    ),
                     html.Iframe(
                         # stacked histogram
                         id="count",
