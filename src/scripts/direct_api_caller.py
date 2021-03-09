@@ -52,9 +52,9 @@ if __name__ == "__main__":
 
     # one of artist, publisher, designer,
     type_of_ids = "artist"
-    path_to_save = "./{}_lookup.json".format(type_of_ids)
+    path_to_save = "./data/lookups/{}_lookup.json".format(type_of_ids)
 
-    df = pd.read_csv("../data/bgg_GameItem.csv")
+    df = pd.read_csv("./data/bgg_GameItem.csv")
     df = df[["bgg_id", type_of_ids]]
 
     ids = utils.extract_ids_from_column(df[type_of_ids])

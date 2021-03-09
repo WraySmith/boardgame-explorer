@@ -26,7 +26,7 @@ def apply_lookup(dataframe, group_type):
     )  # some columns were mixed type
 
     # load the lookup table
-    path_to_save = "./{}_lookup.json".format(group_type)
+    path_to_save = "./data/lookups/{}_lookup.json".format(group_type)
     with open(path_to_save) as f:
         lookup = json.load(f)
     lookup["nan"] = "None"
@@ -101,7 +101,7 @@ def wrangle_df(dataframe):
 if __name__ == "__main__":
 
     # load data
-    df_to_wrangle = pd.read_csv("../data/raw/bgg_GameItem.csv")
+    df_to_wrangle = pd.read_csv("./data/raw/bgg_GameItem.csv")
 
     # filter, subset, etc
     wrangled = wrangle_df(df_to_wrangle)
@@ -113,4 +113,4 @@ if __name__ == "__main__":
         df_copy = apply_lookup(df_copy, group_type)
 
     # save processed df
-    df_copy.to_csv("../data/processed/bgg_with_names.csv")
+    df_copy.to_csv("./data/processed/bgg_with_names.csv")

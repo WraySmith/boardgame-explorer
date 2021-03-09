@@ -10,8 +10,8 @@ if __name__ == "__main__":
     cols = ["designer", "artist", "family", "publisher"]
 
     for col in cols:
-        new = pd.read_csv("../data/bgg_with_names.csv")
-        old = pd.read_csv("../reports/board_games.csv")
+        new = pd.read_csv("./data/processed/bgg_with_names.csv")
+        old = pd.read_csv("./reports/exploratory_data_analysis/board_games_EDA.csv")
         old = old.rename(columns={"game_id": "bgg_id"})
 
         new = new[["bgg_id", col]]
@@ -28,6 +28,7 @@ if __name__ == "__main__":
 
         joined = pd.merge(filtered_new, filtered_old, on="bgg_id")
 
+        # TODO change to check non empty intersect
         joined["is_match"] = joined["{}_x".format(col)] == joined["{}_y".format(col)]
         print("percent match for {} is : {}%".format(col, joined["is_match"].mean()))
 
