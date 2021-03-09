@@ -10,8 +10,8 @@ if __name__ == "__main__":
     cols = ["designer", "artist", "family", "publisher"]
 
     for col in cols:
-        new = pd.read_csv("../data/bgg_with_names.csv")
-        old = pd.read_csv("../reports/board_games.csv")
+        new = pd.read_csv("data/processed/bgg_with_names.csv")
+        old = pd.read_csv("reports/exploratory_data_analysis/board_games_EDA.csv")
         old = old.rename(columns={"game_id": "bgg_id"})
 
         new = new[["bgg_id", col]]
