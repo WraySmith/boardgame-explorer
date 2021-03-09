@@ -279,8 +279,7 @@ fourth_card = dbc.Card(
                                 style={"align-items": "center"},
                             ),
                             html.Br(),
-                             html.Br(),
-                            
+                            html.Br(),
                             dcc.RangeSlider(
                                 id="non-linear-range-slider",
                                 min=1950,
@@ -300,7 +299,6 @@ fourth_card = dbc.Card(
                             ),
                             html.Br(),
                             html.Br(),
-                            
                         ]
                     )
                 ]
@@ -329,7 +327,6 @@ fifth_card = dbc.Card(
                                 value=[1990, 2010],
                                 marks=slider_dict,
                             ),
-                           
                             html.Br(),
                             html.Iframe(
                                 id="output-container-range-slider-non-linear2",
@@ -341,7 +338,6 @@ fifth_card = dbc.Card(
                             ),
                             html.Br(),
                             html.Br(),
-                            
                         ]
                     )
                 ]
