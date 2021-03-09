@@ -193,14 +193,14 @@ def rank_plot_facet(data, year_in=1990, year_out=2010):
             col="mechanic",
             year_in=year_in,
             year_out=year_out,
-            color_="17becf",
+            color_="#17becf",
         ),
         rank_plot_dates(
             data=data,
             col="publisher",
             year_in=year_in,
             year_out=year_out,
-            color_="e377c2",
+            color_="#e377c2",
         ),
     )
 

@@ -87,10 +87,8 @@ def generate_control_card():
             html.Br(),
             html.Br(),
             dcc.Dropdown(id="radio-dependent", options=[], multi=True, value=[None]),
-            html.Br(),
-                    html.Br(),
-                    html.Br(),
-            html.Button(id='clearButton', n_clicks=0, children='Clear')
+            
+           
         ],
     )
 
@@ -509,14 +507,9 @@ def update_options(chosen_selection):
         }
         for c in subset_data(boardgame_data, col)
     ]
-# clear dropdown
 
-@app.callback(Output('radio-dependent', 'value'),
-             [Input('clearButton', 'n_clicks')])
-def clearDropDown1(n_clicks):
 
-        if n_clicks != 0: #Don't clear options when loading page for the first time
-                return [] #Return an empty list of options
+        
 
 
 # scatter plot tab 1
