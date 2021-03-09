@@ -299,7 +299,6 @@ fourth_card = dbc.Card(
                             ),
                             html.Br(),
                             html.Br(),
-                            html.Br(),
                         ]
                     )
                 ]
@@ -329,7 +328,6 @@ fifth_card = dbc.Card(
                                 marks=slider_dict,
                             ),
                             html.Br(),
-                            html.Br(),
                             html.Iframe(
                                 id="output-container-range-slider-non-linear2",
                                 style={
@@ -338,7 +336,6 @@ fifth_card = dbc.Card(
                                     "height": "200px",
                                 },
                             ),
-                            html.Br(),
                             html.Br(),
                             html.Br(),
                         ]
@@ -550,7 +547,7 @@ def update_output1(value):
 # 2nd facet chart
 @app.callback(
     Output("output-container-range-slider-non-linear2", "srcDoc"),
-    Input("non-linear-range-slider", "value"),
+    Input("non-linear-range-slider2", "value"),
 )
 def update_output2(value):
     transformed_value = [v for v in value]
