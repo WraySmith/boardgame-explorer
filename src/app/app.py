@@ -618,7 +618,6 @@ def update_table(c, m, p, n=10):
         "max_players",
         "min_playtime",
         "max_playtime",
-        "playing_time",
         "year_published",
         "category",
         "mechanic",
@@ -636,14 +635,13 @@ def update_table(c, m, p, n=10):
     columns[2]["name"] = "Max Players"
     columns[3]["name"] = "Min Playtime"
     columns[4]["name"] = "Max Playtime"
-    columns[5]["name"] = "Playing time"
-    columns[6]["name"] = "Year published"
-    columns[7]["name"] = "Game category"
-    columns[8]["name"] = "Game mechanic"
-    columns[9]["name"] = "Game designer"
-    columns[10]["name"] = "Game publisher"
-    columns[11]["name"] = "Average game rating"
-    columns[12]["name"] = "User rating"
+    columns[5]["name"] = "Year published"
+    columns[6]["name"] = "Game category"
+    columns[7]["name"] = "Game mechanic"
+    columns[8]["name"] = "Game designer"
+    columns[9]["name"] = "Game publisher"
+    columns[10]["name"] = "Average game rating"
+    columns[11]["name"] = "User rating"
 
     data = table.to_dict("rows")
     return data, columns
