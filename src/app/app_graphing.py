@@ -54,6 +54,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         .properties(
             title=alt.TitleParams(
                 text="Game Popularity based on Published Year",
+                subtitle="Light grey line shows annual average rating of ALL games in dataset",
                 anchor="start",
                 fontSize=20,
                 dy=-20,
