@@ -20,78 +20,48 @@ def scatter_plot_dates(data, col="category", list_=[None]):
     alt.data_transformers.disable_max_rows()
 
     if (list_ == [None]) or (not list_):
-        scatter_plot = (
-            alt.Chart(data)
-            .mark_circle(size=60, opacity=0.1, color="grey")
-            .encode(
-                alt.X(
-                    "year_published",
-                    axis=alt.Axis(title=None),
-                    scale=alt.Scale(zero=False),
-                ),
-                alt.Y(
-                    "average_rating",
-                    axis=alt.Axis(
-                        title="Average Rating",
-                        titleFontSize=12,
-                        offset=14,
-                        titleFontWeight=600,
-                    ),
-                ),
-                tooltip=[
-                    alt.Tooltip("name", title="Name"),
-                    alt.Tooltip("year_published", title="Year Published", format="%Y"),
-                ],
-            )
-            .properties(
-                title=alt.TitleParams(
-                    text="Game Popularity based on Published Year",
-                    anchor="start",
-                    fontSize=20,
-                    dy=-20,
-                    dx=20,
-                ),
-                width=650,
-                height=150,
-            )
-        )
+        set_data = data
+        set_color = alt.value("grey")
     else:
-        scatter_plot = (
-            alt.Chart(call_boardgame_radio(data, col, list_))
-            .mark_circle(size=60, opacity=0.5, color="orange")
-            .encode(
-                alt.X(
-                    "year_published",
-                    axis=alt.Axis(title=None),
-                    scale=alt.Scale(zero=False),
+        set_data = call_boardgame_radio(data, col, list_)
+        set_color = alt.Color("group", title="Group")
+
+    scatter_plot = (
+        alt.Chart(set_data)
+        .mark_circle(size=60, opacity=0.2)
+        .encode(
+            alt.X(
+                "year_published",
+                axis=alt.Axis(title=None),
+                scale=alt.Scale(zero=False),
+            ),
+            alt.Y(
+                "average_rating",
+                axis=alt.Axis(
+                    title="Average Rating",
+                    titleFontSize=12,
+                    offset=14,
+                    titleFontWeight=600,
                 ),
-                alt.Y(
-                    "average_rating",
-                    axis=alt.Axis(
-                        title="Average Rating",
-                        titleFontSize=12,
-                        offset=14,
-                        titleFontWeight=600,
-                    ),
-                ),
-                color=alt.Color("group", title="Group"),
-                tooltip=[
-                    alt.Tooltip("name", title="Name"),
-                    alt.Tooltip("year_published", title="Year Published", format="%Y"),
-                ],
-            )
-            .properties(
-                title=alt.TitleParams(
-                    text="Game Popularity based on Published Year",
-                    anchor="start",
-                    fontSize=20,
-                    dy=-20,
-                    dx=20,
-                ),
-                width=650,
-                height=150,
-            )
+            ),
+            color=set_color,
+            tooltip=[
+                alt.Tooltip("name", title="Name"),
+                alt.Tooltip("year_published", title="Year Published", format="%Y"),
+            ],
         )
+        .properties(
+            title=alt.TitleParams(
+                text="Game Popularity based on Published Year",
+                anchor="start",
+                fontSize=20,
+                dy=-20,
+                dx=20,
+            ),
+            width=650,
+            height=150,
+        )
+    )
 
     line_plot = (
         alt.Chart(data)
@@ -114,80 +84,50 @@ def count_plot_dates(data, col="category", list_=[None]):
 
     return: altair plot
     """
-    # list_ = dict_to_list(dict_)
+    alt.data_transformers.disable_max_rows()
 
     if (list_ == [None]) or (not list_):
-        alt.data_transformers.disable_max_rows()
-        count_plot = (
-            alt.Chart(data)
-            .mark_bar(color="#2ca02c")
-            .encode(
-                alt.X(
-                    "year_published",
-                    axis=alt.Axis(title=None),
-                    scale=alt.Scale(zero=False),
-                ),
-                alt.Y(
-                    "count()",
-                    axis=alt.Axis(
-                        title="Count of Games Published",
-                        titleFontSize=12,
-                        offset=8,
-                        titleFontWeight=600,
-                    ),
-                ),
-            )
-            .properties(
-                title=alt.TitleParams(
-                    text="Game Count based on Published Year",
-                    anchor="start",
-                    fontSize=20,
-                    dy=-20,
-                    dx=20,
-                ),
-                width=650,
-                height=150,
-            )
-        )
-
-        return count_plot
-
+        set_data = data
+        set_color = alt.value("#2ca02c")
     else:
-        alt.data_transformers.disable_max_rows()
-        count_plot = (
-            alt.Chart(call_boardgame_radio(data, col, list_))
-            .mark_bar(color="#2ca02c")
-            .encode(
-                alt.X(
-                    "year_published",
-                    axis=alt.Axis(title=None),
-                    scale=alt.Scale(zero=False),
-                ),
-                alt.Y(
-                    "count()",
-                    axis=alt.Axis(
-                        title="Count of Games Published",
-                        titleFontSize=12,
-                        offset=8,
-                        titleFontWeight=600,
-                    ),
-                ),
-                color=alt.Color("group", title="Group"),
-            )
-            .properties(
-                title=alt.TitleParams(
-                    text="Game Count based on Published Year",
-                    anchor="start",
-                    fontSize=20,
-                    dy=-20,
-                    dx=20,
-                ),
-                width=650,
-                height=150,
-            )
-        )
+        set_data = call_boardgame_radio(data, col, list_)
+        set_color = alt.Color("group", title="Group")
 
-        return count_plot
+    alt.data_transformers.disable_max_rows()
+    count_plot = (
+        alt.Chart(set_data)
+        .mark_bar()
+        .encode(
+            alt.X(
+                "year_published",
+                axis=alt.Axis(title=None),
+                scale=alt.Scale(zero=False),
+            ),
+            alt.Y(
+                "count()",
+                axis=alt.Axis(
+                    title="Count of Games Published",
+                    titleFontSize=12,
+                    offset=8,
+                    titleFontWeight=600,
+                ),
+            ),
+            color=set_color,
+        )
+        .properties(
+            title=alt.TitleParams(
+                text="Game Count based on Published Year",
+                anchor="start",
+                fontSize=20,
+                dy=-20,
+                dx=20,
+            ),
+            width=650,
+            height=150,
+        )
+    )
+
+    return count_plot
 
 
 def rank_plot_dates(
