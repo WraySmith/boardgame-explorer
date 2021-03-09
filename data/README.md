@@ -1,6 +1,8 @@
 # Data Folder Descriptions
 
-**Data folder structure is still a work in progress. Data used within the app is located within the `src/app` folder.**
+## app_data
+
+Contains the data used by the app (called using the function in `src\app\app_wrangling.py`).
 
 ## raw
 
