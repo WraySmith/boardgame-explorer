@@ -65,9 +65,9 @@ if __name__ == "__main__":
     # one of category, mechanic, or family
     type_of_ids = "designer"
 
-    path_to_save = "./{}_lookup.json".format(type_of_ids)
+    path_to_save = "./data/lookups/{}_lookup.json".format(type_of_ids)
 
-    df = pd.read_csv("../data/raw/bgg_GameItem.csv")
+    df = pd.read_csv("./data/raw/bgg_GameItem.csv")
     df = df[["bgg_id", type_of_ids]]
 
     ids = make_list_and_explode(df, type_of_ids)
