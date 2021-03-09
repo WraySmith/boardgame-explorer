@@ -162,7 +162,7 @@ def lower_description():
 
 
 # data set description for tab 1
-def data_set_descirption():
+def data_set_description():
     """
     :return: A Div containing descritption of the data set for tab 1.
     """
@@ -407,7 +407,7 @@ ninth_card = dbc.Card(
                         color="primary",
                     ),
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(data_set_descirption())),
+                        dbc.Card(dbc.CardBody(data_set_description())),
                         id="collapse",
                     ),
                 ]
@@ -513,6 +513,22 @@ app.layout = html.Div(
 
 
 # Set up callbacks/backend
+
+# radio button selection options to populate drop down
+@app.callback(
+    dash.dependencies.Output("radio-dependent", "options"),
+    [dash.dependencies.Input("radio-selection", "value")],
+)
+def update_options(chosen_selection):
+    col = chosen_selection
+    return [
+        {
+            "label": c,
+            "value": c,
+        }
+        for c in subset_data(boardgame_data, col)
+    ]
+
 
 # scatter plot tab 1
 @app.callback(
@@ -688,22 +704,6 @@ def toggle_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
-
-
-# radio button selection options to populate drop down
-@app.callback(
-    dash.dependencies.Output("radio-dependent", "options"),
-    [dash.dependencies.Input("radio-selection", "value")],
-)
-def update_options(chosen_selection):
-    col = chosen_selection
-    return [
-        {
-            "label": c,
-            "value": c,
-        }
-        for c in subset_data(boardgame_data, col)
-    ]
 
 
 # top n games bar chart tab 2
