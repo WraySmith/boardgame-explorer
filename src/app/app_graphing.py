@@ -24,19 +24,19 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_color = alt.value("grey")
     else:
         set_data = call_boardgame_radio(data, col, list_)
-        set_color = alt.Color("group", title="Group")
+        set_color = alt.Color("group:N", title="Group")
 
     scatter_plot = (
         alt.Chart(set_data)
         .mark_circle(size=60, opacity=0.2)
         .encode(
             alt.X(
-                "year_published",
+                "year_published:T",
                 axis=alt.Axis(title=None),
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
-                "average_rating",
+                "average_rating:Q",
                 axis=alt.Axis(
                     title="Average Rating",
                     titleFontSize=12,
@@ -46,8 +46,8 @@ def scatter_plot_dates(data, col="category", list_=[None]):
             ),
             color=set_color,
             tooltip=[
-                alt.Tooltip("name", title="Name"),
-                alt.Tooltip("year_published", title="Year Published", format="%Y"),
+                alt.Tooltip("name:N", title="Name"),
+                alt.Tooltip("year_published:T", title="Year Published", format="%Y"),
             ],
         )
         .properties(
@@ -66,7 +66,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
     line_plot = (
         alt.Chart(data)
         .mark_line(color="dark grey", size=3)
-        .encode(x="year_published", y="mean(average_rating)")
+        .encode(x="year_published:T", y="mean(average_rating)")
     )
 
     scatter_plot = scatter_plot + line_plot
@@ -91,7 +91,7 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_color = alt.value("#2ca02c")
     else:
         set_data = call_boardgame_radio(data, col, list_)
-        set_color = alt.Color("group", title="Group")
+        set_color = alt.Color("group:N", title="Group")
 
     alt.data_transformers.disable_max_rows()
     count_plot = (
@@ -99,12 +99,12 @@ def count_plot_dates(data, col="category", list_=[None]):
         .mark_bar()
         .encode(
             alt.X(
-                "year_published",
+                "year_published:T",
                 axis=alt.Axis(title=None),
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
-                "count()",
+                "count():Q",
                 axis=alt.Axis(
                     title="Count of Games Published",
                     titleFontSize=12,
@@ -148,7 +148,7 @@ def rank_plot_dates(
         .mark_bar(color=color_)
         .encode(
             alt.X(
-                str(col),
+                str(col) + ":N",
                 sort="-y",
                 axis=alt.Axis(
                     titleFontSize=12,
@@ -161,7 +161,7 @@ def rank_plot_dates(
                 scale=alt.Scale(domain=(5, 10)),
             ),
         )
-        .properties(width=250, height=100)
+        .properties(width=250, height=75)
     )
 
     rank_text = rank_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
@@ -193,14 +193,14 @@ def rank_plot_facet(data, year_in=1990, year_out=2010):
             col="mechanic",
             year_in=year_in,
             year_out=year_out,
-            color_="17becf",
+            color_="#17becf",
         ),
         rank_plot_dates(
             data=data,
             col="publisher",
             year_in=year_in,
             year_out=year_out,
-            color_="e377c2",
+            color_="#e377c2",
         ),
     )
 
@@ -223,7 +223,7 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
         .mark_bar()
         .encode(
             alt.X(
-                "name",
+                "name:N",
                 sort="-y",
                 axis=alt.Axis(title=None, labels=False),
             ),
@@ -233,7 +233,7 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
                 scale=alt.Scale(domain=(0, 10)),
             ),
             color=alt.Color(
-                "name",
+                "name:N",
                 title="Boardgame Name",
                 sort=alt.EncodingSortField("-y", order="descending"),
             ),

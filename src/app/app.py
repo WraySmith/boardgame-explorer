@@ -31,6 +31,12 @@ slider_dict = {
     2015: "2015",
 }
 
+# dictionary for dropdowns
+col_key_list = ["category", "mechanic", "publisher"]
+col_value_list = [subset_data(boardgame_data, v) for v in col_key_list]
+col_dict = dict(zip(col_key_list, col_value_list))
+
+
 #  set up app stylesheet and server
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
@@ -108,8 +114,7 @@ def generate_control_card_tab2():
                 id="category-widget",
                 value="",
                 options=[
-                    {"label": name, "value": name}
-                    for name in subset_data(boardgame_data, "category")
+                    {"label": name, "value": name} for name in col_dict["category"]
                 ],
                 multi=True,
             ),
@@ -119,8 +124,7 @@ def generate_control_card_tab2():
                 id="mechanics-widget",
                 value="",
                 options=[
-                    {"label": name, "value": name}
-                    for name in subset_data(boardgame_data, "mechanic")
+                    {"label": name, "value": name} for name in col_dict["mechanic"]
                 ],
                 multi=True,
             ),
@@ -130,8 +134,7 @@ def generate_control_card_tab2():
                 id="publisher-widget",
                 value="",
                 options=[
-                    {"label": name, "value": name}
-                    for name in subset_data(boardgame_data, "publisher")
+                    {"label": name, "value": name} for name in col_dict["publisher"]
                 ],
                 multi=True,
             ),
@@ -197,6 +200,7 @@ first_card = dbc.Card(
                     html.Br(),
                     html.Br(),
                     html.Br(),
+                    html.Br(),
                 ],
             )
         ]
@@ -236,7 +240,6 @@ second_card = dbc.Card(
                 ]
             ),
             html.Br(),
-            html.Br(),
         ]
     )
 )
@@ -265,30 +268,12 @@ fourth_card = dbc.Card(
                 [
                     html.Div(
                         [
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
+                            html.Div(
+                                id="output-container-range-slider",
+                                style={"align-items": "center"},
                             ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear2",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear3",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
+                            html.Br(),
+                            html.Br(),
                             dcc.RangeSlider(
                                 id="non-linear-range-slider",
                                 min=1950,
@@ -297,7 +282,18 @@ fourth_card = dbc.Card(
                                 value=[1990, 2010],
                                 marks=slider_dict,
                             ),
-                            html.Div(id="output-container-range-slider"),
+                            html.Br(),
+                            html.Iframe(
+                                id="output-container-range-slider-non-linear",
+                                style={
+                                    "border-width": "0",
+                                    "width": "1050px",
+                                    "height": "200px",
+                                },
+                            ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
                         ]
                     )
                 ]
@@ -314,30 +310,9 @@ fifth_card = dbc.Card(
                 [
                     html.Div(
                         [
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear4",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear5",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
-                            html.Iframe(
-                                id="output-container-range-slider-non-linear6",
-                                style={
-                                    "border-width": "0",
-                                    "width": "315px",
-                                    "height": "250px",
-                                },
-                            ),
+                            html.Div(id="output-container-range-slider2"),
+                            html.Br(),
+                            html.Br(),
                             dcc.RangeSlider(
                                 id="non-linear-range-slider2",
                                 min=1950,
@@ -346,7 +321,19 @@ fifth_card = dbc.Card(
                                 value=[1990, 2010],
                                 marks=slider_dict,
                             ),
-                            html.Div(id="output-container-range-slider2"),
+                            html.Br(),
+                            html.Br(),
+                            html.Iframe(
+                                id="output-container-range-slider-non-linear2",
+                                style={
+                                    "border-width": "0",
+                                    "width": "1050px",
+                                    "height": "200px",
+                                },
+                            ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
                         ]
                     )
                 ]
@@ -521,13 +508,7 @@ app.layout = html.Div(
 )
 def update_options(chosen_selection):
     col = chosen_selection
-    return [
-        {
-            "label": c,
-            "value": c,
-        }
-        for c in subset_data(boardgame_data, col)
-    ]
+    return [{"label": c, "value": c} for c in col_dict[col]]
 
 
 # scatter plot tab 1
@@ -552,28 +533,26 @@ def call_counts(col, list_):
     return chart2.to_html()
 
 
-# 1st catergory bar chart tab 1
+# 1st facet chart
 @app.callback(
     Output("output-container-range-slider-non-linear", "srcDoc"),
     Input("non-linear-range-slider", "value"),
 )
-
-# considering making general function for milestone 4
-def update_output(value):
+def update_output2(value):
     transformed_value = [v for v in value]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
-    hist1 = rank_plot_dates(
+    hist1 = rank_plot_facet(
         data=boardgame_data,
-        col="category",
         year_in=int(val1),
         year_out=int(val2),
-        color_="#ff7f0e",
     )
     return hist1.to_html()
 
 
-# 1st mechanics bar chart tab 1
+# 2nd facet chart
+
+
 @app.callback(
     Output("output-container-range-slider-non-linear2", "srcDoc"),
     Input("non-linear-range-slider", "value"),
@@ -582,104 +561,22 @@ def update_output2(value):
     transformed_value = [v for v in value]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
-    hist2 = rank_plot_dates(
+    hist2 = rank_plot_facet(
         data=boardgame_data,
-        col="mechanic",
         year_in=int(val1),
         year_out=int(val2),
-        color_="#17becf",
     )
     return hist2.to_html()
 
 
-# 1st publisher bar chart tab 1
-@app.callback(
-    Output("output-container-range-slider-non-linear3", "srcDoc"),
-    Input("non-linear-range-slider", "value"),
-)
-def update_output3(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist3 = rank_plot_dates(
-        data=boardgame_data,
-        col="publisher",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#e377c2",
-    )
-    return hist3.to_html()
-
-
-# 2nd catergory bar chart tab 1
-
-
-@app.callback(
-    Output("output-container-range-slider-non-linear4", "srcDoc"),
-    Input("non-linear-range-slider2", "value"),
-)
-def update_output4(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist4 = rank_plot_dates(
-        data=boardgame_data,
-        col="category",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#ff7f0e",
-    )
-    return hist4.to_html()
-
-
-# 2nd mechanics bar chart tab 1
-@app.callback(
-    Output("output-container-range-slider-non-linear5", "srcDoc"),
-    Input("non-linear-range-slider2", "value"),
-)
-def update_output5(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist5 = rank_plot_dates(
-        data=boardgame_data,
-        col="mechanic",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#17becf",
-    )
-    return hist5.to_html()
-
-
-# 2nd publishers bar chart tab 1
-@app.callback(
-    Output("output-container-range-slider-non-linear6", "srcDoc"),
-    Input("non-linear-range-slider2", "value"),
-)
-def update_output6(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist6 = rank_plot_dates(
-        data=boardgame_data,
-        col="publisher",
-        year_in=int(val1),
-        year_out=int(val2),
-        color_="#e377c2",
-    )
-    return hist6.to_html()
-
-
 # 1st year range slider output tab 1
-
-
 @app.callback(
     dash.dependencies.Output("output-container-range-slider", "children"),
     dash.dependencies.Input("non-linear-range-slider", "value"),
 )
 def range_slider_select(value):
     transformed_value = [v for v in value]
-    return "{} to {}".format(transformed_value[0], transformed_value[1])
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
 # 2nd year range slider output tab 1
@@ -691,7 +588,7 @@ def range_slider_select(value):
 )
 def range_slider_select2(value):
     transformed_value = [v for v in value]
-    return "{} to {}".format(transformed_value[0], transformed_value[1])
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
 # collapsable data set description
