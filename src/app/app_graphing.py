@@ -54,6 +54,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         .properties(
             title=alt.TitleParams(
                 text="Game Popularity based on Published Year",
+                subtitle="Light grey line shows annual average rating of ALL games",
                 anchor="start",
                 fontSize=20,
                 dy=-20,
@@ -64,15 +65,13 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         )
     )
 
-    # THIS IS TEMPORARILY REMOVED AS IT IS IMPACTING PERFORMANCE
-    # WILL BE FIXED FOR MILESTONE 4
-    # line_plot = (
-    #    alt.Chart(data)
-    #    .mark_line(color="dark grey", size=3)
-    #    .encode(x="year_published:T", y="mean(average_rating)")
-    # )
+    line_plot = (
+        alt.Chart(data[["year_published", "average_rating"]])
+        .mark_line(color="dark grey", size=3)
+        .encode(x="year_published:T", y="mean(average_rating)")
+    )
 
-    scatter_plot = scatter_plot  # + line_plot
+    scatter_plot = scatter_plot + line_plot
     return scatter_plot
 
 

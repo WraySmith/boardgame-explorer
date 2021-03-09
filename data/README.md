@@ -1,6 +1,8 @@
 # Data Folder Descriptions
 
-**Data folder structure is still a work in progress. Data used within the app is located within the `src/app` folder.**
+## app_data
+
+Contains the data used by the app (called using the function in `src\app\app_wrangling.py`).
 
 ## raw
 
@@ -13,6 +15,5 @@ Also the raw data has ids instead of names for several columns (eg mechanic or c
 Data from the `raw` folder that has been processed by `wrangle_data.py`. Data in this folder is directly useable by the app.
 
 ## lookups
-
 
 json files used by `wrangle_data.py` to process raw data, i.e convert columns that contain ids into columns that contain names.

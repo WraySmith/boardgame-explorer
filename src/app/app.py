@@ -299,7 +299,6 @@ fourth_card = dbc.Card(
                             ),
                             html.Br(),
                             html.Br(),
-                            html.Br(),
                         ]
                     )
                 ]
@@ -329,7 +328,6 @@ fifth_card = dbc.Card(
                                 marks=slider_dict,
                             ),
                             html.Br(),
-                            html.Br(),
                             html.Iframe(
                                 id="output-container-range-slider-non-linear2",
                                 style={
@@ -338,7 +336,6 @@ fifth_card = dbc.Card(
                                     "height": "200px",
                                 },
                             ),
-                            html.Br(),
                             html.Br(),
                             html.Br(),
                         ]
@@ -550,7 +547,7 @@ def update_output1(value):
 # 2nd facet chart
 @app.callback(
     Output("output-container-range-slider-non-linear2", "srcDoc"),
-    Input("non-linear-range-slider", "value"),
+    Input("non-linear-range-slider2", "value"),
 )
 def update_output2(value):
     transformed_value = [v for v in value]
@@ -621,7 +618,6 @@ def update_table(c, m, p, n=10):
         "max_players",
         "min_playtime",
         "max_playtime",
-        "playing_time",
         "year_published",
         "category",
         "mechanic",
@@ -639,14 +635,13 @@ def update_table(c, m, p, n=10):
     columns[2]["name"] = "Max Players"
     columns[3]["name"] = "Min Playtime"
     columns[4]["name"] = "Max Playtime"
-    columns[5]["name"] = "Playing time"
-    columns[6]["name"] = "Year published"
-    columns[7]["name"] = "Game category"
-    columns[8]["name"] = "Game mechanic"
-    columns[9]["name"] = "Game designer"
-    columns[10]["name"] = "Game publisher"
-    columns[11]["name"] = "Average game rating"
-    columns[12]["name"] = "User rating"
+    columns[5]["name"] = "Year published"
+    columns[6]["name"] = "Game category"
+    columns[7]["name"] = "Game mechanic"
+    columns[8]["name"] = "Game designer"
+    columns[9]["name"] = "Game publisher"
+    columns[10]["name"] = "Average game rating"
+    columns[11]["name"] = "User rating"
 
     data = table.to_dict("rows")
     return data, columns
