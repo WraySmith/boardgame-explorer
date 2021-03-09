@@ -18,7 +18,7 @@ def call_boardgame_data():
     boardgame_data = pd.read_csv(
         "data/app_data/board_game.csv", parse_dates=["year_published"]
     )
-    # boardgame_data.drop(columns=["description"], inplace=True)
+
     boardgame_data["year_published"] = pd.to_datetime(
         boardgame_data["year_published"], format="%Y"
     )
