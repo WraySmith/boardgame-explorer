@@ -106,7 +106,7 @@ def generate_control_card_tab2():
             html.P("Please select categories:"),
             dcc.Dropdown(
                 id="category-widget",
-                value="Economic",
+                value="",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "category")
@@ -117,7 +117,7 @@ def generate_control_card_tab2():
             html.P("Please select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget",
-                value="Trick-taking",
+                value="",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "mechanic")
@@ -128,7 +128,7 @@ def generate_control_card_tab2():
             html.P("Please select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget",
-                value="3M",
+                value="",
                 options=[
                     {"label": name, "value": name}
                     for name in subset_data(boardgame_data, "publisher")
@@ -162,7 +162,7 @@ def lower_description():
 
 
 # data set description for tab 1
-def data_set_descirption():
+def data_set_description():
     """
     :return: A Div containing descritption of the data set for tab 1.
     """
@@ -220,6 +220,9 @@ second_card = dbc.Card(
                             "width": "100%",
                             "height": "250px",
                         },
+                    ),
+                    html.P(
+                        "Annual average rating for all board games shown by grey line."
                     ),
                     html.Iframe(
                         # stacked histogram
@@ -404,7 +407,7 @@ ninth_card = dbc.Card(
                         color="primary",
                     ),
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(data_set_descirption())),
+                        dbc.Card(dbc.CardBody(data_set_description())),
                         id="collapse",
                     ),
                 ]
@@ -510,6 +513,22 @@ app.layout = html.Div(
 
 
 # Set up callbacks/backend
+
+# radio button selection options to populate drop down
+@app.callback(
+    dash.dependencies.Output("radio-dependent", "options"),
+    [dash.dependencies.Input("radio-selection", "value")],
+)
+def update_options(chosen_selection):
+    col = chosen_selection
+    return [
+        {
+            "label": c,
+            "value": c,
+        }
+        for c in subset_data(boardgame_data, col)
+    ]
+
 
 # scatter plot tab 1
 @app.callback(
@@ -687,22 +706,6 @@ def toggle_collapse(n, is_open):
     return is_open
 
 
-# radio button selection options to populate drop down
-@app.callback(
-    dash.dependencies.Output("radio-dependent", "options"),
-    [dash.dependencies.Input("radio-selection", "value")],
-)
-def update_options(chosen_selection):
-    col = chosen_selection
-    return [
-        {
-            "label": c,
-            "value": c,
-        }
-        for c in subset_data(boardgame_data, col)
-    ]
-
-
 # top n games bar chart tab 2
 @app.callback(
     Output("top_n_games", "srcDoc"),
@@ -734,7 +737,6 @@ def update_table(c, m, p, n=10):
         "year_published",
         "category",
         "mechanic",
-        "artist",
         "designer",
         "publisher",
         "average_rating",
@@ -751,11 +753,10 @@ def update_table(c, m, p, n=10):
     columns[6]["name"] = "Year published"
     columns[7]["name"] = "Game category"
     columns[8]["name"] = "Game mechanic"
-    columns[9]["name"] = "Game artist"
-    columns[10]["name"] = "Game designer"
-    columns[11]["name"] = "Game publisher"
-    columns[12]["name"] = "Average game rating"
-    columns[13]["name"] = "User rating"
+    columns[9]["name"] = "Game designer"
+    columns[10]["name"] = "Game publisher"
+    columns[11]["name"] = "Average game rating"
+    columns[12]["name"] = "User rating"
 
     data = table.to_dict("rows")
     return data, columns

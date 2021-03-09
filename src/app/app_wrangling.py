@@ -196,17 +196,18 @@ def call_boardgame_top(data, col, year_in, year_out):
     boardgame_data = boardgame_data[year_filter]
 
     # split up column into categorical values
-    boardgame_data[col] = boardgame_data[col].str.split(",").explode(col)
+    boardgame_data[col] = boardgame_data[col].str.split(",")
+    board_game_exp = boardgame_data.explode(col)
     # find the average rating for the top 5 categories
-    boardgame_data = (
-        boardgame_data.groupby(col)["average_rating"]
+    board_game_exp = (
+        board_game_exp.groupby(col)["average_rating"]
         .mean()
         .sort_values(ascending=False)[:5]
         .to_frame()
         .reset_index()
     )
 
-    return boardgame_data
+    return board_game_exp
 
 
 def subset_data(data, col="category"):
@@ -220,6 +221,6 @@ def subset_data(data, col="category"):
     """
 
     data_copy = data.copy(deep=True)
-    data_copy[col] = data_copy[col].str.split(",").explode(col)
+    exp_series = data_copy[col].str.split(",").explode()
 
-    return list(data_copy[col].unique())
+    return list(exp_series.unique())
