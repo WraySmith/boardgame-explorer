@@ -26,8 +26,32 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_data = app_wr.call_boardgame_radio(data, col, list_)
         set_color = alt.Color("group:N", title="Group")
 
+    reduced_data = set_data.drop(
+        columns=[
+            "Unnamed: 0",
+            "game_id",
+            "image",
+            "max_players",
+            "max_playtime",
+            "min_age",
+            "min_players",
+            "min_playtime",
+            "playing_time",
+            "thumbnail",
+            "artist",
+            "category",
+            "compilation",
+            "designer",
+            "expansion",
+            "family",
+            "mechanic",
+            "publisher",
+            "users_rated",
+        ]
+    )
+
     scatter_plot = (
-        alt.Chart(set_data[["year_published", "average_rating", "name", "group"]])
+        alt.Chart(reduced_data)
         .mark_circle(size=60, opacity=0.2)
         .encode(
             alt.X(
@@ -95,9 +119,33 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_data = app_wr.call_boardgame_radio(data, col, list_)
         set_color = alt.Color("group:N", title="Group")
 
+    reduced_data = set_data.drop(
+        columns=[
+            "Unnamed: 0",
+            "game_id",
+            "image",
+            "max_players",
+            "max_playtime",
+            "min_age",
+            "min_players",
+            "min_playtime",
+            "playing_time",
+            "thumbnail",
+            "artist",
+            "category",
+            "compilation",
+            "designer",
+            "expansion",
+            "family",
+            "mechanic",
+            "publisher",
+            "users_rated",
+        ]
+    )
+
     alt.data_transformers.disable_max_rows()
     count_plot = (
-        alt.Chart(set_data)
+        alt.Chart(reduced_data)
         .mark_bar()
         .encode(
             alt.X(
