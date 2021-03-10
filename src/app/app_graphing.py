@@ -27,7 +27,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_color = alt.Color("group:N", title="Group")
 
     scatter_plot = (
-        alt.Chart(set_data[["year_published", "average_rating", "name"]])
+        alt.Chart(set_data[["year_published", "average_rating", "name", "group"]])
         .mark_circle(size=60, opacity=0.2)
         .encode(
             alt.X(
