@@ -32,7 +32,6 @@ def call_boardgame_data():
 
 def call_boardgame_filter(data, cat, mech, pub, n):
     """
-    Wraps call_boardgame_data
     Returns filtered data based on list of
     values in 'category', 'mechanic', and
     'publisher' columns.
