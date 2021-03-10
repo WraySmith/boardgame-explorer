@@ -32,7 +32,6 @@ def call_boardgame_data():
 
 def call_boardgame_filter(data, cat, mech, pub, n):
     """
-    Wraps call_boardgame_data
     Returns filtered data based on list of
     values in 'category', 'mechanic', and
     'publisher' columns.
@@ -69,7 +68,6 @@ def call_boardgame_filter(data, cat, mech, pub, n):
 
 def call_boardgame_radio(data, col, list_):
     """
-    Wraps call_boardgame_data
     Returns filtered data based on selecting
     'category','mechanic', or 'publisher' column
     and a list of values.
@@ -85,6 +83,8 @@ def call_boardgame_radio(data, col, list_):
     boardgame_data = boardgame_data[call_bool_series_or(col, list_, boardgame_data)]
 
     boardgame_data = form_group(col, list_, boardgame_data)
+
+    boardgame_data = boardgame_data[boardgame_data["group"] != ""]
 
     return boardgame_data
 
@@ -117,12 +117,12 @@ def form_group(col, list_, boardgame_data):
     returns: pandas dataframe
     """
     # takes column and forms new one with appropriate groups
-    boardgame_data[col] = boardgame_data[col].map(lambda x: x.split(","))
+    boardgame_data[col] = list_to_string(boardgame_data[col]).str.split(r",(?![+ ])")
     boardgame_data["group"] = boardgame_data[col].apply(
         lambda x: list(set(x).intersection(set(list_)))
     )
     boardgame_data["group"] = [
-        ",".join(map(str, item)) for item in boardgame_data["group"]
+        ",(?![+ ])".join(map(str, item)) for item in boardgame_data["group"]
     ]
 
     # replaces cross product groups containing all items with generic group
@@ -150,7 +150,7 @@ def call_bool_series_or(col, list_, boardgame_data):
     returns: bool series
     """
     list_ = list_to_string(list_)
-    list_bool = boardgame_data[col].str.match(list_)
+    list_bool = boardgame_data[col].apply(lambda x: any(item in x for item in list_))
 
     return list_bool
 
@@ -227,3 +227,35 @@ def subset_data(data, col="category"):
     exp_series = data_copy[col].str.split(r",(?![+ ])").explode()
 
     return list(exp_series.unique())
+
+
+def remove_columns(data):
+    """
+    removes columns unnecessary for plotting first two graphs on tab1
+    hard coded on columns to remove
+    """
+
+    reduced_data = data.drop(
+        columns=[
+            "Unnamed: 0",
+            "game_id",
+            "image",
+            "max_players",
+            "max_playtime",
+            "min_age",
+            "min_players",
+            "min_playtime",
+            "playing_time",
+            "thumbnail",
+            "artist",
+            "category",
+            "compilation",
+            "designer",
+            "expansion",
+            "family",
+            "mechanic",
+            "publisher",
+            "users_rated",
+        ]
+    )
+    return reduced_data

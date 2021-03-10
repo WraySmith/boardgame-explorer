@@ -26,8 +26,10 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_data = app_wr.call_boardgame_radio(data, col, list_)
         set_color = alt.Color("group:N", title="Group")
 
+    reduced_data = app_wr.remove_columns(set_data)
+
     scatter_plot = (
-        alt.Chart(set_data)
+        alt.Chart(reduced_data)
         .mark_circle(size=60, opacity=0.2)
         .encode(
             alt.X(
@@ -95,9 +97,11 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_data = app_wr.call_boardgame_radio(data, col, list_)
         set_color = alt.Color("group:N", title="Group")
 
+    reduced_data = app_wr.remove_columns(set_data)
+
     alt.data_transformers.disable_max_rows()
     count_plot = (
-        alt.Chart(set_data)
+        alt.Chart(reduced_data)
         .mark_bar()
         .encode(
             alt.X(
