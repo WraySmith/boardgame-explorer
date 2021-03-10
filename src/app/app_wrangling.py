@@ -227,3 +227,35 @@ def subset_data(data, col="category"):
     exp_series = data_copy[col].str.split(r",(?![+ ])").explode()
 
     return list(exp_series.unique())
+
+
+def remove_columns(data):
+    """
+    removes columns unnecessary for plotting first two graphs on tab1
+    hard coded on columns to remove
+    """
+
+    reduced_data = data.drop(
+        columns=[
+            "Unnamed: 0",
+            "game_id",
+            "image",
+            "max_players",
+            "max_playtime",
+            "min_age",
+            "min_players",
+            "min_playtime",
+            "playing_time",
+            "thumbnail",
+            "artist",
+            "category",
+            "compilation",
+            "designer",
+            "expansion",
+            "family",
+            "mechanic",
+            "publisher",
+            "users_rated",
+        ]
+    )
+    return reduced_data
