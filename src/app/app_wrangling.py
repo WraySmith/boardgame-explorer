@@ -42,40 +42,72 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(data, cat, mech, pub, n):
+def call_boardgame_filter(data, cat, mech, pub, n=None):
     """
-    Returns filtered data based on list of
-    values in 'category', 'mechanic', and
-    'publisher' columns.
+    Returns board games filtered based on list of values in
+    'category', 'mechanic', 'publisher' columns. Provides
+    games in descending order and number of games returned
+    can be limited to n.
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    cat: list
-    mech: list
-    pub: list
-    n: int
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    cat: list, list of categories
+    mech: list, list of mechanics
+    pub: list, list of publishers
+    n: int, optional (default=None)
+        number of games to be returned
 
-    return: pandas dataframe
+    Returns
+    -------
+    pandas.DataFrame
     """
-    boardgame_data = data.copy(deep=True)
-    # create dictionary based on inputted lists.
+    boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # create dictionary based on user input lists
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
     # creates a list of bool series for each column
-    column_bool = [
-        call_bool_series_and(key, columns[key], boardgame_data) for key in columns
+    columns_bool = [
+        call_bool_series_and(boardgame_data, key, columns[key]) for key in columns
     ]
-    # checks if no input was provided and returns entirety of data
-    if (column_bool[0] | column_bool[1] | column_bool[2]).sum() != 0:
-        boardgame_data = boardgame_data[
-            (column_bool[0] & column_bool[1] & column_bool[2])
-        ]
 
-    # sorts by average rating and returns top "n" games
-    if n is not None:
-        boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)[
-            :n
-        ]
+    # remove rows that aren't matched
+    boardgame_data = boardgame_data[
+        (columns_bool[0] & columns_bool[1] & columns_bool[2])
+    ]
+
+    # sorts by average rating and returns top "n" games if applicable
+    boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)
+    if n:
+        boardgame_data = boardgame_data[:n]
 
     return boardgame_data
+
+
+def call_bool_series_and(data, col, list_):
+    """
+    Takes filter entries and creates bool series to filter dataframe on.
+    Logic is based on matching all entries.
+    However, if no values in the column are True, then all values changed to True.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column name to apply function to
+    list_: list, list of values to check for
+
+    Returns
+    -------
+    list of class bool
+    """
+    list_bool = data[col].apply(lambda x: all(item in x for item in list_))
+
+    # if no True values in entire list, switch all values to True
+    if list_bool.sum() == 0:
+        list_bool = ~list_bool
+
+    return list_bool
 
 
 def call_boardgame_radio(data, col, list_):
@@ -163,24 +195,6 @@ def call_bool_series_or(col, list_, boardgame_data):
     """
     list_ = list_to_string(list_)
     list_bool = boardgame_data[col].apply(lambda x: any(item in x for item in list_))
-
-    return list_bool
-
-
-def call_bool_series_and(col, list_, boardgame_data):
-    """
-    Takes filters entries and creates bool series to filter
-
-    col: string
-    list_: list
-    boardgame_data: pandas dataframe
-
-    returns: bool series
-    """
-    list_bool = boardgame_data[col].apply(lambda x: all(item in x for item in list_))
-
-    if list_bool.sum() == 0:
-        list_bool = ~list_bool
 
     return list_bool
 
