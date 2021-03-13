@@ -110,6 +110,27 @@ def call_bool_series_and(data, col, list_):
     return list_bool
 
 
+def call_bool_series_or(data, col, list_:
+    """
+    Takes filter entries and creates bool series to filter dataframe on.
+    Logic is based on matching one of entries.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column name to apply function to
+    list_: list, list of values to check for
+
+    Returns
+    -------
+    list of class bool
+    """
+    list_bool = boardgame_data[col].apply(lambda x: any(item in x for item in list_))
+
+    return list_bool
+
+
 def call_boardgame_radio(data, col, list_):
     """
     Returns filtered data based on selecting
@@ -131,22 +152,6 @@ def call_boardgame_radio(data, col, list_):
     boardgame_data = boardgame_data[boardgame_data["group"] != ""]
 
     return boardgame_data
-
-
-def list_to_string(list_):
-    """
-    This takes in a list and changes its format to a
-    string that can be read by .match() function
-
-    list_: list
-
-    returns: string
-    """
-    if type(list_) is list:
-        list_ = str(list_).strip("[']").replace(", ", "").replace("''", "|")
-        return list_
-    else:
-        return list_
 
 
 def form_group(col, list_, boardgame_data):
@@ -183,20 +188,7 @@ def form_group(col, list_, boardgame_data):
     return boardgame_data
 
 
-def call_bool_series_or(col, list_, boardgame_data):
-    """
-    Takes filters entries and creates bool series to filter
 
-    col: string
-    list_: list
-    boardgame_data: pandas dataframe
-
-    returns: bool series
-    """
-    list_ = list_to_string(list_)
-    list_bool = boardgame_data[col].apply(lambda x: any(item in x for item in list_))
-
-    return list_bool
 
 
 def call_boardgame_top(data, col, year_in, year_out):
