@@ -229,49 +229,42 @@ def call_boardgame_top(data, col, year_in, year_out):
     return board_game_exp
 
 
-def subset_data(data, col="category"):
+def subset_data(data, col):
     """
-    Creates list of categories for column
+    Creates list of categories for column used to populate
+    dropdown menus
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column generate list for
 
-    return: list
+    Returns
+    -------
+    list of strings
     """
-
-    data_copy = data.copy(deep=True)
-    exp_series = data_copy[col].str.split(r",(?![+ ])").explode()
-
+    boardgame_data = data.copy(deep=True)
+    exp_series = boardgame_data[col].explode()
     return list(exp_series.unique())
 
 
 def remove_columns(data):
     """
     removes columns unnecessary for plotting first two graphs on tab1
-    hard coded on columns to remove
-    """
 
-    reduced_data = data.drop(
-        columns=[
-            "Unnamed: 0",
-            "game_id",
-            "image",
-            "max_players",
-            "max_playtime",
-            "min_age",
-            "min_players",
-            "min_playtime",
-            "playing_time",
-            "thumbnail",
-            "artist",
-            "category",
-            "compilation",
-            "designer",
-            "expansion",
-            "family",
-            "mechanic",
-            "publisher",
-            "users_rated",
-        ]
-    )
-    return reduced_data
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    boardgame_data = data.copy(deep=True)
+    keep = ["name", "year_published", "average_rating"]
+    if "group" in boardgame_data.columns:
+        keep.append("group")
+
+    return boardgame_data[keep]
