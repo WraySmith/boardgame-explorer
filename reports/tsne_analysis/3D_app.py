@@ -10,9 +10,13 @@ tsne_df = pd.read_csv("nodes.csv")
 data = []
 for idx, val in tsne_df.groupby(tsne_df.highlight):
     if idx == "none":
-        marker_style = dict(size=2.5, symbol="circle", opacity=0.1, color="grey")
+        marker_style = dict(
+            size=val["average_rating"] * 1.5, symbol="circle", opacity=0.1, color="grey"
+        )
     else:
-        marker_style = dict(size=2.5, symbol="circle", opacity=0.4)
+        marker_style = dict(
+            size=val["average_rating"] * 1.5, symbol="circle", opacity=0.4
+        )
 
     scatter = go.Scatter3d(
         name=idx,
@@ -32,21 +36,10 @@ app = dash.Dash(__name__)
 
 app.layout = html.Div(
     [
-        # In-browser storage of global variables
-        # Main app
-        html.Div(
-            [
-                html.Div(
-                    [
-                        # The graph
-                        dcc.Graph(
-                            id="tsne-3d-plot",
-                            figure={"data": data, "layout": tsne_layout},
-                            style={"height": "80vh"},
-                        )
-                    ],
-                ),
-            ],
+        dcc.Graph(
+            id="tsne-3d-plot",
+            figure={"data": data, "layout": tsne_layout},
+            style={"height": "80vh"},
         ),
     ],
 )
