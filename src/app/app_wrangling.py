@@ -1,5 +1,5 @@
 """
-takes data from board_games.csv and changes it to a usable format
+takes data from board_games.csv and changes it to a usable format for the app
 """
 
 import pandas as pd
@@ -7,16 +7,22 @@ import pandas as pd
 
 def call_boardgame_data():
     """
-    Returns data from board_game.csv
+    Returns data from board_game.csv formatted for use in functions
+    results in listed values for 'category', 'mechanic, 'publisher'
 
-    return: pandas dataframe
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    pandas.DataFrame
     """
 
-    # reads csv
     # note that the path is relative to the root folder due to deployment
     # files located in root
     boardgame_data = pd.read_csv(
-        "data/app_data/board_game.csv", parse_dates=["year_published"]
+        "data/app_data/board_game.csv", parse_dates=["year_published"], index_col=0
     )
 
     boardgame_data["year_published"] = pd.to_datetime(
@@ -26,6 +32,12 @@ def call_boardgame_data():
     # convert NA values for these features to a value
     values = {"category": "Unknown", "mechanic": "Unknown", "publisher": "Unknown"}
     boardgame_data.fillna(value=values, inplace=True)
+
+    # create lists from strings
+    cats_split = ["category", "mechanic", "publisher"]
+    boardgame_data[cats_split] = (
+        boardgame_data[cats_split].stack().str.split(r",(?![+ ])").unstack()
+    )
 
     return boardgame_data
 
