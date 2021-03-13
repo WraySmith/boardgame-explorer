@@ -158,6 +158,17 @@ def call_boardgame_radio(data, col, list_):
     return boardgame_data
 
 
+def helper_form_group(x, user_list):
+    """
+    Helper function to check if all values in user list are met.
+    Return "All Selected' if all met.
+    """
+    if all(item in x for item in user_list):
+        return ["All Selected"]
+    else:
+        return x
+
+
 def form_group(data, col, list_):
     """
     This takes the selected filter and populates a group column
@@ -177,13 +188,45 @@ def form_group(data, col, list_):
     # takes column and forms new one with appropriate groups based on matching
     data["group"] = data[col].apply(lambda x: list(set(x).intersection(set(list_))))
 
-    # replaces groups containing all items with generic group
+    # replaces groups containing all items with 'All Selected'
     if len(list_) > 1:
-        data.loc[
-            data["group"].apply(lambda x: all(item in x for item in list_)), "group"
-        ] = ["All Selected"]
+        data["group"] = data["group"].apply(lambda x: helper_form_group(x, list_))
 
     return data
+
+
+def count_group(data):
+    """
+    Provides group counts after `call_boardgame_radio()` is used.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_radio()
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    df_out = data.copy(deep=True)
+    # explode dataframe, group, and count to new df
+    df_out = df_out.explode("group")
+    df_out = pd.DataFrame(df_out.groupby(["year_published", "group"]).game_id.count())
+    # rearrange df
+    df_out = df_out.unstack().droplevel(0, axis=1)
+
+    # if 'All Selected' exists add counts to other categories
+    if "All Selected" in df_out.columns:
+        # create series from 'All Selected'
+        all_addition = df_out["All Selected"].fillna(0)
+        # add counts from 'All Selected to each group'
+        revised_columns = df_out.drop(columns=["All Selected"]).apply(
+            lambda x: x + all_addition.values
+        )
+        # create revised df
+        df_out = pd.concat([revised_columns, df_out[["All Selected"]]], axis=1)
+
+    return df_out
 
 
 def call_boardgame_top(data, col, year_in, year_out):
