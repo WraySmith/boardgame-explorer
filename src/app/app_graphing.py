@@ -23,7 +23,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("grey")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_)
+        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
         set_color = alt.Color("group:N", title="Group")
 
     reduced_data = app_wr.remove_columns(set_data)
@@ -94,7 +94,7 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("#2ca02c")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_)
+        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
         set_color = alt.Color("group:N", title="Group")
 
     reduced_data = app_wr.remove_columns(set_data)
