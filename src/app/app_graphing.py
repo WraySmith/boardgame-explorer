@@ -4,6 +4,7 @@ contains graph calls for dashboard
 
 import altair as alt
 import app_wrangling as app_wr
+import plotly.graph_objs as go
 
 
 def scatter_plot_dates(data, col="category", list_=[None]):
@@ -269,3 +270,46 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     )
 
     return top_plot + top_text
+
+
+def graph_3D(data, col="category", list_=[None]):
+    """
+    3D t-sne graph data output
+
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
+    col: string
+    dict_: dictionary
+
+    return: list of go.Scatter3d
+    """
+    if (list_ == [None]) or (not list_):
+        set_data = data.copy(deep=True)
+        set_data["group"] = "none"
+    else:
+        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
+
+    data_out = []
+    for idx, val in set_data.groupby(set_data.group):
+        if idx == "none":
+            marker_style = dict(
+                size=val["average_rating"] * 1.5,
+                symbol="circle",
+                opacity=0.1,
+                color="grey",
+            )
+        else:
+            marker_style = dict(
+                size=val["average_rating"] * 1.5, symbol="circle", opacity=0.4
+            )
+
+        scatter = go.Scatter3d(
+            name=idx,
+            x=val["x"],
+            y=val["y"],
+            z=val["z"],
+            mode="markers",
+            marker=marker_style,
+        )
+        data_out.append(scatter)
+
+    return data_out
