@@ -14,22 +14,8 @@ import app_wrangling as app_wr
 boardgame_data = app_wr.call_boardgame_data()
 
 # dictionary for tab 1 sliders
-slider_dict = {
-    1950: "1950",
-    1955: "1955",
-    1960: "1960",
-    1965: "1965",
-    1970: "1970",
-    1975: "1975",
-    1980: "1980",
-    1985: "1985",
-    1990: "1990",
-    1995: "1995",
-    2000: "2000",
-    2005: "2005",
-    2010: "2010",
-    2015: "2015",
-}
+max_year = boardgame_data["year_published"].max().year
+slider_dict = {x: str(x) for x in range(1950, (max_year + 1), 5)}
 
 # dictionary for dropdowns
 col_key_list = ["category", "mechanic", "publisher"]
@@ -621,7 +607,6 @@ def update_table(c, m, p, n=10):
         "year_published",
         "category",
         "mechanic",
-        "designer",
         "publisher",
         "average_rating",
         "users_rated",
@@ -635,13 +620,12 @@ def update_table(c, m, p, n=10):
     columns[2]["name"] = "Max Players"
     columns[3]["name"] = "Min Playtime"
     columns[4]["name"] = "Max Playtime"
-    columns[5]["name"] = "Year published"
-    columns[6]["name"] = "Game category"
-    columns[7]["name"] = "Game mechanic"
-    columns[8]["name"] = "Game designer"
-    columns[9]["name"] = "Game publisher"
-    columns[10]["name"] = "Average game rating"
-    columns[11]["name"] = "User rating"
+    columns[5]["name"] = "Year Published"
+    columns[6]["name"] = "Game Category"
+    columns[7]["name"] = "Game Mechanic"
+    columns[8]["name"] = "Game Publisher"
+    columns[9]["name"] = "Average Game Rating"
+    columns[10]["name"] = "User Rating"
 
     data = table.to_dict("rows")
     return data, columns
