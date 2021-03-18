@@ -67,6 +67,8 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         )
     )
 
+    # THIS NEEDS TO BE DONE OUTSIDE OF ALTAIR
+    # OR IDEALLY USE EXPIREMENTAL ALTAIR TRANSFORMER
     line_plot = (
         alt.Chart(data[["year_published", "average_rating"]])
         .mark_line(color="dark grey", size=3)
@@ -154,8 +156,10 @@ def rank_plot_dates(
 
     return: altair plot
     """
+    plot_data = app_wr.call_boardgame_top(data, col, year_in, year_out)
+
     rank_plot = (
-        alt.Chart(app_wr.call_boardgame_top(data, col, year_in, year_out))
+        alt.Chart(plot_data)
         .mark_bar(color=color_)
         .encode(
             alt.X(
@@ -225,9 +229,11 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
 
     return: altair plot
     """
+    plot_data = app_wr.call_boardgame_filter(data, cat, mech, pub, n)
+
     alt.data_transformers.disable_max_rows()
     top_plot = (
-        alt.Chart(app_wr.call_boardgame_filter(data, cat, mech, pub, n))
+        alt.Chart(plot_data)
         .mark_bar()
         .encode(
             alt.X("name:N", sort="-y", axis=alt.Axis(title=None, labels=False)),
