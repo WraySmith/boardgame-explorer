@@ -23,6 +23,13 @@ col_key_list = ["category", "mechanic", "publisher"]
 col_value_list = [app_wr.subset_data(boardgame_data, v) for v in col_key_list]
 col_dict = dict(zip(col_key_list, col_value_list))
 
+# radio dict
+radio_options = [
+    {"label": " Categories", "value": "category"},
+    {"label": " Mechanics", "value": "mechanic"},
+    {"label": " Publishers", "value": "publisher"},
+]
+
 
 #  set up app stylesheet and server
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -69,11 +76,7 @@ def generate_control_card_tab1():
             html.Br(),
             dcc.RadioItems(
                 id="radio-selection-tab1",
-                options=[
-                    {"label": " Categories", "value": "category"},
-                    {"label": " Mechanics", "value": "mechanic"},
-                    {"label": " Publishers", "value": "publisher"},
-                ],
+                options=radio_options,
                 value="mechanic",
                 labelStyle={"display": "block"},
             ),
@@ -148,11 +151,7 @@ def generate_control_card_tab3():
             html.Br(),
             dcc.RadioItems(
                 id="radio-selection-tab3",
-                options=[
-                    {"label": " Categories", "value": "category"},
-                    {"label": " Mechanics", "value": "mechanic"},
-                    {"label": " Publishers", "value": "publisher"},
-                ],
+                options=radio_options,
                 value="mechanic",
                 labelStyle={"display": "block"},
             ),
