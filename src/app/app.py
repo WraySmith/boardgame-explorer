@@ -434,9 +434,7 @@ tenth_card_tab3 = dbc.Card(
             html.Div(
                 id="left-column-tab3",
                 className="four columns",  # not sure this is needed
-                children=[
-                    generate_control_card_tab3(),
-                ],
+                children=[generate_control_card_tab3()],
             )
         ]
     )
@@ -589,7 +587,7 @@ app.layout = html.Div(
     dash.dependencies.Output("radio-dependent-tab1", "options"),
     [dash.dependencies.Input("radio-selection-tab1", "value")],
 )
-def update_options(chosen_selection):
+def update_options_tab1(chosen_selection):
     col = chosen_selection
     return [{"label": c, "value": c} for c in col_dict[col]]
 
@@ -599,7 +597,7 @@ def update_options(chosen_selection):
     dash.dependencies.Output("radio-dependent-tab3", "options"),
     [dash.dependencies.Input("radio-selection-tab3", "value")],
 )
-def update_options(chosen_selection):
+def update_options_tab2(chosen_selection):
     col = chosen_selection
     return [{"label": c, "value": c} for c in col_dict[col]]
 
@@ -627,10 +625,7 @@ def call_counts(col, list_):
 
 
 # 1st facet chart
-@app.callback(
-    Output("top-barcharts", "srcDoc"),
-    Input("top-range-slider", "value"),
-)
+@app.callback(Output("top-barcharts", "srcDoc"), Input("top-range-slider", "value"))
 def update_output1(value):
     transformed_value = [v for v in value]
     val1 = transformed_value[0]
@@ -643,8 +638,7 @@ def update_output1(value):
 
 # 2nd facet chart
 @app.callback(
-    Output("bottom-barcharts", "srcDoc"),
-    Input("bottom-range-slider", "value"),
+    Output("bottom-barcharts", "srcDoc"), Input("bottom-range-slider", "value")
 )
 def update_output2(value):
     transformed_value = [v for v in value]
