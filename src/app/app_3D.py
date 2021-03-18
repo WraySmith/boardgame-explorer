@@ -1,11 +1,17 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
+import dash_bootstrap_components as dbc
+from dash.dependencies import Input, Output, State
+import dash_table
 import plotly.graph_objs as go
 
-# Read in global data
-tsne_df = pd.read_csv("nodes.csv")
+# import functions from .py files
+import app_graphing as app_gr
+import app_wrangling as app_wr
+
+# load board game data
+boardgame_data = app_wr.call_boardgame_data()
 
 data = []
 for idx, val in tsne_df.groupby(tsne_df.highlight):
