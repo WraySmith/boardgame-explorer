@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import dash_table
-import plotly.graph_objs as go
+import numpy as np
 
 # import functions from .py files
 import app_graphing as app_gr
@@ -443,7 +443,18 @@ tenth_card_tab3 = dbc.Card(
                 id="left-column-tab3",
                 className="four columns",  # not sure this is needed
                 children=[generate_control_card_tab3()],
-            )
+            ),
+            html.Br(),
+            html.H6("Name and Rating"),
+            html.Div(id="tsne-data-out-name"),
+            html.Div(id="tsne-data-out-score"),
+            html.Div(id="tsne-data-out-ratings"),
+            html.H6("Categories"),
+            html.Div(id="tsne-data-out-categories"),
+            html.H6("Mechanics"),
+            html.Div(id="tsne-data-out-mechanics"),
+            html.H6("Publishers"),
+            html.Div(id="tsne-data-out-publishers"),
         ]
     )
 )
@@ -464,7 +475,6 @@ eleventh_card_tab3 = dbc.Card(
                     dcc.Graph(id="tsne-3d-plot", style={"height": "80vh"}),
                 ]
             ),
-            html.Br(),
         ]
     )
 )
@@ -771,6 +781,37 @@ def update_games_tab3(col, list_):
 def call_tsne(col, list_, game):
     fig = app_gr.graph_3D(boardgame_data, col, list_, game)
     return fig
+
+
+# table from tsne graph click
+@app.callback(
+    Output("tsne-data-out-name", "children"),
+    Output("tsne-data-out-score", "children"),
+    Output("tsne-data-out-ratings", "children"),
+    Output("tsne-data-out-categories", "children"),
+    Output("tsne-data-out-mechanics", "children"),
+    Output("tsne-data-out-publishers", "children"),
+    Input("tsne-3d-plot", "clickData"),
+)
+def display_click_message(clickData):
+    if clickData:
+        click_point_np = np.array(
+            [clickData["points"][0][i] for i in ["x", "y", "z"]]
+        ).astype(np.float64)
+        # Create a mask of the point clicked, truth value exists at only one row
+        bool_mask_click = boardgame_data.loc[:, "x":"z"].eq(click_point_np).all(axis=1)
+        # retreive data
+        if bool_mask_click.any():
+            data_out = boardgame_data[bool_mask_click]
+            click_name = data_out.name.values[0]
+            click_sc = "Avg Rating: " + str(round(data_out.average_rating.values[0], 2))
+            click_rat = "No. of Ratings: " + str(data_out.users_rated.values[0])
+            click_cat = ", ".join(data_out.category.values[0])
+            click_mec = ", ".join(data_out.mechanic.values[0])
+            click_pub = ", ".join(data_out.publisher.values[0])
+
+        return click_name, click_sc, click_rat, click_cat, click_mec, click_pub
+    return None, None, None, None, None, None
 
 
 # run
