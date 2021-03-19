@@ -285,11 +285,7 @@ def graph_3D(data, col="category", list_=[None], game=None):
     """
     # layout for the 3D plot
     axes = dict(
-        title="",
-        showgrid=True,
-        zeroline=False,
-        showticklabels=False,
-        showspikes=False,
+        title="", showgrid=True, zeroline=False, showticklabels=False, showspikes=False
     )
     layout_out = go.Layout(
         margin=dict(l=0, r=0, b=0, t=0),

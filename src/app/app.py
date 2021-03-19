@@ -756,10 +756,7 @@ def update_options_tab3(chosen_selection):
 # radio button selection options to populate game dropdown for tab3
 @app.callback(
     Output("games-dependent-tab3", "options"),
-    [
-        Input("radio-selection-tab3", "value"),
-        Input("radio-dependent-tab3", "value"),
-    ],
+    [Input("radio-selection-tab3", "value"), Input("radio-dependent-tab3", "value")],
 )
 def update_games_tab3(col, list_):
     if col == "category":
