@@ -14,7 +14,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
-    dict_: dictionary
+    list_: list
 
     returns: altair plot
     """
@@ -272,13 +272,14 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     return top_plot + top_text
 
 
-def graph_3D(data, col="category", list_=[None]):
+def graph_3D(data, col="category", list_=[None], game=None):
     """
     3D t-sne graph data output
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
-    dict_: dictionary
+    list_: list
+    game: string (default None)
 
     return: list of go.Scatter3d
     """
@@ -307,6 +308,25 @@ def graph_3D(data, col="category", list_=[None]):
             x=val["x"],
             y=val["y"],
             z=val["z"],
+            mode="markers",
+            marker=marker_style,
+        )
+        data_out.append(scatter)
+
+    if game:
+        game_data = data[data["name"] == game]
+        marker_style = dict(
+            size=game_data["average_rating"] * 1.5,
+            symbol="circle",
+            opacity=0.7,
+            color="violet",
+        )
+
+        scatter = go.Scatter3d(
+            name=game,
+            x=game_data["x"],
+            y=game_data["y"],
+            z=game_data["z"],
             mode="markers",
             marker=marker_style,
         )

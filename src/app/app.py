@@ -161,6 +161,12 @@ def generate_control_card_tab3():
             dcc.Dropdown(
                 id="radio-dependent-tab3", options=[], multi=True, value=[None]
             ),
+            html.Br(),
+            html.Label("Select game to highlight:"),
+            html.Br(),
+            dcc.Dropdown(
+                id="games-dependent-tab3", options=[], multi=False, value=None
+            ),
         ],
     )
 
@@ -581,22 +587,12 @@ app.layout = html.Div(
 
 # Set up callbacks/backend
 
-# radio button selection options to populate drop downs for tab1
+# radio button selection options to populate dropdowns for tab1
 @app.callback(
     dash.dependencies.Output("radio-dependent-tab1", "options"),
     [dash.dependencies.Input("radio-selection-tab1", "value")],
 )
 def update_options_tab1(chosen_selection):
-    col = chosen_selection
-    return [{"label": c, "value": c} for c in col_dict[col]]
-
-
-# radio button selection options to populate drop downs for tab3
-@app.callback(
-    dash.dependencies.Output("radio-dependent-tab3", "options"),
-    [dash.dependencies.Input("radio-selection-tab3", "value")],
-)
-def update_options_tab2(chosen_selection):
     col = chosen_selection
     return [{"label": c, "value": c} for c in col_dict[col]]
 
@@ -735,14 +731,43 @@ def update_table(c, m, p, n=10):
     return data, columns
 
 
+# radio button selection options to populate dropdowns for tab3
+@app.callback(
+    dash.dependencies.Output("radio-dependent-tab3", "options"),
+    [dash.dependencies.Input("radio-selection-tab3", "value")],
+)
+def update_options_tab3(chosen_selection):
+    col = chosen_selection
+    return [{"label": c, "value": c} for c in col_dict[col]]
+
+
+# radio button selection options to populate game dropdown for tab3
+@app.callback(
+    dash.dependencies.Output("games-dependent-tab3", "options"),
+    [
+        dash.dependencies.Input("radio-selection-tab3", "value"),
+        dash.dependencies.Input("radio-dependent-tab3", "value"),
+    ],
+)
+def update_games_tab3(col, list_):
+    if col == "category":
+        games = app_wr.call_boardgame_filter(boardgame_data, cat=list_)
+    elif col == "mechanic":
+        games = app_wr.call_boardgame_filter(boardgame_data, mech=list_)
+    else:
+        games = app_wr.call_boardgame_filter(boardgame_data, pub=list_)
+    return games["name"].map(lambda x: {"label": x, "value": x})
+
+
 # tsne graph tab 3
 @app.callback(
     Output("tsne-3d-plot", "figure"),
     Input("radio-selection-tab3", "value"),
     Input("radio-dependent-tab3", "value"),
+    Input("games-dependent-tab3", "value"),
 )
-def call_tsne(col, list_):
-    data = app_gr.graph_3D(boardgame_data, col, list_)
+def call_tsne(col, list_, game):
+    data = app_gr.graph_3D(boardgame_data, col, list_, game)
     fig = {"data": data, "layout": tsne_layout}
     return fig
 
