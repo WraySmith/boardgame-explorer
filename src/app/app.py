@@ -783,7 +783,7 @@ def call_tsne(col, list_, game):
     return fig
 
 
-# table from tsne graph click
+# text output from tsne graph click
 @app.callback(
     Output("tsne-data-out-name", "children"),
     Output("tsne-data-out-score", "children"),
@@ -798,7 +798,7 @@ def display_click_message(clickData):
         click_point_np = np.array(
             [clickData["points"][0][i] for i in ["x", "y", "z"]]
         ).astype(np.float64)
-        # Create a mask of the point clicked, truth value exists at only one row
+        # Create a mask of the point clicked
         bool_mask_click = boardgame_data.loc[:, "x":"z"].eq(click_point_np).all(axis=1)
         # retreive data
         if bool_mask_click.any():
