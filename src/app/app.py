@@ -152,14 +152,17 @@ def generate_control_card_tab3():
             dcc.RadioItems(
                 id="radio-selection-tab3",
                 options=radio_options,
-                value="mechanic",
+                value="category",
                 labelStyle={"display": "block"},
             ),
             html.Br(),
             html.Label("Select elements to view:"),
             html.Br(),
             dcc.Dropdown(
-                id="radio-dependent-tab3", options=[], multi=True, value=[None]
+                id="radio-dependent-tab3",
+                options=[],
+                multi=True,
+                value=["Negotiation", "Farming"],
             ),
             html.Br(),
             html.Label("Select game to highlight:"),
@@ -743,10 +746,10 @@ def update_options_tab3(chosen_selection):
 
 # radio button selection options to populate game dropdown for tab3
 @app.callback(
-    dash.dependencies.Output("games-dependent-tab3", "options"),
+    Output("games-dependent-tab3", "options"),
     [
-        dash.dependencies.Input("radio-selection-tab3", "value"),
-        dash.dependencies.Input("radio-dependent-tab3", "value"),
+        Input("radio-selection-tab3", "value"),
+        Input("radio-dependent-tab3", "value"),
     ],
 )
 def update_games_tab3(col, list_):

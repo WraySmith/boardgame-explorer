@@ -293,14 +293,14 @@ def graph_3D(data, col="category", list_=[None], game=None):
     for idx, val in set_data.groupby(set_data.group):
         if idx == "none":
             marker_style = dict(
-                size=val["average_rating"] * 1.5,
+                size=val["average_rating"] * 1.6,
                 symbol="circle",
                 opacity=0.1,
                 color="grey",
             )
         else:
             marker_style = dict(
-                size=val["average_rating"] * 1.5, symbol="circle", opacity=0.4
+                size=val["average_rating"] * 1.6, symbol="circle", opacity=0.4
             )
 
         scatter = go.Scatter3d(
@@ -316,9 +316,9 @@ def graph_3D(data, col="category", list_=[None], game=None):
     if game:
         game_data = data[data["name"] == game]
         marker_style = dict(
-            size=game_data["average_rating"] * 1.5,
+            size=game_data["average_rating"] * 1.6,
             symbol="circle",
-            opacity=0.7,
+            opacity=1.0,
             color="violet",
         )
 
