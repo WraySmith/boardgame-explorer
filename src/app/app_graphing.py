@@ -281,8 +281,17 @@ def graph_3D(data, col="category", list_=[None], game=None):
     list_: list
     game: string (default None)
 
-    return: list of go.Scatter3d
+    return: fig_out, 3D plotly figure
     """
+    # layout for the 3D plot
+    axes = dict(title="", showgrid=True, zeroline=False, showticklabels=False)
+    layout_out = go.Layout(
+        margin=dict(l=0, r=0, b=0, t=0),
+        scene=dict(xaxis=axes, yaxis=axes, zaxis=axes),
+        legend=dict(yanchor="top", y=0.93, xanchor="right", x=0.99),
+    )
+
+    # plotting data
     if (list_ == [None]) or (not list_):
         set_data = data.copy(deep=True)
         set_data["group"] = "none"
@@ -298,10 +307,13 @@ def graph_3D(data, col="category", list_=[None], game=None):
                 opacity=0.1,
                 color="grey",
             )
+            legend_show = False
+
         else:
             marker_style = dict(
                 size=val["average_rating"] * 1.6, symbol="circle", opacity=0.4
             )
+            legend_show = True
 
         scatter = go.Scatter3d(
             name=idx,
@@ -312,6 +324,7 @@ def graph_3D(data, col="category", list_=[None], game=None):
             marker=marker_style,
             text=val["name"],
             hoverinfo="text+name",
+            showlegend=legend_show,
         )
         data_out.append(scatter)
 
@@ -336,4 +349,6 @@ def graph_3D(data, col="category", list_=[None], game=None):
         )
         data_out.append(scatter)
 
-    return data_out
+    fig_out = {"data": data_out, "layout": layout_out}
+
+    return fig_out

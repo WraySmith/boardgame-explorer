@@ -450,7 +450,6 @@ tenth_card_tab3 = dbc.Card(
 
 
 # card 11 containing the tsne plot on tab 3,
-tsne_layout = go.Layout(margin=dict(l=0, r=0, b=0, t=0), title=dict(text="test"))
 eleventh_card_tab3 = dbc.Card(
     dbc.CardBody(
         [
@@ -770,8 +769,7 @@ def update_games_tab3(col, list_):
     Input("games-dependent-tab3", "value"),
 )
 def call_tsne(col, list_, game):
-    data = app_gr.graph_3D(boardgame_data, col, list_, game)
-    fig = {"data": data, "layout": tsne_layout}
+    fig = app_gr.graph_3D(boardgame_data, col, list_, game)
     return fig
 
 
