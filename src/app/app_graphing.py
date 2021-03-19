@@ -310,6 +310,8 @@ def graph_3D(data, col="category", list_=[None], game=None):
             z=val["z"],
             mode="markers",
             marker=marker_style,
+            text=val["name"],
+            hoverinfo="text+name",
         )
         data_out.append(scatter)
 
@@ -329,6 +331,8 @@ def graph_3D(data, col="category", list_=[None], game=None):
             z=game_data["z"],
             mode="markers",
             marker=marker_style,
+            text=game_data["name"],
+            hoverinfo="text",
         )
         data_out.append(scatter)
 
