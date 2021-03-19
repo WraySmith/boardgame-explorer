@@ -14,7 +14,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
-    dict_: dictionary
+    list_: list
 
     returns: altair plot
     """
@@ -272,16 +272,28 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     return top_plot + top_text
 
 
-def graph_3D(data, col="category", list_=[None]):
+def graph_3D(data, col="category", list_=[None], game=None):
     """
     3D t-sne graph data output
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
-    dict_: dictionary
+    list_: list
+    game: string (default None)
 
-    return: list of go.Scatter3d
+    return: fig_out, 3D plotly figure
     """
+    # layout for the 3D plot
+    axes = dict(
+        title="", showgrid=True, zeroline=False, showticklabels=False, showspikes=False
+    )
+    layout_out = go.Layout(
+        margin=dict(l=0, r=0, b=0, t=0),
+        scene=dict(xaxis=axes, yaxis=axes, zaxis=axes),
+        legend=dict(yanchor="top", y=0.93, xanchor="right", x=0.99),
+    )
+
+    # plotting data
     if (list_ == [None]) or (not list_):
         set_data = data.copy(deep=True)
         set_data["group"] = "none"
@@ -292,15 +304,18 @@ def graph_3D(data, col="category", list_=[None]):
     for idx, val in set_data.groupby(set_data.group):
         if idx == "none":
             marker_style = dict(
-                size=val["average_rating"] * 1.5,
+                size=val["average_rating"] * 1.6,
                 symbol="circle",
                 opacity=0.1,
                 color="grey",
             )
+            legend_show = False
+
         else:
             marker_style = dict(
-                size=val["average_rating"] * 1.5, symbol="circle", opacity=0.4
+                size=val["average_rating"] * 1.6, symbol="circle", opacity=0.4
             )
+            legend_show = True
 
         scatter = go.Scatter3d(
             name=idx,
@@ -309,7 +324,33 @@ def graph_3D(data, col="category", list_=[None]):
             z=val["z"],
             mode="markers",
             marker=marker_style,
+            text=val["name"],
+            hoverinfo="text+name",
+            showlegend=legend_show,
         )
         data_out.append(scatter)
 
-    return data_out
+    if game:
+        game_data = data[data["name"] == game]
+        marker_style = dict(
+            size=game_data["average_rating"] * 1.6,
+            symbol="circle",
+            opacity=1.0,
+            color="violet",
+        )
+
+        scatter = go.Scatter3d(
+            name=game,
+            x=game_data["x"],
+            y=game_data["y"],
+            z=game_data["z"],
+            mode="markers",
+            marker=marker_style,
+            text=game_data["name"],
+            hoverinfo="text",
+        )
+        data_out.append(scatter)
+
+    fig_out = {"data": data_out, "layout": layout_out}
+
+    return fig_out
