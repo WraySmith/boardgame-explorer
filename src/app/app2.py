@@ -36,14 +36,14 @@ def title():
     """
     :return: A Div containing dashboard title.
     """
-    return html.Div(children=[html.H1("Board Game Trends Dashboard", style={'font-weight':'normal'})])
+    return html.Div(children=[html.H1("Board Game Data Explorer", style={'font-weight':'normal'})])
 
 
 
 # description card tab 1
 def description_card_tab1():
     """
-    :return: A Div containing welcome message and descriptions.
+    :return: A Div containing welcome message and descriptions on tab 1.
     """
     return html.Div(
         id="description-card-tab1",
@@ -59,28 +59,12 @@ def description_card_tab1():
     )
 
 
-# Collapsable description card tab 2
-def description_card_tab2():
-    """
- 
-    :return: A Div containing a collapsable welcome message and description for tab 2.
 
-    """
-    return html.Div(
-        id="description-card-tab2",
-        children=[
-            html.H5("Welcome to Tab 2"),
-            html.Div(
-                id="intro2",
-                children="Tab 2 introduction",
-            ),
-        ],
-    )
 
 # Data set description for tab 1
 def data_set_description_tab1():
     """
-    :return: A Div containing description of the data set for tab 1.
+    :return: A Div containing description of the data set for tab 1, which pops out in the modal.
     """
     return html.Div(
         children=[
@@ -95,6 +79,7 @@ def data_set_description_tab1():
     )
 
 # tab 1 description modal button
+
 def tab_1_description():
     """
     :return: A Div containing pop out model button that brings up the description of tab 1.
@@ -151,8 +136,7 @@ def generate_control_card_tab2():
         id="control-card-tab2",
         children=[
             html.P(
-                "Please select any combination of categories, mechanics, publishers\
-                     and number of games to show"
+                "Select:"
             ),
             html.Br(),
             html.P("Please select categories:"),
@@ -273,7 +257,7 @@ sub_title_card_2 = dbc.Card(
             dbc.Row([
                 dbc.Col([
 
-                    html.H5("Welcome to Tab 2"),
+                    html.H5("Top Board Games"),
                     html.P("This is tab 2")], width=9)
                     ,
             dbc.Col([
@@ -298,7 +282,7 @@ sub_title_card_2 = dbc.Card(
 ),color='#F3F2F2')
 
 
-# subtitle card tab 2
+# subtitle card tab 3
 sub_title_card_3 = dbc.Card(
     dbc.CardBody(
         
@@ -399,16 +383,17 @@ second_card_tab1 = dbc.Card(
             ),
             html.Br(),
         ]
-    )), dbc.Tab(label="Tab 2", children=(html.Div([dbc.Row(
-                [
+    )), dbc.Tab(label="Density Plot", children=(html.Div([dbc.Row(dbc.Col([
+                
                     html.Div(
-                        [
+                        [html.Br(),
                             html.Div(
                                 id="top-range-slider-output",
-                                style={"align-items": "center"},
+                                
                             ),
                             html.Br(),
                             html.Br(),
+                            html.Div(
                             dcc.RangeSlider(
                                 id="top-range-slider",
                                 min=1950,
@@ -416,52 +401,23 @@ second_card_tab1 = dbc.Card(
                                 step=1,
                                 value=[1990, 2010],
                                 marks=slider_dict,
-                            ),
+                            ), style={'width': '60%', 'display': 'inline-block', 'align-items': 'center', 'justify-content': 'center'}),
                             html.Br(),
+                             html.Br(),
                             html.Iframe(
-                                id="top-barcharts",
+                                id="density_plot",
                                 style={
                                     "border-width": "0",
                                     "width": "1050px",
-                                    "height": "200px",
+                                    "height": "550px",
                                 },
                             ),
-                            html.Br(),
-                            html.Br(),
+                            
                         ]
-                    )
-                ]
-            )
-        , dbc.Row(
-                [
-                    html.Div(
-                        [
-                            html.Div(id="bottom-range-slider-output"),
-                            html.Br(),
-                            html.Br(),
-                            dcc.RangeSlider(
-                                id="bottom-range-slider",
-                                min=1950,
-                                max=2016,
-                                step=1,
-                                value=[1990, 2010],
-                                marks=slider_dict,
-                            ),
-                            html.Br(),
-                            html.Iframe(
-                                id="bottom-barcharts",
-                                style={
-                                    "border-width": "0",
-                                    "width": "1050px",
-                                    "height": "200px",
-                                },
-                            ),
-                            html.Br(),
-                            html.Br(),
-                        ]
-                    )
-                ]
-            )
+                    , style={'display': 'inline-block', 'align-items': 'center', 'justify-content': 'center'})
+                
+    ], width={"size": 6, "offset": 1}))
+        
         ])))])), color='#F3F2F2')
 
 
@@ -509,9 +465,9 @@ top_n_games_card_tab2 = dbc.Card(
                     id="top-n-games",
                     style={"border-width": "0", "width": "100%", "height": "300px"},
                 )
-            )
+            ), html.Br(),html.Br()
         ]
-    ),color='#E5E5E5'
+    ),color='#F3F2F2'
 )
 
 top_n_games_table_card_tab2 = dbc.Card(
@@ -523,6 +479,16 @@ top_n_games_table_card_tab2 = dbc.Card(
                 style_cell={"whiteSpace": "normal", "height": "auto"},
                 style_table={"overflowY": "scroll"},
                 sort_action="native",
+                style_data_conditional=[
+        {
+            'if': {'row_index': 'odd'},
+            'backgroundColor': 'rgb(248, 248, 248)'
+        }
+    ],
+    style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    }
             ),
         ]
     ),color='#F3F2F2'
@@ -604,6 +570,8 @@ tab_selected_style = {
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
+# app layout
+
 app.layout = html.Div(dbc.Container(html.Div(
     
         
@@ -625,8 +593,9 @@ app.layout = html.Div(dbc.Container(html.Div(
                 
                 dcc.Tabs([dcc.Tab(label="Game Trends", children=[html.Div([dbc.Row([((dbc.Col(sub_title_card_1)))]), html.Br(), dbc.Row([dbc.Col(first_card_tab1, width=3), dbc.Col( second_card_tab1, width=9)])])], style=tab_style,
                     selected_style=tab_selected_style), 
-                dcc.Tab(label="Top Games", children=[html.Div([dbc.Row([((dbc.Col(sub_title_card_2)))]), html.Br(), dbc.Row([dbc.Col(first_card_tab2, width=3), dbc.Col([top_n_games_card_tab2,html.Br(), top_n_games_table_card_tab2], width=9)])])], style=tab_style,
-                    selected_style=tab_selected_style), dcc.Tab(label="3D Game Explorer", children=[html.Div([dbc.Row(dbc.Col(sub_title_card_3)), html.Br(), dbc.Row([dbc.Col(control_card_tab3, width=3), dbc.Col(tab_3_plot, width=9)])])],)])
+                dcc.Tab(label="Top Games", children=[html.Div([dbc.Row([((dbc.Col(sub_title_card_2)))]), html.Br(), dbc.Row([dbc.Col(first_card_tab2, width=3), dbc.Col([top_n_games_card_tab2], width=9)]), html.Br(), dbc.Row(dbc.Col(top_n_games_table_card_tab2, width=12))])], style=tab_style,
+                    selected_style=tab_selected_style), dcc.Tab(label="3D Game Explorer", children=[html.Div([dbc.Row(dbc.Col(sub_title_card_3)), html.Br(), dbc.Row([dbc.Col(control_card_tab3, width=3), dbc.Col(tab_3_plot, width=9)])])],style=tab_style,
+                    selected_style=tab_selected_style)])
             ]
        , style={'backgroundColor':'#DDDCDC'} )), style={'backgroundColor':'#DDDCDC'})
 
@@ -696,35 +665,29 @@ def call_counts(col, list_):
     chart2 = app_gr.count_plot_dates(boardgame_data, col, list_)
     return chart2.to_html()
 
-# 1st facet chart
-@app.callback(Output("top-barcharts", "srcDoc"), Input("top-range-slider", "value"))
-def update_output1(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist1 = app_gr.rank_plot_facet(
-        data=boardgame_data, year_in=int(val1), year_out=int(val2)
-    )
-    return hist1.to_html()
-
-
-
-# 2nd facet chart
+# 1st year range slider output tab 1
 @app.callback(
-    Output("bottom-barcharts", "srcDoc"), Input("bottom-range-slider", "value")
+    dash.dependencies.Output("top-range-slider-output", "children"),
+    dash.dependencies.Input("top-range-slider", "value"),
 )
-def update_output2(value):
+def range_slider_select(value):
+    transformed_value = [v for v in value]
+    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
+
+ # density plot tab 1
+ 
+@app.callback(
+    Output("density_plot", "srcDoc"),
+    Input("radio-selection-tab1", "value"),
+    Input("radio-dependent-tab1", "value"),
+    Input("top-range-slider", "value"))
+def call_density(col, list_,value):
     transformed_value = [v for v in value]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
-    hist2 = app_gr.rank_plot_facet(
-        data=boardgame_data, year_in=int(val1), year_out=int(val2)
-    )
-    return hist2.to_html()
-
-
-
-
+    density_chart = app_gr.rank_plot_density(boardgame_data, col, list_, year_in=int(val1), year_out=int(val2), bool_=True)
+    return density_chart.to_html()
+ 
 # modal for description tab 2
 
 @app.callback(
