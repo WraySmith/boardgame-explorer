@@ -68,12 +68,14 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         )
     )
 
-    # THIS NEEDS TO BE DONE OUTSIDE OF ALTAIR
-    # OR IDEALLY USE EXPIREMENTAL ALTAIR TRANSFORMER
+    line_plot_data = (
+        data[["year_published", "average_rating"]].groupby("year_published").mean()
+    ).reset_index()
+
     line_plot = (
-        alt.Chart(data[["year_published", "average_rating"]])
+        alt.Chart(line_plot_data)
         .mark_line(color="dark grey", size=3)
-        .encode(x="year_published:T", y="mean(average_rating)")
+        .encode(x="year_published:T", y="average_rating")
     )
 
     scatter_plot = scatter_plot + line_plot
@@ -101,6 +103,8 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_color = alt.Color("group:N", title="Group")
 
     reduced_data = app_wr.remove_columns(set_data)
+
+    print(reduced_data.head())
 
     alt.data_transformers.disable_max_rows()
     count_plot = (
