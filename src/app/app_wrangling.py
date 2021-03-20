@@ -1,5 +1,5 @@
 """
-takes data from board_games.csv and changes it to a usable format
+takes data from board_games.csv and changes it to a usable format for the app
 """
 
 import pandas as pd
@@ -7,16 +7,21 @@ import pandas as pd
 
 def call_boardgame_data():
     """
-    Returns data from board_game.csv
+    Returns data from board_game.csv formatted for use in functions
+    results in listed values for 'category', 'mechanic, 'publisher'
 
-    return: pandas dataframe
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    pandas.DataFrame
     """
-
-    # reads csv
     # note that the path is relative to the root folder due to deployment
     # files located in root
     boardgame_data = pd.read_csv(
-        "data/app_data/board_game.csv", parse_dates=["year_published"]
+        "data/app_data/board_game.csv", parse_dates=["year_published"], index_col=0
     )
 
     boardgame_data["year_published"] = pd.to_datetime(
@@ -27,43 +32,102 @@ def call_boardgame_data():
     values = {"category": "Unknown", "mechanic": "Unknown", "publisher": "Unknown"}
     boardgame_data.fillna(value=values, inplace=True)
 
+    # create lists from strings
+    cats_split = ["category", "mechanic", "publisher"]
+    boardgame_data[cats_split] = (
+        boardgame_data[cats_split].stack().str.split(r",(?![+ ])").unstack()
+    )
+
     return boardgame_data
 
 
-def call_boardgame_filter(data, cat, mech, pub, n):
+def call_boardgame_filter(data, cat=[None], mech=[None], pub=[None], n=None):
     """
-    Returns filtered data based on list of
-    values in 'category', 'mechanic', and
-    'publisher' columns.
+    Returns board games filtered based on list of values in
+    'category', 'mechanic', 'publisher' columns. Provides
+    games in descending order and number of games returned
+    can be limited to n.
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    cat: list
-    mech: list
-    pub: list
-    n: int
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    cat: list of str, list of categories
+    mech: list of str, list of mechanics
+    pub: list of str, list of publishers
+    n: int, optional (default=None)
+        number of games to be returned
 
-    return: pandas dataframe
+    Returns
+    -------
+    pandas.DataFrame
     """
-    boardgame_data = data.copy(deep=True)
-    # create dictionary based on inputted lists.
+    boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # create dictionary based on user input lists
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
     # creates a list of bool series for each column
-    column_bool = [
-        call_bool_series_and(key, columns[key], boardgame_data) for key in columns
+    columns_bool = [
+        call_bool_series_and(boardgame_data, key, columns[key]) for key in columns
     ]
-    # checks if no input was provided and returns entirety of data
-    if (column_bool[0] | column_bool[1] | column_bool[2]).sum() != 0:
-        boardgame_data = boardgame_data[
-            (column_bool[0] & column_bool[1] & column_bool[2])
-        ]
 
-    # sorts by average rating and returns top "n" games
-    if n is not None:
-        boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)[
-            :n
-        ]
+    # remove rows that aren't matched
+    boardgame_data = boardgame_data[
+        (columns_bool[0] & columns_bool[1] & columns_bool[2])
+    ]
+
+    # sorts by average rating and returns top "n" games if applicable
+    boardgame_data = boardgame_data.sort_values("average_rating", ascending=False)
+    if n:
+        boardgame_data = boardgame_data[:n]
 
     return boardgame_data
+
+
+def call_bool_series_and(data, col, list_):
+    """
+    Takes filter entries and creates bool series to filter dataframe on.
+    Logic is based on matching all entries.
+    However, if no values in the column are True, then all values changed to True.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column name to apply function to
+    list_: list of str, list of values to check for
+
+    Returns
+    -------
+    list of class bool
+    """
+    list_bool = data[col].apply(lambda x: all(item in x for item in list_))
+
+    # if no True values in entire list, switch all values to True
+    if list_bool.sum() == 0:
+        list_bool = ~list_bool
+
+    return list_bool
+
+
+def call_bool_series_or(data, col, list_):
+    """
+    Takes filter entries and creates bool series to filter dataframe on.
+    Logic is based on matching one of entries.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column name to apply function to
+    list_: list of str, list of values to check for
+
+    Returns
+    -------
+    list of class bool
+    """
+    list_bool = data[col].apply(lambda x: any(item in x for item in list_))
+
+    return list_bool
 
 
 def call_boardgame_radio(data, col, list_):
@@ -72,125 +136,121 @@ def call_boardgame_radio(data, col, list_):
     'category','mechanic', or 'publisher' column
     and a list of values.
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    list_: list
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column to filter on
+    list_: list of str, list of values to check for
 
-    return: pandas dataframe
+    Returns
+    -------
+    pandas.DataFrame
     """
-    boardgame_data = data.copy(deep=True)
-
-    boardgame_data = boardgame_data[call_bool_series_or(col, list_, boardgame_data)]
-
-    boardgame_data = form_group(col, list_, boardgame_data)
-
+    boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # subset based on user selection
+    boardgame_data = boardgame_data[call_bool_series_or(boardgame_data, col, list_)]
+    # call form_group() to add group column
+    boardgame_data = form_group(boardgame_data, col, list_)
+    # remove all entries that aren't part of a group
     boardgame_data = boardgame_data[boardgame_data["group"] != ""]
 
     return boardgame_data
 
 
-def list_to_string(list_):
+def helper_form_group(x, user_list):
     """
-    This takes in a list and changes its format to a
-    string that can be read by .match() function
-
-    list_: list
-
-    returns: string
+    Helper function to check if all values in user list are met.
+    Return "All Selected' if all met.
     """
-    if type(list_) is list:
-        list_ = str(list_).strip("[']").replace(", ", "").replace("''", "|")
-        return list_
+    if all(item in x for item in user_list):
+        return ["All Selected"]
     else:
-        return list_
+        return x
 
 
-def form_group(col, list_, boardgame_data):
+def form_group(data, col, list_):
     """
-    This takes the selected filter and forms
-    appropriate groups column.
+    This takes the selected filter and populates a group column
+    indicating which selected values a boardgame has.
 
-    col: string
-    list_: list
-    boardgame_data: pandas dataframe
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column to filter on
+    list_: list of str, list of values to check for
 
-    returns: pandas dataframe
+    Returns
+    -------
+    pandas.DataFrame
     """
-    # takes column and forms new one with appropriate groups
-    boardgame_data[col] = list_to_string(boardgame_data[col]).str.split(r",(?![+ ])")
-    boardgame_data["group"] = boardgame_data[col].apply(
-        lambda x: list(set(x).intersection(set(list_)))
-    )
-    boardgame_data["group"] = [
-        ",(?![+ ])".join(map(str, item)) for item in boardgame_data["group"]
-    ]
+    # takes column and forms new one with appropriate groups based on matching
+    data["group"] = data[col].apply(lambda x: list(set(x).intersection(set(list_))))
 
-    # replaces cross product groups containing all items with generic group
+    # replaces groups containing all items with 'All Selected'
     if len(list_) > 1:
-        boardgame_data.loc[
-            boardgame_data["group"].apply(lambda x: all(item in x for item in list_)),
-            "group",
-        ] = "All Selected"
-        # removes cross products with not all items
-        boardgame_data = boardgame_data[
-            ~boardgame_data["group"].apply(lambda x: x not in list_ + ["All Selected"])
-        ]
+        data["group"] = data["group"].apply(lambda x: helper_form_group(x, list_))
 
-    return boardgame_data
+    return data
 
 
-def call_bool_series_or(col, list_, boardgame_data):
+def count_group(data):
     """
-    Takes filters entries and creates bool series to filter
+    Provides group counts after `call_boardgame_radio()` is used.
 
-    col: string
-    list_: list
-    boardgame_data: pandas dataframe
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_radio()
 
-    returns: bool series
+    Returns
+    -------
+    pandas.DataFrame
     """
-    list_ = list_to_string(list_)
-    list_bool = boardgame_data[col].apply(lambda x: any(item in x for item in list_))
+    df_out = data.copy(deep=True)
+    # explode dataframe, group, and count to new df
+    df_out = df_out.explode("group")
+    df_out = pd.DataFrame(df_out.groupby(["year_published", "group"]).game_id.count())
+    # rearrange df
+    df_out = df_out.unstack().droplevel(0, axis=1)
 
-    return list_bool
+    # if 'All Selected' exists add counts to other categories
+    if "All Selected" in df_out.columns:
+        # create series from 'All Selected'
+        all_addition = df_out["All Selected"].fillna(0)
+        # add counts from 'All Selected to each group'
+        revised_columns = df_out.drop(columns=["All Selected"]).apply(
+            lambda x: x + all_addition.values
+        )
+        # create revised df
+        df_out = pd.concat([revised_columns, df_out[["All Selected"]]], axis=1)
 
-
-def call_bool_series_and(col, list_, boardgame_data):
-    """
-    Takes filters entries and creates bool series to filter
-
-    col: string
-    list_: list
-    boardgame_data: pandas dataframe
-
-    returns: bool series
-    """
-    list_bool = boardgame_data[col].apply(lambda x: all(item in x for item in list_))
-
-    if list_bool.sum() == 0:
-        list_bool = ~list_bool
-
-    return list_bool
+    return df_out
 
 
 def call_boardgame_top(data, col, year_in, year_out):
     """
-    Creates pandas dataframe with top 5
-    categories based on user rating
+    Creates dataframe with top 5 values by user rating in either
+    'category', 'mechanic', or 'publisher'
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    year_in: int
-    year_in: int
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column to filter on
+    year_in: int, start of time period (inclusive)
+    year_in: int, end of time period (inclusive)
 
-    returns: pandas dataframe
+    Returns
+    -------
+    pandas.DataFrame
     """
+    boardgame_data = data.copy(deep=True)
+
     # turns year inputs to date time
     year_in = pd.to_datetime(year_in, format="%Y")
     year_out = pd.to_datetime(year_out, format="%Y")
-
-    # call in boardgame dataframe
-    boardgame_data = data.copy(deep=True)
 
     # create a boolean series to filter by start + end year
     year_filter = (boardgame_data["year_published"] >= year_in) & (
@@ -199,7 +259,6 @@ def call_boardgame_top(data, col, year_in, year_out):
     boardgame_data = boardgame_data[year_filter]
 
     # split up column into categorical values
-    boardgame_data[col] = boardgame_data[col].str.split(r",(?![+ ])")
     board_game_exp = boardgame_data.explode(col)
     # find the average rating for the top 5 categories
     board_game_exp = (
@@ -213,49 +272,42 @@ def call_boardgame_top(data, col, year_in, year_out):
     return board_game_exp
 
 
-def subset_data(data, col="category"):
+def subset_data(data, col):
     """
-    Creates list of categories for column
+    Creates list of categories for column used to populate
+    dropdown menus
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column generate list for
 
-    return: list
+    Returns
+    -------
+    list of strings
     """
-
-    data_copy = data.copy(deep=True)
-    exp_series = data_copy[col].str.split(r",(?![+ ])").explode()
-
+    boardgame_data = data.copy(deep=True)
+    exp_series = boardgame_data[col].explode()
     return list(exp_series.unique())
 
 
 def remove_columns(data):
     """
     removes columns unnecessary for plotting first two graphs on tab1
-    hard coded on columns to remove
-    """
 
-    reduced_data = data.drop(
-        columns=[
-            "Unnamed: 0",
-            "game_id",
-            "image",
-            "max_players",
-            "max_playtime",
-            "min_age",
-            "min_players",
-            "min_playtime",
-            "playing_time",
-            "thumbnail",
-            "artist",
-            "category",
-            "compilation",
-            "designer",
-            "expansion",
-            "family",
-            "mechanic",
-            "publisher",
-            "users_rated",
-        ]
-    )
-    return reduced_data
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    boardgame_data = data.copy(deep=True)
+    keep = ["name", "year_published", "average_rating"]
+    if "group" in boardgame_data.columns:
+        keep.append("group")
+
+    return boardgame_data[keep]

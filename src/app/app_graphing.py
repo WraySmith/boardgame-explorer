@@ -4,6 +4,7 @@ contains graph calls for dashboard
 
 import altair as alt
 import app_wrangling as app_wr
+import plotly.graph_objs as go
 
 
 def scatter_plot_dates(data, col="category", list_=[None]):
@@ -13,7 +14,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
-    dict_: dictionary
+    list_: list
 
     returns: altair plot
     """
@@ -23,7 +24,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("grey")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_)
+        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
         set_color = alt.Color("group:N", title="Group")
 
     reduced_data = app_wr.remove_columns(set_data)
@@ -67,10 +68,14 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         )
     )
 
+    line_plot_data = (
+        data[["year_published", "average_rating"]].groupby("year_published").mean()
+    ).reset_index()
+
     line_plot = (
-        alt.Chart(data[["year_published", "average_rating"]])
+        alt.Chart(line_plot_data)
         .mark_line(color="dark grey", size=3)
-        .encode(x="year_published:T", y="mean(average_rating)")
+        .encode(x="year_published:T", y="average_rating")
     )
 
     scatter_plot = scatter_plot + line_plot
@@ -94,14 +99,22 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("#2ca02c")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_)
+        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
         set_color = alt.Color("group:N", title="Group")
 
     reduced_data = app_wr.remove_columns(set_data)
+    reduced_data = reduced_data.drop(columns=["name"])
+
+    grouping_columns = ["year_published"]
+    if "group" in reduced_data.columns:
+        grouping_columns.append("group")
+    grouped_data = reduced_data.groupby(grouping_columns).count()
+    grouped_data.columns = ["count"]
+    grouped_data = grouped_data.reset_index()
 
     alt.data_transformers.disable_max_rows()
     count_plot = (
-        alt.Chart(reduced_data)
+        alt.Chart(grouped_data)
         .mark_bar()
         .encode(
             alt.X(
@@ -110,7 +123,7 @@ def count_plot_dates(data, col="category", list_=[None]):
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
-                "count():Q",
+                "count:Q",
                 axis=alt.Axis(
                     title="Count of Games Published",
                     titleFontSize=12,
@@ -121,7 +134,7 @@ def count_plot_dates(data, col="category", list_=[None]):
             color=set_color,
             tooltip=[
                 alt.Tooltip("group:N", title="Group"),
-                alt.Tooltip("count():Q", title="Number of Games"),
+                alt.Tooltip("count:Q", title="Number of Games"),
                 alt.Tooltip("year_published:T", title="Year_Published", format="%Y"),
             ],
         )
@@ -154,8 +167,10 @@ def rank_plot_dates(
 
     return: altair plot
     """
+    plot_data = app_wr.call_boardgame_top(data, col, year_in, year_out)
+
     rank_plot = (
-        alt.Chart(app_wr.call_boardgame_top(data, col, year_in, year_out))
+        alt.Chart(plot_data)
         .mark_bar(color=color_)
         .encode(
             alt.X(
@@ -225,9 +240,11 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
 
     return: altair plot
     """
+    plot_data = app_wr.call_boardgame_filter(data, cat, mech, pub, n)
+
     alt.data_transformers.disable_max_rows()
     top_plot = (
-        alt.Chart(app_wr.call_boardgame_filter(data, cat, mech, pub, n))
+        alt.Chart(plot_data)
         .mark_bar()
         .encode(
             alt.X("name:N", sort="-y", axis=alt.Axis(title=None, labels=False)),
@@ -263,3 +280,87 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     )
 
     return top_plot + top_text
+
+
+def graph_3D(data, col="category", list_=[None], game=None):
+    """
+    3D t-sne graph data output
+
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
+    col: string
+    list_: list
+    game: string (default None)
+
+    return: fig_out, 3D plotly figure
+    """
+    # layout for the 3D plot
+    axes = dict(
+        title="", showgrid=True, zeroline=False, showticklabels=False, showspikes=False
+    )
+    layout_out = go.Layout(
+        margin=dict(l=0, r=0, b=0, t=0),
+        scene=dict(xaxis=axes, yaxis=axes, zaxis=axes),
+        legend=dict(yanchor="top", y=0.93, xanchor="right", x=0.99),
+    )
+
+    # plotting data
+    if (list_ == [None]) or (not list_):
+        set_data = data.copy(deep=True)
+        set_data["group"] = "none"
+    else:
+        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
+
+    data_out = []
+    for idx, val in set_data.groupby(set_data.group):
+        if idx == "none":
+            marker_style = dict(
+                size=val["average_rating"] * 1.6,
+                symbol="circle",
+                opacity=0.1,
+                color="grey",
+            )
+            legend_show = False
+
+        else:
+            marker_style = dict(
+                size=val["average_rating"] * 1.6, symbol="circle", opacity=0.4
+            )
+            legend_show = True
+
+        scatter = go.Scatter3d(
+            name=idx,
+            x=val["x"],
+            y=val["y"],
+            z=val["z"],
+            mode="markers",
+            marker=marker_style,
+            text=val["name"],
+            hoverinfo="text+name",
+            showlegend=legend_show,
+        )
+        data_out.append(scatter)
+
+    if game:
+        game_data = data[data["name"] == game]
+        marker_style = dict(
+            size=game_data["average_rating"] * 1.6,
+            symbol="circle",
+            opacity=1.0,
+            color="violet",
+        )
+
+        scatter = go.Scatter3d(
+            name=game,
+            x=game_data["x"],
+            y=game_data["y"],
+            z=game_data["z"],
+            mode="markers",
+            marker=marker_style,
+            text=game_data["name"],
+            hoverinfo="text",
+        )
+        data_out.append(scatter)
+
+    fig_out = {"data": data_out, "layout": layout_out}
+
+    return fig_out
