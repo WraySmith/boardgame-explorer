@@ -30,6 +30,16 @@ radio_options = [
     {"label": " Publishers", "value": "publisher"},
 ]
 
+# extents for 3D plot
+extents_3d = {
+    "min_x": boardgame_data["x"].min(),
+    "max_x": boardgame_data["x"].max(),
+    "min_y": boardgame_data["y"].min(),
+    "max_y": boardgame_data["y"].max(),
+    "min_z": boardgame_data["z"].min(),
+    "max_z": boardgame_data["z"].max(),
+}
+
 
 #  set up app stylesheet and server
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -776,7 +786,7 @@ def update_games_tab3(col, list_):
     Input("games-dependent-tab3", "value"),
 )
 def call_tsne(col, list_, game):
-    fig = app_gr.graph_3D(boardgame_data, col, list_, game)
+    fig = app_gr.graph_3D(boardgame_data, col, list_, game, extents_3d)
     return fig
 
 

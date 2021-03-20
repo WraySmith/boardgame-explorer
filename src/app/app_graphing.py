@@ -272,7 +272,7 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     return top_plot + top_text
 
 
-def graph_3D(data, col="category", list_=[None], game=None):
+def graph_3D(data, col="category", list_=[None], game=None, extents=None):
     """
     3D t-sne graph data output
 
@@ -284,12 +284,22 @@ def graph_3D(data, col="category", list_=[None], game=None):
     return: fig_out, 3D plotly figure
     """
     # layout for the 3D plot
-    axes = dict(
-        title="", showgrid=True, zeroline=False, showticklabels=False, showspikes=False
+    axis_x = dict(
+        title="",
+        showgrid=True,
+        zeroline=False,
+        showticklabels=False,
+        showspikes=False,
+        range=[extents["min_x"], extents["max_x"]],
     )
+    axis_y = axis_x.copy()
+    axis_y["range"] = [extents["min_y"], extents["max_y"]]
+    axis_z = axis_x.copy()
+    axis_z["range"] = [extents["min_z"], extents["max_z"]]
+
     layout_out = go.Layout(
         margin=dict(l=0, r=0, b=0, t=0),
-        scene=dict(xaxis=axes, yaxis=axes, zaxis=axes),
+        scene=dict(xaxis=axis_x, yaxis=axis_y, zaxis=axis_z),
         legend=dict(yanchor="top", y=0.93, xanchor="right", x=0.99),
     )
 
