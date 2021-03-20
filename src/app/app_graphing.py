@@ -396,10 +396,7 @@ def rank_plot_density(
         .encode(
             alt.X("average_rating:Q", bin="binned", title="Average Rating"),
             alt.Y(
-                "density:Q",
-                axis=None,
-                title=None,
-                scale=alt.Scale(domain=[0, 0.75]),
+                "density:Q", axis=None, title=None, scale=alt.Scale(domain=[0, 0.75])
             ),
             alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3")),
         )
