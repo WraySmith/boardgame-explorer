@@ -323,12 +323,13 @@ def rank_plot_density(
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
+    list_: list
     year_in: int
     year_out: int
 
     return: altair plot
     """
-    if (bool_ == True) or (not bool(list_)):
+    if (bool_ is True) or (not bool(list_)):
         plot_data = call_boardgame_density(data, col, year_in, year_out)
     else:
         plot_data = call_boardgame_radio(data, col, list_, year_in, year_out)
