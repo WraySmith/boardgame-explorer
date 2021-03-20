@@ -381,9 +381,9 @@ def rank_plot_density(
     return: altair plot
     """
     if (bool_ is True) or (not bool(list_)):
-        plot_data = app.wr.call_boardgame_density(data, col, year_in, year_out)
+        plot_data = app_wr.call_boardgame_density(data, col, year_in, year_out)
     else:
-        plot_data = app.wr.call_boardgame_radio(data, col, list_, year_in, year_out)
+        plot_data = app_wr.call_boardgame_radio(data, col, list_, year_in, year_out)
 
     rank_plot = (
         alt.Chart(plot_data, height=80)
