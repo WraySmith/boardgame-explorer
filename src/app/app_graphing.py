@@ -315,7 +315,9 @@ def graph_3D(data, col="category", list_=[None]):
     return data_out
 
 
-def rank_plot_density(data, col="category", year_in=1990, year_out=2010):
+def rank_plot_density(
+    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True
+):
     """
     Creates altair graph of set column for set years
 
@@ -326,7 +328,10 @@ def rank_plot_density(data, col="category", year_in=1990, year_out=2010):
 
     return: altair plot
     """
-    plot_data = call_boardgame_density(data, col, year_in, year_out)
+    if (bool_ == True) or (not bool(list_)):
+        plot_data = call_boardgame_density(data, col, year_in, year_out)
+    else:
+        plot_data = call_boardgame_radio(data, col, list_, year_in, year_out)
 
     rank_plot = (
         alt.Chart(plot_data, height=80)

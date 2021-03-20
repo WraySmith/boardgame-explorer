@@ -130,7 +130,7 @@ def call_bool_series_or(data, col, list_):
     return list_bool
 
 
-def call_boardgame_radio(data, col, list_):
+def call_boardgame_radio(data, col, list_, year_in=1900, year_out=2200):
     """
     Returns filtered data based on selecting
     'category','mechanic', or 'publisher' column
@@ -148,6 +148,15 @@ def call_boardgame_radio(data, col, list_):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # turns year inputs to date time
+    year_in = pd.to_datetime(year_in, format="%Y")
+    year_out = pd.to_datetime(year_out, format="%Y")
+
+    # create a boolean series to filter by start + end year
+    year_filter = (boardgame_data["year_published"] >= year_in) & (
+        boardgame_data["year_published"] <= year_out
+    )
+    boardgame_data = boardgame_data[year_filter]
     # subset based on user selection
     boardgame_data = boardgame_data[call_bool_series_or(boardgame_data, col, list_)]
     # call form_group() to add group column
