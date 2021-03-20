@@ -4,8 +4,17 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.manifold import TSNE
 
 
-# load data
 def load_data(filename):
+    """
+    Load dataframe which is in the format required by the app but
+    excluding the x, y, z columns. Completes a TSNE analysis and
+    outputs a dataframe with the x, y, z columns added.
+
+    filename: path to csv
+
+    return: boardgame_data_raw, data from csv read
+    return: boardgame_data_sub, subsetted pd.DataFrame
+    """
     boardgame_data_raw = pd.read_csv(filename)
     boardgame_data = boardgame_data_raw.copy()
     boardgame_data["year_published"] = pd.to_datetime(
@@ -40,8 +49,16 @@ def load_data(filename):
     return boardgame_data_raw, boardgame_data_sub
 
 
-# clean and transform subsetted dataframe for TSNE analysis
 def clean_data(data):
+    """
+    Cleans the subsetted dataframe output from `load_csv()`.
+    Data is transformed for the TSNE analysis.
+
+    data: pd.Dataframe, `boardgame_data_sub` output from `load_csv()`
+
+    return: onehot_df, pd.DataFrame of category and mechanics data for TSNE
+    return: user_df, pd.Dataframe of user data for TSNE
+    """
     boardgame_data_sub = data.copy()
     # compilation and expansion have a high number of values
     # and many boardgames don't have values at all
@@ -77,9 +94,19 @@ def clean_data(data):
 
 
 def tsne_analyse(onehot_df, user_df):
+    """
+    Runs TSNE analysis and provides output.
+
+    onehot_df: pd.Dataframe, output from `clean_data()`
+    user_df: pd.Dataframe, output from `clean_data()`
+
+    return: tsne_cat_df, pd.DataFrame of output from category/mechanic TSNE
+    return: tsne_user_df, pd.DataFrame of output from user TSNE
+    """
     # run TSNE on one-hot encoded category and mechanic features
     # a high perplexity fo 50 was found to provide a good visual result
     tsne_cat = TSNE(perplexity=50, n_components=2)
+
     tsne_cat_results = tsne_cat.fit_transform(onehot_df)
     # run TSNE on user ratings features
     # this is done as we want a separate axis related to user rating
