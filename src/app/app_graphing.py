@@ -361,7 +361,7 @@ def graph_3D(data, col="category", list_=[None], game=None):
         )
         data_out.append(scatter)
 
-        fig_out = {"data": data_out, "layout": layout_out}
+    fig_out = {"data": data_out, "layout": layout_out}
 
     return fig_out
 
@@ -380,8 +380,8 @@ def rank_plot_density(
 
     return: altair plot
     """
-    if (bool_ is True) or (not bool(list_)):
-        plot_data = app_wr.call_boardgame_density(data, col, year_in, year_out)
+    if bool_ or (not bool(list_)):
+        plot_data = app_wr.call_boardgame_top_density(data, col, year_in, year_out)
     else:
         plot_data = app_wr.call_boardgame_radio(data, col, list_, year_in, year_out)
 

@@ -192,7 +192,7 @@ def form_group(data, col, list_):
 
     # replaces groups containing all items with 'All Selected'
     if len(list_) > 1:
-        data.group = data["group"].apply(lambda x: helper_form_group(x, list_))
+        data["group"] = data["group"].apply(lambda x: helper_form_group(x, list_))
 
     return data
 
@@ -306,7 +306,7 @@ def remove_columns(data):
     return boardgame_data[keep]
 
 
-def call_boardgame_density(data, col, year_in, year_out):
+def call_boardgame_top_density(data, col, year_in, year_out):
     """
     Creates dataframe populated with all top 5 values by
     user rating in either 'category', 'mechanic', or 'publisher'
