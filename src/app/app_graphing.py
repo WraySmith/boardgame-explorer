@@ -68,12 +68,14 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         )
     )
 
-    # THIS NEEDS TO BE DONE OUTSIDE OF ALTAIR
-    # OR IDEALLY USE EXPIREMENTAL ALTAIR TRANSFORMER
+    line_plot_data = (
+        data[["year_published", "average_rating"]].groupby("year_published").mean()
+    ).reset_index()
+
     line_plot = (
-        alt.Chart(data[["year_published", "average_rating"]])
+        alt.Chart(line_plot_data)
         .mark_line(color="dark grey", size=3)
-        .encode(x="year_published:T", y="mean(average_rating)")
+        .encode(x="year_published:T", y="average_rating")
     )
 
     scatter_plot = scatter_plot + line_plot
@@ -101,10 +103,18 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_color = alt.Color("group:N", title="Group")
 
     reduced_data = app_wr.remove_columns(set_data)
+    reduced_data = reduced_data.drop(columns=["name"])
+
+    grouping_columns = ["year_published"]
+    if "group" in reduced_data.columns:
+        grouping_columns.append("group")
+    grouped_data = reduced_data.groupby(grouping_columns).count()
+    grouped_data.columns = ["count"]
+    grouped_data = grouped_data.reset_index()
 
     alt.data_transformers.disable_max_rows()
     count_plot = (
-        alt.Chart(reduced_data)
+        alt.Chart(grouped_data)
         .mark_bar()
         .encode(
             alt.X(
@@ -113,7 +123,7 @@ def count_plot_dates(data, col="category", list_=[None]):
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
-                "count():Q",
+                "count:Q",
                 axis=alt.Axis(
                     title="Count of Games Published",
                     titleFontSize=12,
@@ -124,7 +134,7 @@ def count_plot_dates(data, col="category", list_=[None]):
             color=set_color,
             tooltip=[
                 alt.Tooltip("group:N", title="Group"),
-                alt.Tooltip("count():Q", title="Number of Games"),
+                alt.Tooltip("count:Q", title="Number of Games"),
                 alt.Tooltip("year_published:T", title="Year_Published", format="%Y"),
             ],
         )
