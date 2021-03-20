@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import dash_table
-import plotly.graph_objs as go
+import numpy as np
 
 # import functions from .py files
 import app_graphing as app_gr
@@ -152,14 +152,23 @@ def generate_control_card_tab3():
             dcc.RadioItems(
                 id="radio-selection-tab3",
                 options=radio_options,
-                value="mechanic",
+                value="category",
                 labelStyle={"display": "block"},
             ),
             html.Br(),
             html.Label("Select elements to view:"),
             html.Br(),
             dcc.Dropdown(
-                id="radio-dependent-tab3", options=[], multi=True, value=[None]
+                id="radio-dependent-tab3",
+                options=[],
+                multi=True,
+                value=["Negotiation", "Farming"],
+            ),
+            html.Br(),
+            html.Label("Select game to highlight:"),
+            html.Br(),
+            dcc.Dropdown(
+                id="games-dependent-tab3", options=[], multi=False, value=None
             ),
         ],
     )
@@ -434,14 +443,24 @@ tenth_card_tab3 = dbc.Card(
                 id="left-column-tab3",
                 className="four columns",  # not sure this is needed
                 children=[generate_control_card_tab3()],
-            )
+            ),
+            html.Br(),
+            html.H6("Name and Rating"),
+            html.Div(id="tsne-data-out-name"),
+            html.Div(id="tsne-data-out-score"),
+            html.Div(id="tsne-data-out-ratings"),
+            html.H6("Categories"),
+            html.Div(id="tsne-data-out-categories"),
+            html.H6("Mechanics"),
+            html.Div(id="tsne-data-out-mechanics"),
+            html.H6("Publishers"),
+            html.Div(id="tsne-data-out-publishers"),
         ]
     )
 )
 
 
 # card 11 containing the tsne plot on tab 3,
-tsne_layout = go.Layout(margin=dict(l=0, r=0, b=0, t=0), title=dict(text="test"))
 eleventh_card_tab3 = dbc.Card(
     dbc.CardBody(
         [
@@ -456,7 +475,6 @@ eleventh_card_tab3 = dbc.Card(
                     dcc.Graph(id="tsne-3d-plot", style={"height": "80vh"}),
                 ]
             ),
-            html.Br(),
         ]
     )
 )
@@ -581,22 +599,12 @@ app.layout = html.Div(
 
 # Set up callbacks/backend
 
-# radio button selection options to populate drop downs for tab1
+# radio button selection options to populate dropdowns for tab1
 @app.callback(
     dash.dependencies.Output("radio-dependent-tab1", "options"),
     [dash.dependencies.Input("radio-selection-tab1", "value")],
 )
 def update_options_tab1(chosen_selection):
-    col = chosen_selection
-    return [{"label": c, "value": c} for c in col_dict[col]]
-
-
-# radio button selection options to populate drop downs for tab3
-@app.callback(
-    dash.dependencies.Output("radio-dependent-tab3", "options"),
-    [dash.dependencies.Input("radio-selection-tab3", "value")],
-)
-def update_options_tab2(chosen_selection):
     col = chosen_selection
     return [{"label": c, "value": c} for c in col_dict[col]]
 
@@ -735,16 +743,72 @@ def update_table(c, m, p, n=10):
     return data, columns
 
 
+# radio button selection options to populate dropdowns for tab3
+@app.callback(
+    dash.dependencies.Output("radio-dependent-tab3", "options"),
+    [dash.dependencies.Input("radio-selection-tab3", "value")],
+)
+def update_options_tab3(chosen_selection):
+    col = chosen_selection
+    return [{"label": c, "value": c} for c in col_dict[col]]
+
+
+# radio button selection options to populate game dropdown for tab3
+@app.callback(
+    Output("games-dependent-tab3", "options"),
+    [Input("radio-selection-tab3", "value"), Input("radio-dependent-tab3", "value")],
+)
+def update_games_tab3(col, list_):
+    if col == "category":
+        games = app_wr.call_boardgame_filter(boardgame_data, cat=list_)
+    elif col == "mechanic":
+        games = app_wr.call_boardgame_filter(boardgame_data, mech=list_)
+    else:
+        games = app_wr.call_boardgame_filter(boardgame_data, pub=list_)
+    return games["name"].map(lambda x: {"label": x, "value": x})
+
+
 # tsne graph tab 3
 @app.callback(
     Output("tsne-3d-plot", "figure"),
     Input("radio-selection-tab3", "value"),
     Input("radio-dependent-tab3", "value"),
+    Input("games-dependent-tab3", "value"),
 )
-def call_tsne(col, list_):
-    data = app_gr.graph_3D(boardgame_data, col, list_)
-    fig = {"data": data, "layout": tsne_layout}
+def call_tsne(col, list_, game):
+    fig = app_gr.graph_3D(boardgame_data, col, list_, game)
     return fig
+
+
+# text output from tsne graph click
+@app.callback(
+    Output("tsne-data-out-name", "children"),
+    Output("tsne-data-out-score", "children"),
+    Output("tsne-data-out-ratings", "children"),
+    Output("tsne-data-out-categories", "children"),
+    Output("tsne-data-out-mechanics", "children"),
+    Output("tsne-data-out-publishers", "children"),
+    Input("tsne-3d-plot", "clickData"),
+)
+def display_click_message(clickData):
+    if clickData:
+        click_point_np = np.array(
+            [clickData["points"][0][i] for i in ["x", "y", "z"]]
+        ).astype(np.float64)
+        # Create a mask of the point clicked
+        bool_mask_click = boardgame_data.loc[:, "x":"z"].eq(click_point_np).all(axis=1)
+        # retreive data
+        if bool_mask_click.any():
+            data_out = boardgame_data[bool_mask_click]
+            click_name = data_out.name.values[0]
+            click_sc = "Avg Rating: " + str(round(data_out.average_rating.values[0], 2))
+            click_rat = "No. of Ratings: " + str(data_out.users_rated.values[0])
+            click_cat = ", ".join(data_out.category.values[0])
+            click_mec = ", ".join(data_out.mechanic.values[0])
+            click_pub = ", ".join(data_out.publisher.values[0])
+
+        return click_name, click_sc, click_rat, click_cat, click_mec, click_pub
+    return None, None, None, None, None, None
 
 
 # run

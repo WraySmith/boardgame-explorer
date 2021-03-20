@@ -41,7 +41,7 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(data, cat, mech, pub, n=None):
+def call_boardgame_filter(data, cat=[None], mech=[None], pub=[None], n=None):
     """
     Returns board games filtered based on list of values in
     'category', 'mechanic', 'publisher' columns. Provides
