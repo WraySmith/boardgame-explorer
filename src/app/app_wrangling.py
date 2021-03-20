@@ -130,7 +130,7 @@ def call_bool_series_or(data, col, list_):
     return list_bool
 
 
-def call_boardgame_radio(data, col, list_):
+def call_boardgame_radio(data, col, list_, year_in=1900, year_out=2200):
     """
     Returns filtered data based on selecting
     'category','mechanic', or 'publisher' column
@@ -148,6 +148,8 @@ def call_boardgame_radio(data, col, list_):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # filters data based on years provided
+    boardgame_data = year_filter(boardgame_data, year_in, year_out)
     # subset based on user selection
     boardgame_data = boardgame_data[call_bool_series_or(boardgame_data, col, list_)]
     # call form_group() to add group column
@@ -247,17 +249,8 @@ def call_boardgame_top(data, col, year_in, year_out):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)
-
-    # turns year inputs to date time
-    year_in = pd.to_datetime(year_in, format="%Y")
-    year_out = pd.to_datetime(year_out, format="%Y")
-
-    # create a boolean series to filter by start + end year
-    year_filter = (boardgame_data["year_published"] >= year_in) & (
-        boardgame_data["year_published"] <= year_out
-    )
-    boardgame_data = boardgame_data[year_filter]
-
+    # filters data based on years provided
+    boardgame_data = year_filter(boardgame_data, year_in, year_out)
     # split up column into categorical values
     board_game_exp = boardgame_data.explode(col)
     # find the average rating for the top 5 categories
@@ -311,3 +304,60 @@ def remove_columns(data):
         keep.append("group")
 
     return boardgame_data[keep]
+
+
+def call_boardgame_top_density(data, col, year_in, year_out):
+    """
+    Creates dataframe populated with all top 5 values by
+    user rating in either 'category', 'mechanic', or 'publisher'
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column to filter on
+    year_in: int, start of time period (inclusive)
+    year_in: int, end of time period (inclusive)
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    boardgame_data = data.copy(deep=True)
+    boardgame_list = call_boardgame_top(data, col, year_in, year_out)[col].to_list()
+
+    boardgame_data = boardgame_data[
+        call_bool_series_or(boardgame_data, col, boardgame_list)
+    ]
+    boardgame_data = form_group(boardgame_data, col, boardgame_list)
+    boardgame_data = boardgame_data.explode("group")
+
+    return boardgame_data
+
+
+def year_filter(data, year_in, year_out):
+    """
+    Limits pandas data frame by year range
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+    year_in: int, start of time period (inclusive)
+    year_in: int, end of time period (inclusive)
+
+    Returns
+    -------
+    Boolean.Series
+    """
+    boardgame_data = data
+    # turns year inputs to date time
+    year_in = pd.to_datetime(year_in, format="%Y")
+    year_out = pd.to_datetime(year_out, format="%Y")
+
+    # create a boolean series to filter by start + end year
+    year_filter = (boardgame_data["year_published"] >= year_in) & (
+        boardgame_data["year_published"] <= year_out
+    )
+    boardgame_data = boardgame_data[year_filter]
+
+    return boardgame_data
