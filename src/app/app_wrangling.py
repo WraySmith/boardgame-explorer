@@ -190,7 +190,7 @@ def form_group(data, col, list_):
 
     # replaces groups containing all items with 'All Selected'
     if len(list_) > 1:
-        data["group"] = data["group"].apply(lambda x: helper_form_group(x, list_))
+        data.group = data["group"].apply(lambda x: helper_form_group(x, list_))
 
     return data
 
@@ -311,3 +311,32 @@ def remove_columns(data):
         keep.append("group")
 
     return boardgame_data[keep]
+
+
+def call_boardgame_density(data, col, year_in, year_out):
+    """
+    Creates dataframe populated with all top 5 values by
+    user rating in either 'category', 'mechanic', or 'publisher'
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        generated from app_wrangling.call_boardgame_data()
+    col: string, column to filter on
+    year_in: int, start of time period (inclusive)
+    year_in: int, end of time period (inclusive)
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    boardgame_data = data.copy(deep=True)
+    boardgame_list = call_boardgame_top(data, col, year_in, year_out)[col].to_list()
+
+    boardgame_data = boardgame_data[
+        call_bool_series_or(boardgame_data, col, boardgame_list)
+    ]
+    boardgame_data = form_group(boardgame_data, col, boardgame_list)
+    boardgame_data = boardgame_data.explode("group")
+
+    return boardgame_data

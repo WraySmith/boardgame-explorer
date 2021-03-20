@@ -313,3 +313,60 @@ def graph_3D(data, col="category", list_=[None]):
         data_out.append(scatter)
 
     return data_out
+
+
+def rank_plot_density(data, col="category", year_in=1990, year_out=2010):
+    """
+    Creates altair graph of set column for set years
+
+    data: a pandas df generated from app_wrangling.call_boardgame_data()
+    col: string
+    year_in: int
+    year_out: int
+
+    return: altair plot
+    """
+    plot_data = call_boardgame_density(data, col, year_in, year_out)
+
+    rank_plot = (
+        alt.Chart(plot_data, height=80)
+        .transform_density(
+            "average_rating", as_=["average_rating", "density"], groupby=["group"]
+        )
+        .mark_area(
+            interpolate="monotone", fillOpacity=0.8, stroke="lightgray", strokeWidth=0.5
+        )
+        .encode(
+            alt.X("average_rating:Q", bin="binned", title="Average Rating"),
+            alt.Y(
+                "density:Q",
+                axis=None,
+                title=None,
+                scale=alt.Scale(domain=[0, 0.75]),
+            ),
+            alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3")),
+        )
+    )
+
+    avg_line = (
+        alt.Chart(plot_data)
+        .mark_rule(color="black")
+        .encode(x="mean(average_rating)", fill=alt.Fill("group", legend=None))
+    )
+
+    out_plot = (
+        (rank_plot + avg_line)
+        .facet(
+            row=alt.Row(
+                "group:N",
+                title=None,
+                header=alt.Header(labelAngle=0, labelAlign="left"),
+            )
+        )
+        .properties(title="Top 5 for " + str(col).capitalize(), bounds="flush")
+        .configure_facet(spacing=0)
+        .configure_view(stroke=None)
+        .configure_title(anchor="middle")
+    )
+
+    return out_plot
