@@ -130,7 +130,9 @@ def call_bool_series_or(data, col, list_):
     return list_bool
 
 
-def call_boardgame_radio(data, col, list_, year_in=1900, year_out=2200):
+def call_boardgame_radio(
+    data, col, list_, year_in=1900, year_out=2200, no_of_ratings=0
+):
     """
     Returns filtered data based on selecting
     'category','mechanic', or 'publisher' column
@@ -150,6 +152,8 @@ def call_boardgame_radio(data, col, list_, year_in=1900, year_out=2200):
     boardgame_data = data.copy(deep=True)  # deep required as contains lists
     # filters data based on years provided
     boardgame_data = year_filter(boardgame_data, year_in, year_out)
+    # filter data based on minimum number of ratings
+    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
     # subset based on user selection
     boardgame_data = boardgame_data[call_bool_series_or(boardgame_data, col, list_)]
     # call form_group() to add group column
@@ -231,7 +235,7 @@ def count_group(data):
     return df_out
 
 
-def call_boardgame_top(data, col, year_in, year_out):
+def call_boardgame_top(data, col, year_in, year_out, no_of_ratings=0):
     """
     Creates dataframe with top 5 values by user rating in either
     'category', 'mechanic', or 'publisher'
@@ -251,6 +255,8 @@ def call_boardgame_top(data, col, year_in, year_out):
     boardgame_data = data.copy(deep=True)
     # filters data based on years provided
     boardgame_data = year_filter(boardgame_data, year_in, year_out)
+    # filter data based on minimum number of ratings
+    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
     # split up column into categorical values
     board_game_exp = boardgame_data.explode(col)
     # find the average rating for the top 5 categories
@@ -347,7 +353,7 @@ def year_filter(data, year_in, year_out):
 
     Returns
     -------
-    Boolean.Series
+    pandas.Dataframe
     """
     boardgame_data = data
     # turns year inputs to date time
@@ -359,5 +365,28 @@ def year_filter(data, year_in, year_out):
         boardgame_data["year_published"] <= year_out
     )
     boardgame_data = boardgame_data[year_filter]
+
+    return boardgame_data
+
+
+def rating_filter(data, no_of_ratings):
+    """
+    Limits pandas data frame by minimum
+    number of rating
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+    no_of_ratings: int
+
+    Returns
+    -------
+    pandas.dataframe
+    """
+    boardgame_data = data
+
+    # create a boolean series to filter out number of ratings less than required
+    rating_filter = boardgame_data["users_rated"] >= no_of_ratings
+    boardgame_data = boardgame_data[rating_filter]
 
     return boardgame_data
