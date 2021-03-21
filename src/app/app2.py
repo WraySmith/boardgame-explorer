@@ -597,7 +597,7 @@ app.layout = html.Div(dbc.Container(html.Div(
                     selected_style=tab_selected_style), dcc.Tab(label="3D Game Explorer", children=[html.Div([dbc.Row(dbc.Col(sub_title_card_3)), html.Br(), dbc.Row([dbc.Col(control_card_tab3, width=3), dbc.Col(tab_3_plot, width=9)])])],style=tab_style,
                     selected_style=tab_selected_style)])
             ]
-       , style={'backgroundColor':'#DDDCDC'} )), style={'backgroundColor':'#DDDCDC'})
+       , style={'backgroundColor':'#DDDCDC'} ), fluid=True ), style={'backgroundColor':'#DDDCDC'})
 
 
 
