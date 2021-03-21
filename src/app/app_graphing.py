@@ -25,7 +25,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_color = alt.value("grey")
     else:
         set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
-        set_color = alt.Color("group:N", title="Group")
+        set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3"))
 
     reduced_data = app_wr.remove_columns(set_data)
 
@@ -35,16 +35,17 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         .encode(
             alt.X(
                 "year_published:T",
-                axis=alt.Axis(title=None),
+                axis=alt.Axis(title=None, labelFontSize=13),
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
                 "average_rating:Q",
                 axis=alt.Axis(
                     title="Average Rating",
-                    titleFontSize=12,
+                    titleFontSize=15,
                     offset=14,
                     titleFontWeight=600,
+                    labelFontSize=13,
                 ),
             ),
             color=set_color,
@@ -55,14 +56,6 @@ def scatter_plot_dates(data, col="category", list_=[None]):
             ],
         )
         .properties(
-            title=alt.TitleParams(
-                text="Game Popularity based on Published Year",
-                subtitle="Light grey line shows annual average rating of ALL games",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
             width=650,
             height=150,
         )
@@ -74,11 +67,15 @@ def scatter_plot_dates(data, col="category", list_=[None]):
 
     line_plot = (
         alt.Chart(line_plot_data)
-        .mark_line(color="dark grey", size=3)
+        .mark_line(color="#62a9b5", size=3, opacity=0.6)
         .encode(x="year_published:T", y="average_rating")
     )
 
-    scatter_plot = scatter_plot + line_plot
+    scatter_plot = (
+        (scatter_plot + line_plot)
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
+    )
     return scatter_plot
 
 
@@ -97,10 +94,10 @@ def count_plot_dates(data, col="category", list_=[None]):
 
     if (list_ == [None]) or (not list_):
         set_data = data
-        set_color = alt.value("#2ca02c")
+        set_color = alt.value("#62a9b5")
     else:
         set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
-        set_color = alt.Color("group:N", title="Group")
+        set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3"))
 
     reduced_data = app_wr.remove_columns(set_data)
     reduced_data = reduced_data.drop(columns=["name"])
@@ -119,16 +116,17 @@ def count_plot_dates(data, col="category", list_=[None]):
         .encode(
             alt.X(
                 "year_published:T",
-                axis=alt.Axis(title=None),
+                axis=alt.Axis(title=None, labelFontSize=13),
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
                 "count:Q",
                 axis=alt.Axis(
                     title="Count of Games Published",
-                    titleFontSize=12,
+                    titleFontSize=15,
                     offset=8,
                     titleFontWeight=600,
+                    labelFontSize=13,
                 ),
             ),
             color=set_color,
@@ -139,16 +137,11 @@ def count_plot_dates(data, col="category", list_=[None]):
             ],
         )
         .properties(
-            title=alt.TitleParams(
-                text="Game Count based on Published Year",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
             width=650,
             height=150,
         )
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
     )
 
     return count_plot
@@ -247,16 +240,26 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
         alt.Chart(plot_data)
         .mark_bar()
         .encode(
-            alt.X("name:N", sort="-y", axis=alt.Axis(title=None, labels=False)),
+            alt.X(
+                "name:N",
+                sort="-y",
+                axis=alt.Axis(title=None, labels=False, ticks=False),
+            ),
             alt.Y(
                 "average_rating:Q",
-                axis=alt.Axis(title="Average Rating"),
+                axis=alt.Axis(
+                    title="Average Rating",
+                    labelFontSize=13,
+                    titleFontSize=15,
+                    grid=False,
+                ),
                 scale=alt.Scale(domain=(0, 10)),
             ),
             color=alt.Color(
                 "name:N",
                 title="Boardgame Name",
                 sort=alt.EncodingSortField("-y", order="descending"),
+                scale=alt.Scale(scheme="set3"),
             ),
             tooltip=[
                 alt.Tooltip("name", title="Name"),
@@ -264,22 +267,21 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
             ],
         )
         .properties(
-            title=alt.TitleParams(
-                text="Top 10 Games Based on User Selection",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
-            width=500,
-            height=200,
+            width=600,
+            height=300,
         )
     )
     top_text = top_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
         text=alt.Text("average_rating:Q", format=",.2r")
     )
+    out_plot = (
+        (top_plot + top_text)
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
+        .configure_view(strokeOpacity=0)
+    )
 
-    return top_plot + top_text
+    return out_plot
 
 
 def graph_3D(data, col="category", list_=[None], game=None):
@@ -395,9 +397,7 @@ def rank_plot_density(
         )
         .encode(
             alt.X("average_rating:Q", bin="binned", title="Average Rating"),
-            alt.Y(
-                "density:Q", axis=None, title=None, scale=alt.Scale(domain=[0, 0.75])
-            ),
+            alt.Y("density:Q", title=None, scale=alt.Scale(domain=[0, 1])),
             alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3")),
         )
     )
@@ -417,10 +417,13 @@ def rank_plot_density(
                 header=alt.Header(labelAngle=0, labelAlign="left"),
             )
         )
-        .properties(title="Top 5 for " + str(col).capitalize(), bounds="flush")
+        .properties(bounds="flush")
         .configure_facet(spacing=0)
         .configure_view(stroke=None)
         .configure_title(anchor="middle")
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
+        .configure_view(strokeOpacity=0)
     )
 
     return out_plot
