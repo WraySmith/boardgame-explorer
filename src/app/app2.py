@@ -86,7 +86,7 @@ def tab_1_description():
     """
     return html.Div(
         children=[
-            html.H4("Tab 1 Descripion"),
+            html.H4("Tab 1 Desciption        "),
             html.P(
                 "Blah Blah Blah"
             ),
@@ -476,7 +476,7 @@ top_n_games_table_card_tab2 = dbc.Card(
             html.H5("Top 10 Games Facts Table:"),
             dash_table.DataTable(
                 id="top-n-games-datatable",
-                style_cell={"whiteSpace": "normal", "height": "auto"},
+                style_cell={"whiteSpace": "normal", "height": "auto", 'font-family': 'Verdana'},
                 style_table={"overflowY": "scroll"},
                 sort_action="native",
                 style_data_conditional=[
