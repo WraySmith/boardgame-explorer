@@ -926,9 +926,10 @@ def call_scatter(col, list_, n_ratings):
     Output("count", "srcDoc"),
     Input("radio-selection-tab1", "value"),
     Input("radio-dependent-tab1", "value"),
+    Input("min-num-ratings", "value"),
 )
-def call_counts(col, list_):
-    chart2 = app_gr.count_plot_dates(boardgame_data, col, list_)
+def call_counts(col, list_, n_ratings):
+    chart2 = app_gr.count_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart2.to_html()
 
 
@@ -943,27 +944,30 @@ def range_slider_select(value):
 
 
 # density plot tab 1
-
-
 @app.callback(
     Output("density_plot", "srcDoc"),
     Input("radio-selection-tab1", "value"),
     Input("radio-dependent-tab1", "value"),
     Input("top-range-slider", "value"),
+    Input("min-num-ratings", "value"),
 )
-def call_density(col, list_, value):
-    transformed_value = [v for v in value]
+def call_density(col, list_, value1, value2):
+    transformed_value = [v for v in value1]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
     density_chart = app_gr.rank_plot_density(
-        boardgame_data, col, list_, year_in=int(val1), year_out=int(val2), bool_=False
+        boardgame_data,
+        col,
+        list_,
+        year_in=int(val1),
+        year_out=int(val2),
+        bool_=False,
+        n_ratings=value2,
     )
     return density_chart.to_html()
 
 
 # modal for description tab 2
-
-
 @app.callback(
     Output("modal3", "is_open"),
     [Input("open3", "n_clicks"), Input("close3", "n_clicks")],
@@ -976,8 +980,6 @@ def toggle_modal(n1, n2, is_open):
 
 
 # modal for description tab 2
-
-
 @app.callback(
     Output("modal4", "is_open"),
     [Input("open4", "n_clicks"), Input("close4", "n_clicks")],
@@ -1019,9 +1021,12 @@ def toggle_popover(n, is_open):
     Input("category-widget-tab2", "value"),
     Input("mechanics-widget-tab2", "value"),
     Input("publisher-widget-tab2", "value"),
+    Input("min-num-ratings2", "value"),
 )
-def call_top_n_games(c, m, p, n=10):
-    top_n_games = app_gr.top_n_plot(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
+def call_top_n_games(c, m, p, value2):
+    top_n_games = app_gr.top_n_plot(
+        data=boardgame_data, cat=c, mech=m, pub=p, n=10, n_ratings=value2,
+    )
     return top_n_games.to_html()
 
 
@@ -1032,8 +1037,9 @@ def call_top_n_games(c, m, p, n=10):
     Input("category-widget-tab2", "value"),
     Input("mechanics-widget-tab2", "value"),
     Input("publisher-widget-tab2", "value"),
+    Input("min-num-ratings2", "value"),
 )
-def update_table(c, m, p, n=10):
+def update_table(c, m, p, value2):
     list_cols = [
         "name",
         "min_players",
@@ -1048,7 +1054,7 @@ def update_table(c, m, p, n=10):
         "users_rated",
     ]
     table = app_wr.call_boardgame_filter(
-        data=boardgame_data, cat=c, mech=m, pub=p, n=10
+        data=boardgame_data, cat=c, mech=m, pub=p, n=10, n_ratings=value2
     )
     columns = [{"name": col, "id": col} for col in list_cols]
     columns[0]["name"] = ("Game name",)
