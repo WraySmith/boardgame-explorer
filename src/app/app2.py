@@ -153,6 +153,7 @@ def generate_control_card_tab1():
                 options=radio_options,
                 value="mechanic",
                 labelStyle={"display": "block"},
+                persistence=False,
             ),
             html.Br(),
             html.H6("Select elements to view:"),
