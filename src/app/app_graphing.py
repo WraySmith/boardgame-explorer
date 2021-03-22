@@ -7,7 +7,7 @@ import app_wrangling as app_wr
 import plotly.graph_objs as go
 
 
-def scatter_plot_dates(data, col="category", list_=[None]):
+def scatter_plot_dates(data, col="category", list_=[None], n_ratings=0):
     """
     Takes in inputs filtering data and creates scatter plot
     for comparison of user ratings over time
@@ -24,7 +24,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("grey")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
+        set_data = app_wr.call_boardgame_radio(data, col, list_, no_of_ratings = n_ratings).explode("group")
         set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3"))
 
     reduced_data = app_wr.remove_columns(set_data)
@@ -79,7 +79,7 @@ def scatter_plot_dates(data, col="category", list_=[None]):
     return scatter_plot
 
 
-def count_plot_dates(data, col="category", list_=[None]):
+def count_plot_dates(data, col="category", list_=[None], n_ratings=0):
     """
     Takes input filtering data and creates
     a plot counting how many game occurrences
@@ -96,7 +96,7 @@ def count_plot_dates(data, col="category", list_=[None]):
         set_data = data
         set_color = alt.value("#62a9b5")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
+        set_data = app_wr.call_boardgame_radio(data, col, list_, no_of_ratings = n_ratings).explode("group")
         set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3"))
 
     reduced_data = app_wr.remove_columns(set_data)
@@ -369,8 +369,7 @@ def graph_3D(data, col="category", list_=[None], game=None):
 
 
 def rank_plot_density(
-    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True
-):
+    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True, n_ratings=0):
     """
     Creates altair graph of set column for set years
 
@@ -383,9 +382,9 @@ def rank_plot_density(
     return: altair plot
     """
     if bool_ or (not bool(list_)):
-        plot_data = app_wr.call_boardgame_top_density(data, col, year_in, year_out)
+        plot_data = app_wr.call_boardgame_top_density(data, col, year_in, year_out, n_ratings)
     else:
-        plot_data = app_wr.call_boardgame_radio(data, col, list_, year_in, year_out)
+        plot_data = app_wr.call_boardgame_radio(data, col, list_, year_in, year_out, n_ratings)
 
     rank_plot = (
         alt.Chart(plot_data, height=80)

@@ -312,7 +312,7 @@ def remove_columns(data):
     return boardgame_data[keep]
 
 
-def call_boardgame_top_density(data, col, year_in, year_out):
+def call_boardgame_top_density(data, col, year_in, year_out, no_of_ratings):
     """
     Creates dataframe populated with all top 5 values by
     user rating in either 'category', 'mechanic', or 'publisher'
@@ -330,11 +330,15 @@ def call_boardgame_top_density(data, col, year_in, year_out):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)
+
+    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
+
     boardgame_list = call_boardgame_top(data, col, year_in, year_out)[col].to_list()
 
     boardgame_data = boardgame_data[
         call_bool_series_or(boardgame_data, col, boardgame_list)
     ]
+
     boardgame_data = form_group(boardgame_data, col, boardgame_list)
     boardgame_data = boardgame_data.explode("group")
 
