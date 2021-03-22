@@ -413,9 +413,11 @@ def rank_plot_density(
         )
         .encode(
             alt.X(
-                "average_rating:Q",
+                "average_rating_bin:Q",
                 title="Average Rating",
-                axis=alt.Axis(labelFontSize=13, titleFontSize=15, titleFontWeight=100),
+                axis=alt.Axis(
+                    labelFontSize=13, titleFontSize=15, titleFontWeight=100, grid=False
+                ),
             ),
             alt.Y(
                 "density:Q",
@@ -427,14 +429,21 @@ def rank_plot_density(
         )
     )
 
-    # avg_line = (
-    #     alt.Chart(plot_data)
-    #     .mark_rule(color="black")
-    #     .encode(x="mean(average_rating)", fill=alt.Fill("group", legend=None))
-    # )
+    avg_line = (
+        alt.Chart(plot_data)
+        .mark_rule(color="black")
+        .encode(
+            x=alt.X("mean", title="Average Rating"),
+            fill=alt.Fill("group", legend=None),
+            tooltip=[
+                alt.Tooltip("group:N", title="Group"),
+                alt.Tooltip("mean:Q", title="Mean"),
+            ],
+        )
+    )
 
     out_plot = (
-        (rank_plot)
+        (rank_plot + avg_line)
         .facet(
             row=alt.Row(
                 "group:N",
@@ -443,11 +452,10 @@ def rank_plot_density(
             )
         )
         .properties(bounds="flush")
-        .configure_facet(spacing=0)
-        .configure_view(stroke=None, strokeOpacity=0)
-        .configure_title(anchor="middle")
         .configure(background="transparent")
         .configure_legend(titleFontSize=18, labelFontSize=13)
+        .configure_facet(spacing=0)
+        .configure_view(stroke=None, strokeOpacity=0)
     )
 
     return out_plot
