@@ -39,7 +39,7 @@ def load_data(filename):
             "name",
             "category",
             "compilation",
-            "expansion",
+            # "expansion",
             "mechanic",
             "average_rating",
             "users_rated",
@@ -64,9 +64,12 @@ def clean_data(data):
     # compilation and expansion have a high number of values
     # and many boardgames don't have values at all
     # just list whether a game is part of a compilation or expanionsion or not
-    boardgame_data_sub[["expansion", "compilation"]] = (
-        boardgame_data_sub[["expansion", "compilation"]].notna().astype(int)
+    boardgame_data_sub[["compilation"]] = (
+        boardgame_data_sub[["compilation"]].notna().astype(int)
     )
+    # boardgame_data_sub[["expansion", "compilation"]] = (
+    #     boardgame_data_sub[["expansion", "compilation"]].notna().astype(int)
+    # )
 
     # convert category and mechanic to one hot encoding and standardize the columns
     # NOTE: not currently using the one-hot encoded expansion or compilation
@@ -124,7 +127,8 @@ def tsne_analyse(onehot_df, user_df):
 
 if __name__ == "__main__":
     # load data and create subset for analysis
-    filename = "./data/app_data/board_game_date.csv"
+    filename = "./data/app_data/new.csv"
+    # filename = "./data/app_data/board_game_date.csv"
     raw, mod = load_data(filename)
     print("Data loaded successfully")
 
@@ -138,5 +142,5 @@ if __name__ == "__main__":
 
     # save data
     combined_output = pd.concat([raw, result_cat, result_user], axis=1)
-    combined_output.to_csv(filename + "_tsne.csv", index=False)
+    combined_output.to_csv("./data/app_data/new" + "_tsne.csv", index=False)
     print("Dataframe saved")
