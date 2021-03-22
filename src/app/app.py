@@ -58,12 +58,13 @@ def description_card_tab1():
     return html.Div(
         id="description-card-tab1",
         children=[
-            html.H5("Welcome to our Board Games Dashboard"),
-            html.Div(
-                id="intro",
-                children="Explore board game trends over time based on category, mechanics \
-                and publisher selection below. Also visualize the top categories,\
-                mechanics and publishers by year using our interactive density plots.",
+            html.H5("Welcome to the Board Game Data Explorer"),
+            dcc.Markdown(
+                id="intro1",
+                children="Use the tab selectors above to view either \
+                    **Game Trends**, **Top Games**, or the **3D Game Explorer**. \
+                    Descriptions are available on each tab using the **button** \
+                    to the right. A **dataset** description is also available.",
             ),
         ],
     )
@@ -78,11 +79,14 @@ def data_set_desc_tab1():
     return html.Div(
         children=[
             html.H4("Description of Dataset"),
-            html.P(
-                " This dataset comes from the Board Game Geek website and \
-                    includes boardgames with descriptions, general game \
-                    details, publisher, and user ratings for 10,000 boardgames\
-                    published between 1950 and 2021."
+            dcc.Markdown(
+                "This dataset comes from the [BoardGameGeek](https://boardgamegeek.com/) \
+                    website and includes board games with descriptions, general game \
+                    details, publisher, and user ratings.",
+            ),
+            dcc.Markdown(
+                "Note that he dataset is filtered to remove any games with less than \
+                    50 user ratings and is limited to games published after 1950."
             ),
         ]
     )
@@ -99,15 +103,30 @@ def tab_1_description():
     return html.Div(
         children=[
             html.H4("Game Trends"),
-            html.P(
-                "This tab allows users to select elements from game categories, \
-            mechanics or publishers on the control card on the left, as well as \
-            the minimum number of game ratings. This allows the user to visualize \
-            the average game rating over time as well as counts of published games. \
-            Users can switch to the density plots tab and selected a time period \
-            between 1950 and 2016 and view the game rating density plots for the \
-            selected time period, depending on game categories, mechanics or \
-            publishers selected from the control card on the left."
+            dcc.Markdown(
+                "Select Categories, Mechanics, or Publishers and filter on the \
+                    minimum number of user ratings for a board game."
+            ),
+            html.H5("Timeseries Subtab"),
+            dcc.Markdown(
+                "**Average Game Ratings** provides a plot of each game's \
+                    average user rating vs published year. Note that \
+                    the blue trendline represents the annual average of all \
+                    published games regardless of user selection."
+            ),
+            dcc.Markdown(
+                "**Game Counts** provides the total count of games published in each year \
+                    based on the user selections."
+            ),
+            html.H5("Density Subtab"),
+            dcc.Markdown(
+                "View user rating density plots based on user selections. Also allows \
+                    subsetting the data based on a year range using a slider"
+            ),
+            dcc.Markdown(
+                "If no elements are selected from the dropdown menu, the top 5 Categories, \
+                    Mechanics or Publishers based on the mean average user rating will \
+                    be displayed."
             ),
         ]
     )
@@ -122,11 +141,15 @@ def tab_2_description():
     return html.Div(
         children=[
             html.H4("Top Games"),
-            html.P(
+            dcc.Markdown(
                 "This tab allows users to select any combination of game categories, \
-                mechanics and publishers , and view the top 10 games associated with \
-                their selections. Below there is a  button that allows users  to see \
-                a fact table of those top 10 games."
+                mechanics and publishers as well as the minimum number of user ratings \
+                for a game. The top 10 games containing all selections and ranked by \
+                user rating will be displayed."
+            ),
+            dcc.Markdown(
+                "Below the barchart is also a button which will show a table of \
+                information for the 10 games."
             ),
         ]
     )
@@ -141,10 +164,21 @@ def tab_3_description():
     return html.Div(
         children=[
             html.H4("3D Game Explorer"),
-            html.P(
-                "This tab allows users to select  game categories, mechanics or \
-                publishers, and view an interactive 3D plot based on the selections. \
-                Users can also click on a game in the 3D plot to view game facts."
+            dcc.Markdown(
+                "The 3D Game Explorer shows a visual representation of game \
+                similarity based on game categories, mechanics, and user ratings."
+            ),
+            dcc.Markdown(
+                "The graph was generated using a \
+                [t-SNE](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)\
+                analysis. Game similarity between mechanics and categories is shown on \
+                the horizontal (x and y axes) and game similarity in user ratings \
+                (both counts and average rating) is represented on the vertical \
+                (z-axis)."
+            ),
+            dcc.Markdown(
+                "Clicking on any game will provide game details at the bottom of the left\
+                column."
             ),
         ]
     )
@@ -193,7 +227,7 @@ def generate_control_card_tab2():
     return html.Div(
         id="control-card-tab2",
         children=[
-            html.H6("Please select categories:"),
+            html.H6("Select categories:"),
             dcc.Dropdown(
                 id="category-widget-tab2",
                 value="",
@@ -203,7 +237,7 @@ def generate_control_card_tab2():
                 multi=True,
             ),
             html.Br(),
-            html.H6("Please select mechanics:"),
+            html.H6("Select mechanics:"),
             dcc.Dropdown(
                 id="mechanics-widget-tab2",
                 value="",
@@ -213,7 +247,7 @@ def generate_control_card_tab2():
                 multi=True,
             ),
             html.Br(),
-            html.H6("Please select publishers:"),
+            html.H6("Select publishers:"),
             dcc.Dropdown(
                 id="publisher-widget-tab2",
                 value="",
@@ -281,32 +315,27 @@ sub_title_card_1 = dbc.Card(
                             dbc.Col(description_card_tab1(), width=8),
                             dbc.Col(
                                 [
-                                    dbc.Row(
+                                    html.Div(
                                         [
-                                            html.Div(
-                                                [
-                                                    dbc.Button(
-                                                        "Dataset Description",
-                                                        id="open",
-                                                        style={"margin-left": "15px"},
-                                                    ),
-                                                    dbc.Modal(
-                                                        [
-                                                            dbc.ModalBody(
-                                                                data_set_desc_tab1()
-                                                            ),
-                                                            dbc.ModalFooter(
-                                                                dbc.Button(
-                                                                    "Close",
-                                                                    id="close",
-                                                                    className="ml-auto",
-                                                                )
-                                                            ),
-                                                        ],
-                                                        id="modal",
-                                                    ),
-                                                ]
+                                            dbc.Button(
+                                                "Dataset Description",
+                                                id="open",
+                                                style={"margin-left": "15px"},
                                             ),
+                                            dbc.Modal(
+                                                [
+                                                    dbc.ModalBody(data_set_desc_tab1()),
+                                                    dbc.ModalFooter(
+                                                        dbc.Button(
+                                                            "Close",
+                                                            id="close",
+                                                            className="ml-auto",
+                                                        )
+                                                    ),
+                                                ],
+                                                id="modal",
+                                            ),
+                                            html.Br(),
                                             html.Br(),
                                             html.Div(
                                                 [
@@ -393,10 +422,12 @@ sub_title_card_3 = dbc.Card(
                 dbc.Col(
                     [
                         html.H5("Board Game Explorer"),
-                        html.P(
+                        dcc.Markdown(
                             "Select either categories, mechanics or publishers.\
-                             Then select different elements to view on the\
-                                following figure."
+                            Then select different elements to view on the\
+                            following figure. **Click** any game on the plot to\
+                            view details in the left column. **Larger** points \
+                            indicate games with higher user ratings scores."
                         ),
                     ],
                     width=9,
@@ -475,7 +506,7 @@ second_card_tab1 = dbc.Card(
         dbc.Tabs(
             [
                 dbc.Tab(
-                    label="Board Game Popularity and Counts",
+                    label="Timeseries Plots",
                     children=(
                         [
                             html.Div(
@@ -483,9 +514,13 @@ second_card_tab1 = dbc.Card(
                                     dbc.Col(
                                         [
                                             html.Br(),
-                                            html.H5("Average Game Rating Over Time"),
+                                            html.H5("Average Game Ratings"),
+                                            html.H6(
+                                                "Blue line shows annual average of \
+                                                    ALL games in dataset"
+                                            ),
                                             html.Iframe(
-                                                # scatter plott
+                                                # scatter plot
                                                 id="scatter",
                                                 style={
                                                     "border-width": "0",
@@ -599,9 +634,8 @@ first_card_tab2 = dbc.Card(
                                     dbc.PopoverBody(
                                         "Select any combination of game categories, mechanics \
                                     and publishers in the dropdowns below to populate \
-                                    the Top Games bar chart. Click the View Game Facts \
-                                    Sheet button to view facts about the top 10 games \
-                                    based on user selection."
+                                    the Top Games bar chart. User the slider to filter \
+                                    based on mininum number of user ratings for a game."
                                     ),
                                 ],
                                 id="popover2",
@@ -648,6 +682,7 @@ top_n_games_card_tab2 = dbc.Card(
     style={"height": "30rem"},
 )
 
+# table card
 top_n_games_table_card_tab2 = dbc.Card(
     dbc.CardBody(
         [
@@ -685,8 +720,9 @@ top_n_games_table_card_tab2 = dbc.Card(
                                         },
                                     ),
                                 ],
-                                style={"height": "40rem", "width": "80rem"},
-                            )
+                                style={"height": "40rem", "width": "90rem"},
+                            ),
+                            color="#F3F2F2",
                         ),
                         id="collapse",
                     ),
@@ -781,7 +817,11 @@ tab_selected_style = {
 }
 
 #  set up app stylesheet and server
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(
+    __name__,
+    title="Board Game Data Explorer",
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+)
 server = app.server
 
 # app layout
