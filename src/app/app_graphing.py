@@ -380,6 +380,7 @@ def graph_3D(data, col="category", list_=[None], game=None):
 def rank_plot_density(
     data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True, n_ratings=0
 ):
+
     """
     Creates altair graph of set column for set years
 
