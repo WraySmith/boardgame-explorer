@@ -22,15 +22,17 @@ def scatter_plot_dates(data, col="category", list_=[], n_ratings=0):
     alt.data_transformers.disable_max_rows()
 
     if (list_ == [None]) or (not list_):
-        set_data = app_wr.rating_filter(data, n_ratings)
-        set_color = alt.value("grey")
+        set_scatter = app_wr.rating_filter(data, n_ratings)
+        set_scatter_col = alt.value("grey")
     else:
-        set_data = app_wr.call_boardgame_radio(
+        set_scatter = app_wr.call_boardgame_radio(
             data, col, list_, no_of_ratings=n_ratings
         ).explode("group")
-        set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2"))
+        set_scatter_col = alt.Color(
+            "group:N", title=None, scale=alt.Scale(scheme="dark2")
+        )
 
-    reduced_data = app_wr.remove_columns(set_data)
+    reduced_data = app_wr.remove_columns(set_scatter)
 
     scatter_plot = (
         alt.Chart(reduced_data)
@@ -51,7 +53,7 @@ def scatter_plot_dates(data, col="category", list_=[], n_ratings=0):
                     labelFontSize=13,
                 ),
             ),
-            color=set_color,
+            color=set_scatter_col,
             tooltip=[
                 alt.Tooltip("name:N", title="Name"),
                 alt.Tooltip("average_rating:Q", title="Average Rating"),
