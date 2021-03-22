@@ -488,8 +488,8 @@ def clean_table(data):
     pandas.DataFrame
     """
     data["year_published"] = data["year_published"].dt.year
-    data["mechanic"] = [", ".join(map(str, l)) for l in data["mechanic"]]
-    data["publisher"] = [", ".join(map(str, l)) for l in data["publisher"]]
-    data["category"] = [", ".join(map(str, l)) for l in data["category"]]
+    data["mechanic"] = [", ".join(map(str, item)) for item in data["mechanic"]]
+    data["publisher"] = [", ".join(map(str, item)) for item in data["publisher"]]
+    data["category"] = [", ".join(map(str, item)) for item in data["category"]]
     data["average_rating"] = round(data["average_rating"], 2)
     return data
