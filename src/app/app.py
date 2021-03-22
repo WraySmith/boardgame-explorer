@@ -689,7 +689,7 @@ top_n_games_table_card_tab2 = dbc.Card(
             html.Div(
                 [
                     dbc.Button(
-                        "View Game Fact Sheet",
+                        "View Game Details",
                         id="collapse-button",
                         className="mb-3",
                         color="primary",
@@ -705,6 +705,7 @@ top_n_games_table_card_tab2 = dbc.Card(
                                             "whiteSpace": "normal",
                                             "height": "auto",
                                             "font-family": "Verdana",
+                                            "font-size": 10,
                                         },
                                         style_table={"overflowY": "scroll"},
                                         sort_action="native",
@@ -1120,20 +1121,21 @@ def update_table_tab2(c, m, p, value2):
         data=boardgame_data, cat=c, mech=m, pub=p, n=10, n_ratings=value2
     )
     columns = [{"name": col, "id": col} for col in list_cols]
-    columns[0]["name"] = ("Game name",)
+    columns[0]["name"] = ("Game Name",)
     columns[1]["name"] = "Min Players"
     columns[2]["name"] = "Max Players"
     columns[3]["name"] = "Min Playtime"
     columns[4]["name"] = "Max Playtime"
     columns[5]["name"] = "Year Published"
-    columns[6]["name"] = "Game Category"
-    columns[7]["name"] = "Game Mechanic"
-    columns[8]["name"] = "Game Publisher"
-    columns[9]["name"] = "Average Game Rating"
-    columns[10]["name"] = "User Rating"
+    columns[6]["name"] = "Categories"
+    columns[7]["name"] = "Mechanics"
+    columns[8]["name"] = "Publishers"
+    columns[9]["name"] = "Avg. User Rating"
+    columns[10]["name"] = "No. Ratings"
 
-    data = table.to_dict("rows")
-    return data, columns
+    table_out = app_wr.clean_table(table)
+    data_out = table_out.to_dict("rows")
+    return data_out, columns
 
 
 # radio button selection options to populate dropdowns for tab3
