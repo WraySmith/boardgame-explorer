@@ -900,11 +900,12 @@ def toggle_popover(n, is_open):
 # radio button selection options to populate drop downs for tab1
 @app.callback(
     dash.dependencies.Output("radio-dependent-tab1", "options"),
+    dash.dependencies.Output("radio-dependent-tab1", "value"),
     [dash.dependencies.Input("radio-selection-tab1", "value")],
 )
 def update_options_tab1(chosen_selection):
     col = chosen_selection
-    return [{"label": c, "value": c} for c in col_dict[col]]
+    return [{"label": c, "value": c} for c in col_dict[col]], []
 
 
 # scatter plot tab 1
