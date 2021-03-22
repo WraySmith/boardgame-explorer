@@ -1,10 +1,11 @@
-# import functions needed
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import dash_table
+import plotly.graph_objs as go
+
 import numpy as np
 
 # import functions from .py files
@@ -40,24 +41,20 @@ extents_3d = {
     "max_z": boardgame_data["z"].max(),
 }
 
-
-#  set up app stylesheet and server
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.server
-
-
-# title
+# title for all tabs
 def title():
     """
     :return: A Div containing dashboard title.
     """
-    return html.Div(children=[html.H1("Board Game Trends Dashboard")])
+    return html.Div(
+        children=[html.H1("Board Game Data Explorer", style={"font-weight": "normal"})]
+    )
 
 
 # description card tab 1
 def description_card_tab1():
     """
-    :return: A Div containing welcome message and descriptions.
+    :return: A Div containing welcome message and descriptions on tab 1.
     """
     return html.Div(
         id="description-card-tab1",
@@ -67,149 +64,16 @@ def description_card_tab1():
                 id="intro",
                 children="Explore board game trends over time based on category, mechanics \
                     and publisher selection below. Also visualize the top categories,\
-                    mechanics and publishers by year using our interactive features.",
+                    mechanics and publishers by year using our interactive density plots.",
             ),
         ],
     )
 
 
-# control card for tab 1
-def generate_control_card_tab1():
-    """
-    :return: A Div containing controls for graphs on tab 1.
-    """
-    return html.Div(
-        id="control-card-tab1",
-        children=[
-            html.Label("Select what you want to view:"),
-            html.Br(),
-            html.Br(),
-            dcc.RadioItems(
-                id="radio-selection-tab1",
-                options=radio_options,
-                value="mechanic",
-                labelStyle={"display": "block"},
-            ),
-            html.Br(),
-            html.Label("Select elements to view:"),
-            html.Br(),
-            html.Br(),
-            dcc.Dropdown(
-                id="radio-dependent-tab1", options=[], multi=True, value=[None]
-            ),
-        ],
-    )
-
-
-# control card for tab 2
-def generate_control_card_tab2():
-    """
-    :return: A Div containing controls for graphs on tab 2.
-    """
-    return html.Div(
-        id="control-card-tab2",
-        children=[
-            html.P(
-                "Please select any combination of categories, mechanics, publishers\
-                     and number of games to show"
-            ),
-            html.Br(),
-            html.P("Please select categories:"),
-            dcc.Dropdown(
-                id="category-widget-tab2",
-                value="",
-                options=[
-                    {"label": name, "value": name} for name in col_dict["category"]
-                ],
-                multi=True,
-            ),
-            html.Br(),
-            html.P("Please select mechanics:"),
-            dcc.Dropdown(
-                id="mechanics-widget-tab2",
-                value="",
-                options=[
-                    {"label": name, "value": name} for name in col_dict["mechanic"]
-                ],
-                multi=True,
-            ),
-            html.Br(),
-            html.P("Please select publishers:"),
-            dcc.Dropdown(
-                id="publisher-widget-tab2",
-                value="",
-                options=[
-                    {"label": name, "value": name} for name in col_dict["publisher"]
-                ],
-                multi=True,
-            ),
-            html.Br(),
-            html.Br(),
-        ],
-    )
-
-
-# control card for tab 3
-def generate_control_card_tab3():
-    """
-    :return: A Div containing controls for graphs on tab 3.
-    """
-    return html.Div(
-        id="control-card-tab3",
-        children=[
-            html.Label("Select:"),
-            html.Br(),
-            dcc.RadioItems(
-                id="radio-selection-tab3",
-                options=radio_options,
-                value="category",
-                labelStyle={"display": "block"},
-            ),
-            html.Br(),
-            html.Label("Select elements to view:"),
-            html.Br(),
-            dcc.Dropdown(
-                id="radio-dependent-tab3",
-                options=[],
-                multi=True,
-                value=["Negotiation", "Farming"],
-            ),
-            html.Br(),
-            html.Label("Select game to highlight:"),
-            html.Br(),
-            dcc.Dropdown(
-                id="games-dependent-tab3", options=[], multi=False, value=None
-            ),
-        ],
-    )
-
-
-# lower description for tab 1
-def lower_description_tab1():
-    """
-    :return: A Div containing description for lower portion of tab 1.
-    """
-    return html.Div(
-        children=[
-            html.H4("Top 5 Categories, Mechanics and Publishers by Rating"),
-            html.P(
-                "Two sets of bar charts with year range sliders are provided \
-                    to allow comparison for two different periods.",
-            ),
-            html.Br(),
-            html.P(
-                "Drag the year sliders below to select your year ranges and \
-                    compare the top 5 categories, mechanics and publishers \
-                    between time periods."
-            ),
-        ]
-    )
-
-
-# data set description for tab 1
+# Data set description for tab 1
 def data_set_description_tab1():
     """
-    :return: A Div containing description of the data set for tab 1.
+    :return: A Div containing description of the data set for tab 1, which pops out in the modal.
     """
     return html.Div(
         children=[
@@ -224,271 +88,670 @@ def data_set_description_tab1():
     )
 
 
-# below are the cards that are used in the layout
+# tab 1 description for modal button
 
 
-# card 1 containing the description and control card for tab 1
+def tab_1_description():
+    """
+    :return: A Div containing description of tab 1 that goes in the pop out modal on tab 1.
+    """
+    return html.Div(
+        children=[
+            html.H4("Game Trends"),
+            html.P(
+                "This tab allows users to select elements from game categories, \
+        mechanics or publishers on the control card on the left, as well as the minimum number of game ratings. This \
+        allows the user to visualize the average game rating over time as well as counts of published games. Users can \
+        switch to the density plots tab and selected a time period between 1950 and 2016 and view the game rating density \
+        plots for the selected time period, depending on game categories, mechanics or publishers selected from the control \
+         card on the left."
+            ),
+        ]
+    )
+
+
+# tab 2 description for modal button
+def tab_2_description():
+    """
+    :return: A Div containing description of tab 2 that goes in the pop out modal on tab 2.
+    """
+    return html.Div(
+        children=[
+            html.H4("Top Games"),
+            html.P(
+                "This tab allows users to select any combination of game categories, mechanics and \
+                publishers , and view the top 10 games associated with their selections. Below there is\
+                 a  button that allows users  to see a fact table of those top 10 games."
+            ),
+        ]
+    )
+
+
+# tab 3 description for modal button
+def tab_3_description():
+    """
+    :return: A Div containing description of tab 3 that goes in the pop out modal on tab 3.
+    """
+    return html.Div(
+        children=[
+            html.H4("3D Game Explorer"),
+            html.P(
+                "This tab allows users to select  game categories, mechanics or \
+                publishers, and view an interactive 3D plot based on the selections. Users can also click on a game\
+                in the 3D plot to view game facts."
+            ),
+        ]
+    )
+
+
+# control card for tab 1
+def generate_control_card_tab1():
+    """
+    :return: A Div containing controls for graphs on tab 1.
+    """
+    return html.Div(
+        id="control-card-tab1",
+        children=[
+            html.H6("Select:"),
+            dcc.RadioItems(
+                id="radio-selection-tab1",
+                options=radio_options,
+                value="mechanic",
+                labelStyle={"display": "block"},
+                persistence=False,
+            ),
+            html.Br(),
+            html.H6("Select elements to view:"),
+            dcc.Dropdown(id="radio-dependent-tab1", options=[], multi=True, value=[]),
+            html.Br(),
+            html.H6("Select minumum number of ratings:"),
+            dcc.Slider(
+                id="min-num-ratings",
+                min=0,
+                max=10000,
+                step=100,
+                value=5000,
+                marks={0: "0", 5000: "5000", 10000: "10000"},
+            ),
+            html.Br(),
+            html.Div(id="slider-output-container_2"),
+        ],
+    )
+
+
+# control card for tab 2
+def generate_control_card_tab2():
+    """
+    :return: A Div containing controls for graphs on tab 2.
+    """
+    return html.Div(
+        id="control-card-tab2",
+        children=[
+            html.H6("Please select categories:"),
+            dcc.Dropdown(
+                id="category-widget-tab2",
+                value="",
+                options=[
+                    {"label": name, "value": name} for name in col_dict["category"]
+                ],
+                multi=True,
+            ),
+            html.Br(),
+            html.H6("Please select mechanics:"),
+            dcc.Dropdown(
+                id="mechanics-widget-tab2",
+                value="",
+                options=[
+                    {"label": name, "value": name} for name in col_dict["mechanic"]
+                ],
+                multi=True,
+            ),
+            html.Br(),
+            html.H6("Please select publishers:"),
+            dcc.Dropdown(
+                id="publisher-widget-tab2",
+                value="",
+                options=[
+                    {"label": name, "value": name} for name in col_dict["publisher"]
+                ],
+                multi=True,
+            ),
+            html.Br(),
+            html.H6("Select minumum number of ratings:"),
+            dcc.Slider(
+                id="min-num-ratings2",
+                min=0,
+                max=10000,
+                step=100,
+                value=5000,
+                marks={0: "0", 5000: "5000", 10000: "10000"},
+            ),
+            html.Br(),
+            html.Div(id="slider-output-container_3"),
+        ],
+    )
+
+
+# control card for tab 3
+def generate_control_card_tab3():
+    """
+    :return: A Div containing controls for graphs on tab 3.
+    """
+    return html.Div(
+        id="control-card-tab3",
+        children=[
+            html.H6("Select:"),
+            dcc.RadioItems(
+                id="radio-selection-tab3",
+                options=radio_options,
+                value="category",
+                labelStyle={"display": "block"},
+            ),
+            html.Br(),
+            html.H6("Select elements to view:"),
+            dcc.Dropdown(
+                id="radio-dependent-tab3",
+                options=[],
+                multi=True,
+                value=["Negotiation", "Farming"],
+            ),
+            html.Br(),
+            html.H6("Select game to highlight:"),
+            dcc.Dropdown(
+                id="games-dependent-tab3", options=[], multi=False, value=None
+            ),
+        ],
+    )
+
+
+# sub-title card tab 1
+sub_title_card_1 = dbc.Card(
+    dbc.CardBody(
+        [
+            html.Div(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(description_card_tab1(), width=8),
+                            dbc.Col(
+                                [
+                                    dbc.Row(
+                                        [
+                                            html.Div(
+                                                [
+                                                    dbc.Button(
+                                                        "Dataset Description",
+                                                        id="open",
+                                                        style={"margin-left": "15px"},
+                                                    ),
+                                                    dbc.Modal(
+                                                        [
+                                                            dbc.ModalBody(
+                                                                data_set_description_tab1()
+                                                            ),
+                                                            dbc.ModalFooter(
+                                                                dbc.Button(
+                                                                    "Close",
+                                                                    id="close",
+                                                                    className="ml-auto",
+                                                                )
+                                                            ),
+                                                        ],
+                                                        id="modal",
+                                                    ),
+                                                ]
+                                            ),
+                                            html.Br(),
+                                            html.Div(
+                                                [
+                                                    dbc.Button(
+                                                        "Game Trends Tab Description ",
+                                                        id="open2",
+                                                        style={"margin-left": "15px"},
+                                                    ),
+                                                    dbc.Modal(
+                                                        [
+                                                            dbc.ModalBody(
+                                                                tab_1_description()
+                                                            ),
+                                                            dbc.ModalFooter(
+                                                                dbc.Button(
+                                                                    "Close",
+                                                                    id="close2",
+                                                                    className="ml-auto",
+                                                                )
+                                                            ),
+                                                        ],
+                                                        id="modal2",
+                                                    ),
+                                                ]
+                                            ),
+                                        ]
+                                    ),
+                                ]
+                            ),
+                        ],
+                    ),
+                ]
+            )
+        ]
+    ),
+    color="#F3F2F2",
+)
+
+# subtitle card tab 2
+sub_title_card_2 = dbc.Card(
+    dbc.CardBody(
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H5("Top Board Games"),
+                        html.P(
+                            "Use the interactive features \
+                below to view the top 10 games based on choice of game categories, mechanics \
+                and publishers. "
+                        ),
+                    ],
+                    width=9,
+                ),
+                dbc.Col(
+                    [
+                        dbc.Button("Top Games Tab Description", id="open3"),
+                        dbc.Modal(
+                            [
+                                dbc.ModalBody(tab_2_description()),
+                                dbc.ModalFooter(
+                                    dbc.Button(
+                                        "Close", id="close3", className="ml-auto"
+                                    )
+                                ),
+                            ],
+                            id="modal3",
+                        ),
+                    ],
+                    width=3,
+                ),
+            ]
+        )
+    ),
+    color="#F3F2F2",
+)
+
+
+# subtitle card tab 3
+sub_title_card_3 = dbc.Card(
+    dbc.CardBody(
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H5("Board Game Explorer"),
+                        html.P(
+                            "Select either categories, mechanics or publishers.\
+                             Then select different elements to view on the\
+                                following figure."
+                        ),
+                    ],
+                    width=9,
+                ),
+                dbc.Col(
+                    [
+                        dbc.Button("3D Game Explorer Description", id="open4"),
+                        dbc.Modal(
+                            [
+                                dbc.ModalBody(tab_3_description()),
+                                dbc.ModalFooter(
+                                    dbc.Button(
+                                        "Close", id="close4", className="ml-auto"
+                                    )
+                                ),
+                            ],
+                            id="modal4",
+                        ),
+                    ],
+                    width=3,
+                ),
+            ]
+        )
+    ),
+    color="#F3F2F2",
+)
+
+
+# card 1 containing the pop over "how to use tab 1" instructions and
+# control card for tab 1
 first_card_tab1 = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
-                id="left-upper-tab1",
-                className="four columns",  # not sure this is needed?
+                id="control-card-tab-1",
                 children=[
-                    description_card_tab1(),
+                    html.Div(
+                        [
+                            dbc.Button("How to use", id="popover-target", color="info"),
+                            dbc.Popover(
+                                [
+                                    dbc.PopoverHeader(
+                                        "How To Use The Game Trends Tab?"
+                                    ),
+                                    dbc.PopoverBody(
+                                        "Select either categories, mechanics or publishers below, \
+                                        then select elements from the drop-down to visualize on this \
+                                        tab. Use the slider to select the minimum number ratings for \
+                                        the games shown in the visualization. In the density plot tab,\
+                                        choose a time period by dragging the interactive slider. "
+                                    ),
+                                ],
+                                id="popover",
+                                is_open=False,
+                                target="popover-target",
+                            ),
+                        ]
+                    ),
                     html.Br(),
                     generate_control_card_tab1(),
-                    html.Br(),
-                    html.Br(),
-                    html.Br(),
-                    html.Br(),
-                    html.Br(),
-                    html.Br(),
-                    html.Br(),
                 ],
             )
         ]
-    )
+    ),
+    color="#F3F2F2",
 )
-# card 2 containing the two plots on upper portion of tab 1,
+
+
+# card 2 for tab 1 containing the two plots on upper portion of tab 1,
 # the scatter plot and the counts stacked histogram
 second_card_tab1 = dbc.Card(
     dbc.CardBody(
-        [
-            html.Div(
-                [
-                    html.H4("Board Game Ratings and Counts from 1950 to 2016"),
-                    html.P(
-                        "Select either categories, mechanics or publishers.\
-                             Then select different elements to view on the\
-                                following two figures."
-                    ),
-                    html.Iframe(
-                        # scatter plot
-                        id="scatter",
-                        style={
-                            "border-width": "0",
-                            "width": "100%",
-                            "height": "250px",
-                        },
-                    ),
-                    html.Iframe(
-                        # stacked histogram
-                        id="count",
-                        style={
-                            "border-width": "0",
-                            "width": "100%",
-                            "height": "250px",
-                        },
-                    ),
-                ]
-            ),
-            html.Br(),
-        ]
-    )
-)
-
-
-# card 3 containing the lower description and
-# collapsable data set description for tab 1
-third_card_tab1 = dbc.Card(
-    dbc.CardBody(
-        [
-            dbc.Col(
-                id="left-lower-tab1",
-                className="four columns",  # not sure this is needed?
-                children=[lower_description_tab1()],
-            )
-        ]
-    )
-)
-
-
-# card 4 containing the top slider and bar charts to view top categories,
-# mechanics and publishers for selected time periods from the slider for tab 1
-fourth_card_tab1 = dbc.Card(
-    dbc.CardBody(
-        [
-            dbc.Row(
-                [
-                    html.Div(
+        dbc.Tabs(
+            [
+                dbc.Tab(
+                    label="Board Game Popularity and Counts",
+                    children=(
                         [
                             html.Div(
-                                id="top-range-slider-output",
-                                style={"align-items": "center"},
-                            ),
-                            html.Br(),
-                            html.Br(),
-                            dcc.RangeSlider(
-                                id="top-range-slider",
-                                min=1950,
-                                max=2016,
-                                step=1,
-                                value=[1990, 2010],
-                                marks=slider_dict,
-                            ),
-                            html.Br(),
-                            html.Iframe(
-                                id="top-barcharts",
-                                style={
-                                    "border-width": "0",
-                                    "width": "1050px",
-                                    "height": "200px",
-                                },
-                            ),
-                            html.Br(),
-                            html.Br(),
+                                [
+                                    dbc.Col(
+                                        [
+                                            html.Br(),
+                                            html.H5("Average Game Rating Over Time"),
+                                            html.Iframe(
+                                                # scatter plott
+                                                id="scatter",
+                                                style={
+                                                    "border-width": "0",
+                                                    "width": "100%",
+                                                    "height": "250px",
+                                                },
+                                            ),
+                                            html.Br(),
+                                            html.H5("Published Game Counts"),
+                                            html.Iframe(
+                                                # stacked histogram
+                                                id="count",
+                                                style={
+                                                    "border-width": "0",
+                                                    "width": "100%",
+                                                    "height": "250px",
+                                                },
+                                            ),
+                                        ],
+                                        width={"size": 10, "offset": 1},
+                                    ),
+                                    html.Br(),
+                                ]
+                            )
                         ]
-                    )
-                ]
-            )
-        ]
-    )
+                    ),
+                ),
+                dbc.Tab(
+                    label="Density Plot",
+                    children=(
+                        html.Div(
+                            [
+                                dbc.Row(
+                                    dbc.Col(
+                                        [
+                                            html.Div(
+                                                [
+                                                    html.Br(),
+                                                    html.H5("Game Density Plots"),
+                                                    html.Br(),
+                                                    html.Div(
+                                                        id="top-range-slider-output",
+                                                    ),
+                                                    html.Br(),
+                                                    html.Br(),
+                                                    html.Div(
+                                                        dcc.RangeSlider(
+                                                            id="top-range-slider",
+                                                            min=1950,
+                                                            max=2016,
+                                                            step=1,
+                                                            value=[1990, 2010],
+                                                            marks=slider_dict,
+                                                        ),
+                                                        style={
+                                                            "width": "60%",
+                                                            "display": "inline-block",
+                                                            "align-items": "center",
+                                                            "justify-content": "center",
+                                                        },
+                                                    ),
+                                                    html.Br(),
+                                                    html.Br(),
+                                                    html.Br(),
+                                                    html.Iframe(
+                                                        id="density_plot",
+                                                        style={
+                                                            "border-width": "0",
+                                                            "width": "1050px",
+                                                            "height": "550px",
+                                                        },
+                                                    ),
+                                                ],
+                                                style={
+                                                    "display": "inline-block",
+                                                    "align-items": "center",
+                                                    "justify-content": "center",
+                                                },
+                                            )
+                                        ],
+                                        width={"size": 6, "offset": 1},
+                                    )
+                                )
+                            ]
+                        )
+                    ),
+                ),
+            ]
+        )
+    ),
+    color="#F3F2F2",
 )
 
 
-# card 5 containing the bottom slider and bar charts to view top categories,
-# mechanics and publishers for selected time periods from the slider for tab 1
-fifth_card_tab1 = dbc.Card(
-    dbc.CardBody(
-        [
-            dbc.Row(
-                [
-                    html.Div(
-                        [
-                            html.Div(id="bottom-range-slider-output"),
-                            html.Br(),
-                            html.Br(),
-                            dcc.RangeSlider(
-                                id="bottom-range-slider",
-                                min=1950,
-                                max=2016,
-                                step=1,
-                                value=[1990, 2010],
-                                marks=slider_dict,
-                            ),
-                            html.Br(),
-                            html.Iframe(
-                                id="bottom-barcharts",
-                                style={
-                                    "border-width": "0",
-                                    "width": "1050px",
-                                    "height": "200px",
-                                },
-                            ),
-                            html.Br(),
-                            html.Br(),
-                        ]
-                    )
-                ]
-            )
-        ]
-    )
-)
-
-
-# card 6 containing the control card and the slider for number of games for tab 2
-sixth_card_tab2 = dbc.Card(dbc.CardBody([generate_control_card_tab2()]))
-
-
-# card 7 containing the top 10 games bar chart for tab 2
-seventh_card_tab2 = dbc.Card(
+# card 1 for tab 2 containing the pop over "how to use tab 2" instructions and
+# control card for tab 2
+first_card_tab2 = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
-                html.Iframe(
-                    id="top-n-games",
-                    style={"border-width": "0", "width": "100%", "height": "300px"},
-                )
-            )
-        ]
-    )
-)
-
-
-# card 8 containing the data table for the top n games for tab 2
-eight_card_tab2 = dbc.Card(
-    dbc.CardBody(
-        [
-            html.H5("Top 10 Games Facts Table:"),
-            dash_table.DataTable(
-                id="top-n-games-datatable",
-                style_cell={"whiteSpace": "normal", "height": "auto"},
-                style_table={"overflowY": "scroll"},
-                sort_action="native",
+                id="control-card-tab-2",
+                children=[
+                    html.Div(
+                        [
+                            dbc.Button(
+                                "How to use", id="popover-target2", color="info"
+                            ),
+                            dbc.Popover(
+                                [
+                                    dbc.PopoverHeader("How To Use The Top Games Tab?"),
+                                    dbc.PopoverBody(
+                                        "Select any combination of game categories, mechanics and publishers \
+                                        in the dropdowns below to populate the Top Games bar chart. Click the \
+                                        View Game Facts Sheet button to view facts about the top 10 games \
+                                        based on user selection."
+                                    ),
+                                ],
+                                id="popover2",
+                                is_open=False,
+                                target="popover-target2",
+                            ),
+                        ]
+                    ),
+                    html.Br(),
+                    generate_control_card_tab2(),
+                ],
             ),
         ]
-    )
+    ),
+    color="#F3F2F2",
+    style={"height": "30em"},
 )
 
 
-# card 9 for data set description tab 1
-ninth_card_tab1 = dbc.Card(
+# Tab 2 card containing the top 10 games bar chart for tab 2
+top_n_games_card_tab2 = dbc.Card(
+    dbc.CardBody(
+        [
+            html.Br(),
+            dbc.Col(
+                [
+                    html.H5("Top 10 Games"),
+                    html.Div(
+                        html.Iframe(
+                            id="top-n-games",
+                            style={
+                                "border-width": "0",
+                                "width": "100%",
+                                "height": "1000px",
+                            },
+                        ),
+                    ),
+                ],
+                width={"size": 12, "offset": 1},
+            ),
+        ]
+    ),
+    color="#F3F2F2",
+    style={"height": "30rem"},
+)
+
+top_n_games_table_card_tab2 = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
                 [
                     dbc.Button(
-                        "Click here to view dataset description",
+                        "View Game Fact Sheet",
                         id="collapse-button",
-                        className="mb-3",  # not sure this is needed
+                        className="mb-3",
                         color="primary",
                     ),
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(data_set_description_tab1())),
+                        dbc.Card(
+                            dbc.CardBody(
+                                [
+                                    html.H5("Top 10 Games Facts Table:"),
+                                    dash_table.DataTable(
+                                        id="top-n-games-datatable",
+                                        style_cell={
+                                            "whiteSpace": "normal",
+                                            "height": "auto",
+                                            "font-family": "Verdana",
+                                        },
+                                        style_table={"overflowY": "scroll"},
+                                        sort_action="native",
+                                        style_data_conditional=[
+                                            {
+                                                "if": {"row_index": "odd"},
+                                                "backgroundColor": "rgb(248, 248, 248)",
+                                            }
+                                        ],
+                                        style_header={
+                                            "backgroundColor": "rgb(230, 230, 230)",
+                                            "fontWeight": "bold",
+                                        },
+                                    ),
+                                ],
+                                style={"height": "40rem", "width": "80rem"},
+                            )
+                        ),
                         id="collapse",
                     ),
                 ]
             )
         ]
-    )
+    ),
+    color="#F3F2F2",
 )
 
-
-# card 10 containing the control card for tab 3
-tenth_card_tab3 = dbc.Card(
+# card 1 for tab 3 containing the pop over "how to use tab 2" instructions and
+# control card for tab 3
+control_card_tab3 = dbc.Card(
     dbc.CardBody(
         [
+            html.Div(
+                [
+                    dbc.Button("How to use", id="popover-target3", color="info"),
+                    dbc.Popover(
+                        [
+                            dbc.PopoverHeader("How To Use The 3D Game Explorer Tab?"),
+                            dbc.PopoverBody(
+                                "Select game categories, mechanics and publishers or populate \
+                                the 3D plot. Click and drag to  move around the  3D plot, and use the mouse to zoom. Simply \
+                                    hover over and click a game to view game facts."
+                            ),
+                        ],
+                        id="popover3",
+                        is_open=False,
+                        target="popover-target3",
+                    ),
+                ]
+            ),
+            html.Br(),
             html.Div(
                 id="left-column-tab3",
                 className="four columns",  # not sure this is needed
                 children=[generate_control_card_tab3()],
             ),
             html.Br(),
-            html.H6("Name and Rating"),
+            html.H5("Selected Game Facts:"),
+            html.H6("Name and Rating:"),
             html.Div(id="tsne-data-out-name"),
             html.Div(id="tsne-data-out-score"),
             html.Div(id="tsne-data-out-ratings"),
-            html.H6("Categories"),
+            html.Br(),
+            html.H6("Categories:"),
             html.Div(id="tsne-data-out-categories"),
-            html.H6("Mechanics"),
+            html.Br(),
+            html.H6("Mechanics:"),
             html.Div(id="tsne-data-out-mechanics"),
-            html.H6("Publishers"),
+            html.Br(),
+            html.H6("Publishers:"),
             html.Div(id="tsne-data-out-publishers"),
         ]
-    )
+    ),
+    color="#F3F2F2",
 )
 
 
-# card 11 containing the tsne plot on tab 3,
-eleventh_card_tab3 = dbc.Card(
+# card the tsne plot on tab 3
+tab_3_plot = dbc.Card(
     dbc.CardBody(
         [
             html.Div(
                 [
-                    html.H4("Board Game Explorer"),
-                    html.P(
-                        "Select either categories, mechanics or publishers.\
-                             Then select different elements to view on the\
-                                following figure."
-                    ),
+                    html.Br(),
+                    html.H5("3D Game Explorer"),
                     dcc.Graph(id="tsne-3d-plot", style={"height": "80vh"}),
                 ]
             ),
         ]
-    )
+    ),
+    color="#F3F2F2",
 )
-
 
 # tab styling features for layout
 tabs_styles = {"height": "44px" ""}
@@ -506,11 +769,14 @@ tab_selected_style = {
     "padding": "6px",
 }
 
+#  set up app stylesheet and server
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 
 # app layout
 app.layout = html.Div(
-    [
-        dbc.Container(
+    dbc.Container(
+        html.Div(
             [  # dashboard title
                 dbc.Row(
                     [
@@ -518,105 +784,136 @@ app.layout = html.Div(
                             [
                                 html.Div(
                                     id="title-top",
-                                    className="title on top",  # needed?
                                     children=[title()],
+                                    style={"backgroundColor": "#DDDCDC"},
                                 )
-                            ],
-                            width=12,
+                            ]
                         )
                     ]
-                )
-            ]
-        ),
-        dcc.Tabs(
-            [
-                # tab 1
-                dcc.Tab(
-                    label="Game Trends",
-                    children=[
-                        html.Br(),
-                        dbc.Row(
-                            [
-                                dbc.Col(first_card_tab1, width=3),
-                                dbc.Col(second_card_tab1, width=9),
-                            ]
-                        ),
-                        html.Br(),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [third_card_tab1, html.Br(), ninth_card_tab1],
-                                    width=3,
-                                ),
-                                dbc.Col(
-                                    [(fourth_card_tab1), html.Br(), (fifth_card_tab1)],
-                                    width=9,
-                                ),
-                            ],
-                        ),
-                    ],
-                    style=tab_style,
-                    selected_style=tab_selected_style,
                 ),
-                # tab 2
-                dcc.Tab(
-                    label="Top Games",
-                    children=[
-                        dbc.Container(
-                            [
-                                html.Br(),
-                                dbc.Row(
+                dcc.Tabs(
+                    [
+                        dcc.Tab(
+                            label="Game Trends",
+                            children=[
+                                html.Div(
                                     [
-                                        dbc.Col(sixth_card_tab2, width=3),
-                                        dbc.Col(
+                                        dbc.Row([((dbc.Col(sub_title_card_1)))]),
+                                        html.Br(),
+                                        dbc.Row(
                                             [
-                                                (seventh_card_tab2),
-                                                html.Br(),
-                                                (eight_card_tab2),
-                                            ],
-                                            width=9,
-                                            style={"height": "100vh"},
+                                                dbc.Col(first_card_tab1, width=3),
+                                                dbc.Col(second_card_tab1, width=9),
+                                            ]
                                         ),
                                     ]
-                                ),
-                            ]
-                        )
-                    ],
-                    style=tab_style,
-                    selected_style=tab_selected_style,
-                ),
-                # tab 3
-                dcc.Tab(
-                    label="Game Explorer",
-                    children=[
-                        html.Br(),
-                        dbc.Row(
-                            [
-                                dbc.Col(tenth_card_tab3, width=3),
-                                dbc.Col(eleventh_card_tab3, width=9),
-                            ]
+                                )
+                            ],
+                            style=tab_style,
+                            selected_style=tab_selected_style,
                         ),
-                        html.Br(),
-                    ],
-                    style=tab_style,
-                    selected_style=tab_selected_style,
+                        dcc.Tab(
+                            label="Top Games",
+                            children=[
+                                html.Div(
+                                    [
+                                        dbc.Row([((dbc.Col(sub_title_card_2)))]),
+                                        html.Br(),
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(first_card_tab2, width=3),
+                                                dbc.Col(
+                                                    [
+                                                        top_n_games_card_tab2,
+                                                    ],
+                                                    width=9,
+                                                ),
+                                            ]
+                                        ),
+                                        html.Br(),
+                                        dbc.Row(dbc.Col(top_n_games_table_card_tab2)),
+                                    ]
+                                )
+                            ],
+                            style=tab_style,
+                            selected_style=tab_selected_style,
+                        ),
+                        dcc.Tab(
+                            label="3D Game Explorer",
+                            children=[
+                                html.Div(
+                                    [
+                                        dbc.Row(dbc.Col(sub_title_card_3)),
+                                        html.Br(),
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(control_card_tab3, width=3),
+                                                dbc.Col(tab_3_plot, width=9),
+                                            ]
+                                        ),
+                                    ]
+                                )
+                            ],
+                            style=tab_style,
+                            selected_style=tab_selected_style,
+                        ),
+                    ]
                 ),
-            ]
+            ],
+            style={"backgroundColor": "#DDDCDC"},
         ),
-    ]
+        fluid=True,
+    ),
+    style={"backgroundColor": "#DDDCDC"},
 )
 
 
 # Set up callbacks/backend
+# modal data set description
+@app.callback(
+    Output("modal", "is_open"),
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
 
-# radio button selection options to populate dropdowns for tab1
+
+# modal tab 1 description
+@app.callback(
+    Output("modal2", "is_open"),
+    [Input("open2", "n_clicks"), Input("close2", "n_clicks")],
+    [State("modal2", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+# Button over select for how to use tab 1 on control card
+@app.callback(
+    Output("popover", "is_open"),
+    [Input("popover-target", "n_clicks")],
+    [State("popover", "is_open")],
+)
+def toggle_popover(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+# radio button selection options to populate drop downs for tab1
 @app.callback(
     dash.dependencies.Output("radio-dependent-tab1", "options"),
+    dash.dependencies.Output("radio-dependent-tab1", "value"),
     [dash.dependencies.Input("radio-selection-tab1", "value")],
 )
 def update_options_tab1(chosen_selection):
     col = chosen_selection
-    return [{"label": c, "value": c} for c in col_dict[col]]
+    return [{"label": c, "value": c} for c in col_dict[col]], []
 
 
 # scatter plot tab 1
@@ -624,9 +921,10 @@ def update_options_tab1(chosen_selection):
     Output("scatter", "srcDoc"),
     Input("radio-selection-tab1", "value"),
     Input("radio-dependent-tab1", "value"),
+    Input("min-num-ratings", "value"),
 )
-def call_scatter(col, list_):
-    chart = app_gr.scatter_plot_dates(boardgame_data, col, list_)
+def call_scatter(col, list_, n_ratings):
+    chart = app_gr.scatter_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart.to_html()
 
 
@@ -635,36 +933,11 @@ def call_scatter(col, list_):
     Output("count", "srcDoc"),
     Input("radio-selection-tab1", "value"),
     Input("radio-dependent-tab1", "value"),
+    Input("min-num-ratings", "value"),
 )
-def call_counts(col, list_):
-    chart2 = app_gr.count_plot_dates(boardgame_data, col, list_)
+def call_counts(col, list_, n_ratings):
+    chart2 = app_gr.count_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart2.to_html()
-
-
-# 1st facet chart
-@app.callback(Output("top-barcharts", "srcDoc"), Input("top-range-slider", "value"))
-def update_output1(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist1 = app_gr.rank_plot_facet(
-        data=boardgame_data, year_in=int(val1), year_out=int(val2)
-    )
-    return hist1.to_html()
-
-
-# 2nd facet chart
-@app.callback(
-    Output("bottom-barcharts", "srcDoc"), Input("bottom-range-slider", "value")
-)
-def update_output2(value):
-    transformed_value = [v for v in value]
-    val1 = transformed_value[0]
-    val2 = transformed_value[1]
-    hist2 = app_gr.rank_plot_facet(
-        data=boardgame_data, year_in=int(val1), year_out=int(val2)
-    )
-    return hist2.to_html()
 
 
 # 1st year range slider output tab 1
@@ -677,23 +950,73 @@ def range_slider_select(value):
     return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
 
-# 2nd year range slider output tab 1
+# density plot tab 1
 @app.callback(
-    dash.dependencies.Output("bottom-range-slider-output", "children"),
-    dash.dependencies.Input("bottom-range-slider", "value"),
+    Output("density_plot", "srcDoc"),
+    Input("radio-selection-tab1", "value"),
+    Input("radio-dependent-tab1", "value"),
+    Input("top-range-slider", "value"),
+    Input("min-num-ratings", "value"),
 )
-def range_slider_select2(value):
-    transformed_value = [v for v in value]
-    return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
+def call_density(col, list_, value1, value2):
+    transformed_value = [v for v in value1]
+    val1 = transformed_value[0]
+    val2 = transformed_value[1]
+    density_chart = app_gr.rank_plot_density(
+        boardgame_data,
+        col,
+        list_,
+        year_in=int(val1),
+        year_out=int(val2),
+        bool_=False,
+        n_ratings=value2,
+    )
+    return density_chart.to_html()
 
 
-# collapsable data set description
+# modal for description tab 2
 @app.callback(
-    Output("collapse", "is_open"),
-    [Input("collapse-button", "n_clicks")],
-    [State("collapse", "is_open")],
+    Output("modal3", "is_open"),
+    [Input("open3", "n_clicks"), Input("close3", "n_clicks")],
+    [State("modal3", "is_open")],
 )
-def toggle_collapse(n, is_open):
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+# modal for description tab 2
+@app.callback(
+    Output("modal4", "is_open"),
+    [Input("open4", "n_clicks"), Input("close4", "n_clicks")],
+    [State("modal4", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+# Button over select for how to use tab 2 on control card
+@app.callback(
+    Output("popover2", "is_open"),
+    [Input("popover-target2", "n_clicks")],
+    [State("popover2", "is_open")],
+)
+def toggle_popover(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+# Button over select for how to use tab 3 on control card
+@app.callback(
+    Output("popover3", "is_open"),
+    [Input("popover-target3", "n_clicks")],
+    [State("popover3", "is_open")],
+)
+def toggle_popover(n, is_open):
     if n:
         return not is_open
     return is_open
@@ -705,9 +1028,17 @@ def toggle_collapse(n, is_open):
     Input("category-widget-tab2", "value"),
     Input("mechanics-widget-tab2", "value"),
     Input("publisher-widget-tab2", "value"),
+    Input("min-num-ratings2", "value"),
 )
-def call_top_n_games(c, m, p, n=10):
-    top_n_games = app_gr.top_n_plot(data=boardgame_data, cat=c, mech=m, pub=p, n=10)
+def call_top_n_games(c, m, p, value2):
+    top_n_games = app_gr.top_n_plot(
+        data=boardgame_data,
+        cat=c,
+        mech=m,
+        pub=p,
+        n=10,
+        n_ratings=value2,
+    )
     return top_n_games.to_html()
 
 
@@ -718,8 +1049,9 @@ def call_top_n_games(c, m, p, n=10):
     Input("category-widget-tab2", "value"),
     Input("mechanics-widget-tab2", "value"),
     Input("publisher-widget-tab2", "value"),
+    Input("min-num-ratings2", "value"),
 )
-def update_table(c, m, p, n=10):
+def update_table(c, m, p, value2):
     list_cols = [
         "name",
         "min_players",
@@ -734,7 +1066,7 @@ def update_table(c, m, p, n=10):
         "users_rated",
     ]
     table = app_wr.call_boardgame_filter(
-        data=boardgame_data, cat=c, mech=m, pub=p, n=10
+        data=boardgame_data, cat=c, mech=m, pub=p, n=10, n_ratings=value2
     )
     columns = [{"name": col, "id": col} for col in list_cols]
     columns[0]["name"] = ("Game name",)
@@ -821,6 +1153,36 @@ def display_click_message(clickData):
     return None, None, None, None, None, None
 
 
+# slider output container first tab
+@app.callback(
+    dash.dependencies.Output("slider-output-container_2", "children"),
+    [dash.dependencies.Input("min-num-ratings", "value")],
+)
+def update_output(value):
+    return "Min Ratings: {}".format(value)
+
+
+# slider output container second tab
+@app.callback(
+    dash.dependencies.Output("slider-output-container_3", "children"),
+    [dash.dependencies.Input("min-num-ratings2", "value")],
+)
+def update_output(value):
+    return "Min Ratings: {}".format(value)
+
+
+# collapse button for top 10 games fact table
+@app.callback(
+    Output("collapse", "is_open"),
+    [Input("collapse-button", "n_clicks")],
+    [State("collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
 # run
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8055)
+    app.run_server(debug=True, host="127.0.0.1", port=8056)
