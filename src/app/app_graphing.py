@@ -5,7 +5,6 @@ contains graph calls for dashboard
 import altair as alt
 import app_wrangling as app_wr
 import plotly.graph_objs as go
-import plotly.express as px
 
 
 def scatter_plot_dates(data, col="category", list_=[None]):
