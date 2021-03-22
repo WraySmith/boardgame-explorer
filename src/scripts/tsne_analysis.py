@@ -7,12 +7,12 @@ from sklearn.manifold import TSNE
 def load_data(filename):
     """
     Load dataframe which is in the format required by the app but
-    excluding the x, y, z columns. Completes a TSNE analysis and
-    outputs a dataframe with the x, y, z columns added.
+    excluding the x, y, z columns. Fills NA values and creates subset
+    of columns for TSNE analysis
 
     filename: path to csv
 
-    return: boardgame_data_raw, data from csv read
+    return: boardgame_data_raw, raw data from csv read
     return: boardgame_data_sub, subsetted pd.DataFrame
     """
     boardgame_data_raw = pd.read_csv(filename)
@@ -57,7 +57,8 @@ def clean_data(data):
     data: pd.Dataframe, `boardgame_data_sub` output from `load_csv()`
 
     return: onehot_df, pd.DataFrame of category and mechanics data for TSNE
-    return: user_df, pd.Dataframe of user data for TSNE
+    return: user_df, pd.Dataframe of `average_rating` and `users_rated`
+        for input to TSNE
     """
     boardgame_data_sub = data.copy()
     # compilation and expansion have a high number of values
@@ -68,7 +69,7 @@ def clean_data(data):
     )
 
     # convert category and mechanic to one hot encoding and standardize the columns
-    # NOTE: note currently using the one-hot encoded expansion or compilation
+    # NOTE: not currently using the one-hot encoded expansion or compilation
     # standardizing resulted in a better TSNE result
     binarizer = MultiLabelBinarizer()
     category = pd.DataFrame(
@@ -101,7 +102,7 @@ def tsne_analyse(onehot_df, user_df):
     user_df: pd.Dataframe, output from `clean_data()`
 
     return: tsne_cat_df, pd.DataFrame of output from category/mechanic TSNE
-    return: tsne_user_df, pd.DataFrame of output from user TSNE
+    return: tsne_user_df, pd.DataFrame of output from user rating TSNE
     """
     # run TSNE on one-hot encoded category and mechanic features
     # a high perplexity fo 50 was found to provide a good visual result
