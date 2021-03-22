@@ -7,7 +7,7 @@ import app_wrangling as app_wr
 import plotly.graph_objs as go
 
 
-def scatter_plot_dates(data, col="category", list_=[None]):
+def scatter_plot_dates(data, col="category", list_=[], n_ratings=0):
     """
     Takes in inputs filtering data and creates scatter plot
     for comparison of user ratings over time
@@ -15,17 +15,20 @@ def scatter_plot_dates(data, col="category", list_=[None]):
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     list_: list
+    n_ratings: int
 
     returns: altair plot
     """
     alt.data_transformers.disable_max_rows()
 
     if (list_ == [None]) or (not list_):
-        set_data = data
+        set_data = app_wr.rating_filter(data, n_ratings)
         set_color = alt.value("grey")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
-        set_color = alt.Color("group:N", title="Group")
+        set_data = app_wr.call_boardgame_radio(
+            data, col, list_, no_of_ratings=n_ratings
+        ).explode("group")
+        set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2"))
 
     reduced_data = app_wr.remove_columns(set_data)
 
@@ -35,16 +38,17 @@ def scatter_plot_dates(data, col="category", list_=[None]):
         .encode(
             alt.X(
                 "year_published:T",
-                axis=alt.Axis(title=None),
+                axis=alt.Axis(title=None, labelFontSize=13, titleFontWeight=100),
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
                 "average_rating:Q",
                 axis=alt.Axis(
                     title="Average Rating",
-                    titleFontSize=12,
+                    titleFontSize=15,
                     offset=14,
-                    titleFontWeight=600,
+                    titleFontWeight=100,
+                    labelFontSize=13,
                 ),
             ),
             color=set_color,
@@ -55,14 +59,6 @@ def scatter_plot_dates(data, col="category", list_=[None]):
             ],
         )
         .properties(
-            title=alt.TitleParams(
-                text="Game Popularity based on Published Year",
-                subtitle="Light grey line shows annual average rating of ALL games",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
             width=650,
             height=150,
         )
@@ -74,15 +70,19 @@ def scatter_plot_dates(data, col="category", list_=[None]):
 
     line_plot = (
         alt.Chart(line_plot_data)
-        .mark_line(color="dark grey", size=3)
+        .mark_line(color="#62a9b5", size=3, opacity=0.6)
         .encode(x="year_published:T", y="average_rating")
     )
 
-    scatter_plot = scatter_plot + line_plot
+    scatter_plot = (
+        (scatter_plot + line_plot)
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
+    )
     return scatter_plot
 
 
-def count_plot_dates(data, col="category", list_=[None]):
+def count_plot_dates(data, col="category", list_=[], n_ratings=0):
     """
     Takes input filtering data and creates
     a plot counting how many game occurrences
@@ -90,17 +90,20 @@ def count_plot_dates(data, col="category", list_=[None]):
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
     list_: list of strings input
+    n_rating: int
 
     return: altair plot
     """
     alt.data_transformers.disable_max_rows()
 
     if (list_ == [None]) or (not list_):
-        set_data = data
-        set_color = alt.value("#2ca02c")
+        set_data = app_wr.rating_filter(data, n_ratings)
+        set_color = alt.value("#62a9b5")
     else:
-        set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
-        set_color = alt.Color("group:N", title="Group")
+        set_data = app_wr.call_boardgame_radio(
+            data, col, list_, no_of_ratings=n_ratings
+        ).explode("group")
+        set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2"))
 
     reduced_data = app_wr.remove_columns(set_data)
     reduced_data = reduced_data.drop(columns=["name"])
@@ -119,16 +122,17 @@ def count_plot_dates(data, col="category", list_=[None]):
         .encode(
             alt.X(
                 "year_published:T",
-                axis=alt.Axis(title=None),
+                axis=alt.Axis(title=None, labelFontSize=13, titleFontWeight=100),
                 scale=alt.Scale(zero=False),
             ),
             alt.Y(
                 "count:Q",
                 axis=alt.Axis(
-                    title="Count of Games Published",
-                    titleFontSize=12,
+                    title="Count",
+                    titleFontSize=15,
                     offset=8,
-                    titleFontWeight=600,
+                    titleFontWeight=100,
+                    labelFontSize=13,
                 ),
             ),
             color=set_color,
@@ -139,16 +143,11 @@ def count_plot_dates(data, col="category", list_=[None]):
             ],
         )
         .properties(
-            title=alt.TitleParams(
-                text="Game Count based on Published Year",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
             width=650,
             height=150,
         )
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
     )
 
     return count_plot
@@ -164,6 +163,7 @@ def rank_plot_dates(
     col: string
     year_in: int
     year_out: int
+    color_: string of unicode color
 
     return: altair plot
     """
@@ -228,7 +228,7 @@ def rank_plot_facet(data, year_in=1990, year_out=2010):
     )
 
 
-def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
+def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10, n_ratings=0):
     """
     Creates altair graph for top "n" games with filtered data
 
@@ -237,26 +237,38 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     mech: list
     pub: list
     n: int
+    n_ratings: int
 
     return: altair plot
     """
-    plot_data = app_wr.call_boardgame_filter(data, cat, mech, pub, n)
+    plot_data = app_wr.call_boardgame_filter(data, cat, mech, pub, n, n_ratings)
 
     alt.data_transformers.disable_max_rows()
     top_plot = (
         alt.Chart(plot_data)
         .mark_bar()
         .encode(
-            alt.X("name:N", sort="-y", axis=alt.Axis(title=None, labels=False)),
+            alt.X(
+                "name:N",
+                sort="-y",
+                axis=alt.Axis(title=None, labels=False, ticks=False),
+            ),
             alt.Y(
                 "average_rating:Q",
-                axis=alt.Axis(title="Average Rating"),
+                axis=alt.Axis(
+                    title="Average Rating",
+                    labelFontSize=13,
+                    titleFontSize=15,
+                    grid=False,
+                    titleFontWeight=100,
+                ),
                 scale=alt.Scale(domain=(0, 10)),
             ),
             color=alt.Color(
                 "name:N",
                 title="Boardgame Name",
                 sort=alt.EncodingSortField("-y", order="descending"),
+                scale=alt.Scale(scheme="dark2"),
             ),
             tooltip=[
                 alt.Tooltip("name", title="Name"),
@@ -264,22 +276,21 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
             ],
         )
         .properties(
-            title=alt.TitleParams(
-                text="Top 10 Games Based on User Selection",
-                anchor="start",
-                fontSize=20,
-                dy=-20,
-                dx=20,
-            ),
-            width=500,
-            height=200,
+            width=600,
+            height=300,
         )
     )
     top_text = top_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
         text=alt.Text("average_rating:Q", format=",.2r")
     )
+    out_plot = (
+        (top_plot + top_text)
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=15, labelFontSize=13, titleFontWeight=100)
+        .configure_view(strokeOpacity=0)
+    )
 
-    return top_plot + top_text
+    return out_plot
 
 
 def graph_3D(data, col="category", list_=[None], game=None, extents=None):
@@ -396,8 +407,9 @@ def graph_3D(data, col="category", list_=[None], game=None, extents=None):
 
 
 def rank_plot_density(
-    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True
+    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True, n_ratings=0
 ):
+
     """
     Creates altair graph of set column for set years
 
@@ -406,35 +418,57 @@ def rank_plot_density(
     list_: list
     year_in: int
     year_out: int
+    n_rating: int
 
     return: altair plot
     """
     if bool_ or (not bool(list_)):
-        plot_data = app_wr.call_boardgame_top_density(data, col, year_in, year_out)
+        plot_data = app_wr.call_boardgame_top_density(
+            data, col, year_in, year_out, n_ratings
+        )
     else:
-        plot_data = app_wr.call_boardgame_radio(data, col, list_, year_in, year_out)
+        plot_data = app_wr.call_boardgame_radio(
+            data, col, list_, year_in, year_out, n_ratings
+        )
+
+    plot_data = app_wr.bin_rating(plot_data)
+
+    plot_data = app_wr.density_transform(plot_data, col)
 
     rank_plot = (
         alt.Chart(plot_data, height=80)
-        .transform_density(
-            "average_rating", as_=["average_rating", "density"], groupby=["group"]
-        )
         .mark_area(
             interpolate="monotone", fillOpacity=0.8, stroke="lightgray", strokeWidth=0.5
         )
         .encode(
-            alt.X("average_rating:Q", bin="binned", title="Average Rating"),
-            alt.Y(
-                "density:Q", axis=None, title=None, scale=alt.Scale(domain=[0, 0.75])
+            alt.X(
+                "average_rating_bin:Q",
+                title="Average Rating",
+                axis=alt.Axis(
+                    labelFontSize=13, titleFontSize=15, titleFontWeight=100, grid=False
+                ),
             ),
-            alt.Color("group:N", title=None, scale=alt.Scale(scheme="set3")),
+            alt.Y(
+                "density:Q",
+                title=None,
+                scale=alt.Scale(domain=[0, 1]),
+                axis=None,
+            ),
+            alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2")),
         )
     )
 
     avg_line = (
         alt.Chart(plot_data)
         .mark_rule(color="black")
-        .encode(x="mean(average_rating)", fill=alt.Fill("group", legend=None))
+        .encode(
+            x=alt.X("mean", title="Average Rating"),
+            fill=alt.Fill("group", legend=None),
+            tooltip=[
+                alt.Tooltip("group:N", title="Group"),
+                alt.Tooltip("mean:Q", title="Mean"),
+            ],
+        )
     )
 
     out_plot = (
@@ -443,13 +477,14 @@ def rank_plot_density(
             row=alt.Row(
                 "group:N",
                 title=None,
-                header=alt.Header(labelAngle=0, labelAlign="left"),
+                header=alt.Header(labelAngle=0, labelAlign="left", labelFontSize=13),
             )
         )
-        .properties(title="Top 5 for " + str(col).capitalize(), bounds="flush")
+        .properties(bounds="flush")
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
         .configure_facet(spacing=0)
-        .configure_view(stroke=None)
-        .configure_title(anchor="middle")
+        .configure_view(stroke=None, strokeOpacity=0)
     )
 
     return out_plot

@@ -3,6 +3,7 @@ takes data from board_games.csv and changes it to a usable format for the app
 """
 
 import pandas as pd
+import numpy as np
 
 
 def call_boardgame_data():
@@ -41,7 +42,9 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(data, cat=[None], mech=[None], pub=[None], n=None):
+def call_boardgame_filter(
+    data, cat=[None], mech=[None], pub=[None], n=None, n_ratings=0
+):
     """
     Returns board games filtered based on list of values in
     'category', 'mechanic', 'publisher' columns. Provides
@@ -63,6 +66,8 @@ def call_boardgame_filter(data, cat=[None], mech=[None], pub=[None], n=None):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # filter based on minimum number of ratings
+    boardgame_data = rating_filter(boardgame_data, n_ratings)
     # create dictionary based on user input lists
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
     # creates a list of bool series for each column
@@ -130,7 +135,9 @@ def call_bool_series_or(data, col, list_):
     return list_bool
 
 
-def call_boardgame_radio(data, col, list_, year_in=1900, year_out=2200):
+def call_boardgame_radio(
+    data, col, list_, year_in=1900, year_out=2200, no_of_ratings=0
+):
     """
     Returns filtered data based on selecting
     'category','mechanic', or 'publisher' column
@@ -150,6 +157,8 @@ def call_boardgame_radio(data, col, list_, year_in=1900, year_out=2200):
     boardgame_data = data.copy(deep=True)  # deep required as contains lists
     # filters data based on years provided
     boardgame_data = year_filter(boardgame_data, year_in, year_out)
+    # filter data based on minimum number of ratings
+    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
     # subset based on user selection
     boardgame_data = boardgame_data[call_bool_series_or(boardgame_data, col, list_)]
     # call form_group() to add group column
@@ -231,7 +240,7 @@ def count_group(data):
     return df_out
 
 
-def call_boardgame_top(data, col, year_in, year_out):
+def call_boardgame_top(data, col, year_in, year_out, no_of_ratings=0):
     """
     Creates dataframe with top 5 values by user rating in either
     'category', 'mechanic', or 'publisher'
@@ -251,6 +260,8 @@ def call_boardgame_top(data, col, year_in, year_out):
     boardgame_data = data.copy(deep=True)
     # filters data based on years provided
     boardgame_data = year_filter(boardgame_data, year_in, year_out)
+    # filter data based on minimum number of ratings
+    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
     # split up column into categorical values
     board_game_exp = boardgame_data.explode(col)
     # find the average rating for the top 5 categories
@@ -306,7 +317,7 @@ def remove_columns(data):
     return boardgame_data[keep]
 
 
-def call_boardgame_top_density(data, col, year_in, year_out):
+def call_boardgame_top_density(data, col, year_in, year_out, no_of_ratings):
     """
     Creates dataframe populated with all top 5 values by
     user rating in either 'category', 'mechanic', or 'publisher'
@@ -318,17 +329,22 @@ def call_boardgame_top_density(data, col, year_in, year_out):
     col: string, column to filter on
     year_in: int, start of time period (inclusive)
     year_in: int, end of time period (inclusive)
+    no_of_ratings: int
 
     Returns
     -------
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)
+
+    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
+
     boardgame_list = call_boardgame_top(data, col, year_in, year_out)[col].to_list()
 
     boardgame_data = boardgame_data[
         call_bool_series_or(boardgame_data, col, boardgame_list)
     ]
+
     boardgame_data = form_group(boardgame_data, col, boardgame_list)
     boardgame_data = boardgame_data.explode("group")
 
@@ -347,7 +363,7 @@ def year_filter(data, year_in, year_out):
 
     Returns
     -------
-    Boolean.Series
+    pandas.Dataframe
     """
     boardgame_data = data
     # turns year inputs to date time
@@ -361,3 +377,99 @@ def year_filter(data, year_in, year_out):
     boardgame_data = boardgame_data[year_filter]
 
     return boardgame_data
+
+
+def rating_filter(data, no_of_ratings):
+    """
+    Limits pandas data frame by minimum
+    number of rating
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+    no_of_ratings: int
+
+    Returns
+    -------
+    pandas.dataframe
+    """
+    boardgame_data = data
+
+    # create a boolean series to filter out number of ratings less than required
+    rating_filter = boardgame_data["users_rated"] >= no_of_ratings
+    boardgame_data = boardgame_data[rating_filter]
+
+    return boardgame_data
+
+
+def bin_rating(data):
+    """
+    Bins the average rating into 0.5 increments
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+
+    Returns
+    -------
+    pandas.dataframe
+    """
+    # list of bins
+    bin_list = list(np.arange(-0.25, 10.5, 0.5))
+    # list of bin labels
+    set_list = list(np.arange(0, 10.5, 0.5))
+    # bins the average rating column
+    data["average_rating_bin"] = pd.cut(
+        data["average_rating"], bins=bin_list, labels=set_list
+    )
+
+    return data
+
+
+def density_transform(data, col):
+    """
+    Creates a density column for average ratings
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+    col: string, column to filter on
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    data_copy = data.copy()
+
+    # create density column
+    plot_density = (
+        data_copy.explode("group")
+        .groupby(["average_rating_bin", "group"])[col]
+        .count()
+        .to_frame("density")
+        .reset_index()
+    )
+    # create mean values
+    plot_mean = (
+        data_copy.explode("group")
+        .groupby("group")["average_rating"]
+        .mean()
+        .to_frame("average_rating")
+        .reset_index()
+    )
+
+    # generate list of group names
+    names = list(plot_density["group"].unique())
+    # create empty list for chart data
+    chart_data = []
+
+    # runs through each group and creates density
+    for x in names:
+        temp = plot_density[plot_density["group"] == x]
+        temp["density"] = temp["density"] / temp["density"].sum()
+        temp["mean"] = plot_mean[plot_mean["group"] == x]["average_rating"]
+        chart_data.append(temp)
+    # puts back into single dataframe
+    chart_data = pd.concat(chart_data).reset_index().drop(columns="index")
+
+    return chart_data
