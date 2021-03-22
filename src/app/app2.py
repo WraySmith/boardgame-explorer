@@ -31,7 +31,6 @@ radio_options = [
     {"label": " Publishers", "value": "publisher"},
 ]
 
-
 # title for all tabs
 def title():
     """
@@ -84,7 +83,7 @@ def data_set_description_tab1():
 
 def tab_1_description():
     """
-    :return: A Div containing description of tab 1 that goes  in the pop out modal on tab 1.
+    :return: A Div containing description of tab 1 that goes in the pop out modal on tab 1.
     """
     return html.Div(
         children=[
@@ -102,11 +101,9 @@ def tab_1_description():
 
 
 # tab 2 description for modal button
-
-
 def tab_2_description():
     """
-        :return: A Div containing description of tab 2 that goes  in the pop out modal on tab 2.
+        :return: A Div containing description of tab 2 that goes in the pop out modal on tab 2.
     """
     return html.Div(
         children=[
@@ -120,9 +117,7 @@ def tab_2_description():
     )
 
 
-# tab 2 description for modal button
-
-
+# tab 3 description for modal button
 def tab_3_description():
     """
         :return: A Div containing description of tab 3 that goes in the pop out modal on tab 3.
@@ -602,7 +597,7 @@ first_card_tab2 = dbc.Card(
         ]
     ),
     color="#F3F2F2",
-    style={"height": "38rem"},
+    style={"height": "30em"},
 )
 
 
@@ -630,7 +625,7 @@ top_n_games_card_tab2 = dbc.Card(
         ]
     ),
     color="#F3F2F2",
-    style={"height": "38rem"},
+    style={"height": "30rem"},
 )
 
 top_n_games_table_card_tab2 = dbc.Card(
@@ -769,7 +764,6 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 # app layout
-
 app.layout = html.Div(
     dbc.Container(
         html.Div(
@@ -790,7 +784,7 @@ app.layout = html.Div(
                 dcc.Tabs(
                     [
                         dcc.Tab(
-                            label="Game Trends Tab",
+                            label="Game Trends",
                             children=[
                                 html.Div(
                                     [
