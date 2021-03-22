@@ -153,79 +153,88 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
     return count_plot
 
 
-def rank_plot_dates(
-    data, col="category", year_in=1990, year_out=2010, color_="#ff7f0e"
+def rank_plot_density(
+    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True, n_ratings=0
 ):
+
     """
     Creates altair graph of set column for set years
 
     data: a pandas df generated from app_wrangling.call_boardgame_data()
     col: string
+    list_: list
     year_in: int
     year_out: int
-    color_: string of unicode color
+    n_rating: int
 
     return: altair plot
     """
-    plot_data = app_wr.call_boardgame_top(data, col, year_in, year_out)
+    if bool_ or (not bool(list_)):
+        plot_data = app_wr.call_boardgame_top_density(
+            data, col, year_in, year_out, n_ratings
+        )
+    else:
+        plot_data = app_wr.call_boardgame_radio(
+            data, col, list_, year_in, year_out, n_ratings
+        )
+
+    plot_data = app_wr.bin_rating(plot_data)
+
+    plot_data = app_wr.density_transform(plot_data, col)
 
     rank_plot = (
-        alt.Chart(plot_data)
-        .mark_bar(color=color_)
+        alt.Chart(plot_data, height=80)
+        .mark_area(
+            interpolate="monotone", fillOpacity=0.8, stroke="lightgray", strokeWidth=0.5
+        )
         .encode(
             alt.X(
-                str(col) + ":N",
-                sort="-y",
-                axis=alt.Axis(titleFontSize=12, titleFontWeight=600),
+                "average_rating_bin:Q",
+                title="Average Rating",
+                axis=alt.Axis(
+                    labelFontSize=13, titleFontSize=15, titleFontWeight=100, grid=False
+                ),
             ),
             alt.Y(
-                "average_rating:Q",
-                axis=alt.Axis(title="Average Rating"),
-                scale=alt.Scale(domain=(5, 10)),
+                "density:Q",
+                title=None,
+                scale=alt.Scale(domain=[0, 1]),
+                axis=None,
             ),
+            alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2")),
         )
-        .properties(width=250, height=75)
     )
 
-    rank_text = rank_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
-        text=alt.Text("average_rating:Q", format=",.2r")
+    avg_line = (
+        alt.Chart(plot_data)
+        .mark_rule(color="black")
+        .encode(
+            x=alt.X("mean", title="Average Rating"),
+            fill=alt.Fill("group", legend=None),
+            tooltip=[
+                alt.Tooltip("group:N", title="Group"),
+                alt.Tooltip("mean:Q", title="Mean"),
+            ],
+        )
     )
-    return rank_plot + rank_text
 
-
-def rank_plot_facet(data, year_in=1990, year_out=2010):
-    """
-    Facets altair graphs
-
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    year_in: int
-    year_out: int
-
-    return: altair plot
-    """
-    return alt.hconcat(
-        rank_plot_dates(
-            data=data,
-            col="category",
-            year_in=year_in,
-            year_out=year_out,
-            color_="#ff7f0e",
-        ),
-        rank_plot_dates(
-            data=data,
-            col="mechanic",
-            year_in=year_in,
-            year_out=year_out,
-            color_="#17becf",
-        ),
-        rank_plot_dates(
-            data=data,
-            col="publisher",
-            year_in=year_in,
-            year_out=year_out,
-            color_="#e377c2",
-        ),
+    out_plot = (
+        (rank_plot + avg_line)
+        .facet(
+            row=alt.Row(
+                "group:N",
+                title=None,
+                header=alt.Header(labelAngle=0, labelAlign="left", labelFontSize=13),
+            )
+        )
+        .properties(bounds="flush")
+        .configure(background="transparent")
+        .configure_legend(titleFontSize=18, labelFontSize=13)
+        .configure_facet(spacing=0)
+        .configure_view(stroke=None, strokeOpacity=0)
     )
+
+    return out_plot
 
 
 def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10, n_ratings=0):
@@ -404,87 +413,3 @@ def graph_3D(data, col="category", list_=[None], game=None, extents=None):
     fig_out = {"data": data_out, "layout": layout_out}
 
     return fig_out
-
-
-def rank_plot_density(
-    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True, n_ratings=0
-):
-
-    """
-    Creates altair graph of set column for set years
-
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    list_: list
-    year_in: int
-    year_out: int
-    n_rating: int
-
-    return: altair plot
-    """
-    if bool_ or (not bool(list_)):
-        plot_data = app_wr.call_boardgame_top_density(
-            data, col, year_in, year_out, n_ratings
-        )
-    else:
-        plot_data = app_wr.call_boardgame_radio(
-            data, col, list_, year_in, year_out, n_ratings
-        )
-
-    plot_data = app_wr.bin_rating(plot_data)
-
-    plot_data = app_wr.density_transform(plot_data, col)
-
-    rank_plot = (
-        alt.Chart(plot_data, height=80)
-        .mark_area(
-            interpolate="monotone", fillOpacity=0.8, stroke="lightgray", strokeWidth=0.5
-        )
-        .encode(
-            alt.X(
-                "average_rating_bin:Q",
-                title="Average Rating",
-                axis=alt.Axis(
-                    labelFontSize=13, titleFontSize=15, titleFontWeight=100, grid=False
-                ),
-            ),
-            alt.Y(
-                "density:Q",
-                title=None,
-                scale=alt.Scale(domain=[0, 1]),
-                axis=None,
-            ),
-            alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2")),
-        )
-    )
-
-    avg_line = (
-        alt.Chart(plot_data)
-        .mark_rule(color="black")
-        .encode(
-            x=alt.X("mean", title="Average Rating"),
-            fill=alt.Fill("group", legend=None),
-            tooltip=[
-                alt.Tooltip("group:N", title="Group"),
-                alt.Tooltip("mean:Q", title="Mean"),
-            ],
-        )
-    )
-
-    out_plot = (
-        (rank_plot + avg_line)
-        .facet(
-            row=alt.Row(
-                "group:N",
-                title=None,
-                header=alt.Header(labelAngle=0, labelAlign="left", labelFontSize=13),
-            )
-        )
-        .properties(bounds="flush")
-        .configure(background="transparent")
-        .configure_legend(titleFontSize=18, labelFontSize=13)
-        .configure_facet(spacing=0)
-        .configure_view(stroke=None, strokeOpacity=0)
-    )
-
-    return out_plot

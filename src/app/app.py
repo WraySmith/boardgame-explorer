@@ -13,7 +13,7 @@ import app_wrangling as app_wr
 # load board game data
 boardgame_data = app_wr.call_boardgame_data()
 
-# dictionary for tab 1 sliders
+# dictionary for tab 1 slider
 max_year = boardgame_data["year_published"].max().year
 slider_dict = {x: str(x) for x in range(1950, (max_year + 1), 5)}
 
