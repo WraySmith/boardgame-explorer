@@ -41,7 +41,9 @@ def call_boardgame_data():
     return boardgame_data
 
 
-def call_boardgame_filter(data, cat=[None], mech=[None], pub=[None], n=None):
+def call_boardgame_filter(
+    data, cat=[None], mech=[None], pub=[None], n=None, n_ratings=0
+):
     """
     Returns board games filtered based on list of values in
     'category', 'mechanic', 'publisher' columns. Provides
@@ -63,6 +65,8 @@ def call_boardgame_filter(data, cat=[None], mech=[None], pub=[None], n=None):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)  # deep required as contains lists
+    # filter based on minimum number of ratings
+    boardgame_data = rating_filter(boardgame_data, n_ratings)
     # create dictionary based on user input lists
     columns = {"category": cat, "mechanic": mech, "publisher": pub}
     # creates a list of bool series for each column
