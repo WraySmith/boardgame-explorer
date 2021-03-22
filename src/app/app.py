@@ -4,8 +4,6 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import dash_table
-import plotly.graph_objs as go
-
 import numpy as np
 
 # import functions from .py files
@@ -41,6 +39,7 @@ extents_3d = {
     "max_z": boardgame_data["z"].max(),
 }
 
+
 # title for all tabs
 def title():
     """
@@ -63,17 +62,18 @@ def description_card_tab1():
             html.Div(
                 id="intro",
                 children="Explore board game trends over time based on category, mechanics \
-                    and publisher selection below. Also visualize the top categories,\
-                    mechanics and publishers by year using our interactive density plots.",
+                and publisher selection below. Also visualize the top categories,\
+                mechanics and publishers by year using our interactive density plots.",
             ),
         ],
     )
 
 
 # Data set description for tab 1
-def data_set_description_tab1():
+def data_set_desc_tab1():
     """
-    :return: A Div containing description of the data set for tab 1, which pops out in the modal.
+    :return: A Div containing description of the data set for tab 1,
+    which pops out in the modal.
     """
     return html.Div(
         children=[
@@ -93,18 +93,21 @@ def data_set_description_tab1():
 
 def tab_1_description():
     """
-    :return: A Div containing description of tab 1 that goes in the pop out modal on tab 1.
+    :return: A Div containing description of tab 1
+    that goes in the pop out modal on tab 1.
     """
     return html.Div(
         children=[
             html.H4("Game Trends"),
             html.P(
                 "This tab allows users to select elements from game categories, \
-        mechanics or publishers on the control card on the left, as well as the minimum number of game ratings. This \
-        allows the user to visualize the average game rating over time as well as counts of published games. Users can \
-        switch to the density plots tab and selected a time period between 1950 and 2016 and view the game rating density \
-        plots for the selected time period, depending on game categories, mechanics or publishers selected from the control \
-         card on the left."
+            mechanics or publishers on the control card on the left, as well as \
+            the minimum number of game ratings. This allows the user to visualize \
+            the average game rating over time as well as counts of published games. \
+            Users can switch to the density plots tab and selected a time period \
+            between 1950 and 2016 and view the game rating density plots for the \
+            selected time period, depending on game categories, mechanics or \
+            publishers selected from the control card on the left."
             ),
         ]
     )
@@ -113,15 +116,17 @@ def tab_1_description():
 # tab 2 description for modal button
 def tab_2_description():
     """
-    :return: A Div containing description of tab 2 that goes in the pop out modal on tab 2.
+    :return: A Div containing description of tab 2
+    that goes in the pop out modal on tab 2.
     """
     return html.Div(
         children=[
             html.H4("Top Games"),
             html.P(
-                "This tab allows users to select any combination of game categories, mechanics and \
-                publishers , and view the top 10 games associated with their selections. Below there is\
-                 a  button that allows users  to see a fact table of those top 10 games."
+                "This tab allows users to select any combination of game categories, \
+                mechanics and publishers , and view the top 10 games associated with \
+                their selections. Below there is a  button that allows users  to see \
+                a fact table of those top 10 games."
             ),
         ]
     )
@@ -130,15 +135,16 @@ def tab_2_description():
 # tab 3 description for modal button
 def tab_3_description():
     """
-    :return: A Div containing description of tab 3 that goes in the pop out modal on tab 3.
+    :return: A Div containing description of tab 3
+    that goes in the pop out modal on tab 3.
     """
     return html.Div(
         children=[
             html.H4("3D Game Explorer"),
             html.P(
                 "This tab allows users to select  game categories, mechanics or \
-                publishers, and view an interactive 3D plot based on the selections. Users can also click on a game\
-                in the 3D plot to view game facts."
+                publishers, and view an interactive 3D plot based on the selections. \
+                Users can also click on a game in the 3D plot to view game facts."
             ),
         ]
     )
@@ -287,7 +293,7 @@ sub_title_card_1 = dbc.Card(
                                                     dbc.Modal(
                                                         [
                                                             dbc.ModalBody(
-                                                                data_set_description_tab1()
+                                                                data_set_desc_tab1()
                                                             ),
                                                             dbc.ModalFooter(
                                                                 dbc.Button(
@@ -348,9 +354,9 @@ sub_title_card_2 = dbc.Card(
                     [
                         html.H5("Top Board Games"),
                         html.P(
-                            "Use the interactive features \
-                below to view the top 10 games based on choice of game categories, mechanics \
-                and publishers. "
+                            "Use the interactive features below to view the top \
+                            10 games based on choice of game categories, mechanics \
+                            and publishers. "
                         ),
                     ],
                     width=9,
@@ -436,11 +442,14 @@ first_card_tab1 = dbc.Card(
                                         "How To Use The Game Trends Tab?"
                                     ),
                                     dbc.PopoverBody(
-                                        "Select either categories, mechanics or publishers below, \
-                                        then select elements from the drop-down to visualize on this \
-                                        tab. Use the slider to select the minimum number ratings for \
-                                        the games shown in the visualization. In the density plot tab,\
-                                        choose a time period by dragging the interactive slider. "
+                                        "Select either categories, mechanics or \
+                                        publishers below, then select elements \
+                                        from the drop-down to visualize on this \
+                                        tab. Use the slider to select the minimum \
+                                        number ratings for the games shown in the \
+                                        visualization. In the density plot tab,\
+                                        choose a time period by dragging the \
+                                        interactive slider. "
                                     ),
                                 ],
                                 id="popover",
@@ -588,10 +597,11 @@ first_card_tab2 = dbc.Card(
                                 [
                                     dbc.PopoverHeader("How To Use The Top Games Tab?"),
                                     dbc.PopoverBody(
-                                        "Select any combination of game categories, mechanics and publishers \
-                                        in the dropdowns below to populate the Top Games bar chart. Click the \
-                                        View Game Facts Sheet button to view facts about the top 10 games \
-                                        based on user selection."
+                                        "Select any combination of game categories, mechanics \
+                                    and publishers in the dropdowns below to populate \
+                                    the Top Games bar chart. Click the View Game Facts \
+                                    Sheet button to view facts about the top 10 games \
+                                    based on user selection."
                                     ),
                                 ],
                                 id="popover2",
@@ -700,8 +710,9 @@ control_card_tab3 = dbc.Card(
                             dbc.PopoverHeader("How To Use The 3D Game Explorer Tab?"),
                             dbc.PopoverBody(
                                 "Select game categories, mechanics and publishers or populate \
-                                the 3D plot. Click and drag to  move around the  3D plot, and use the mouse to zoom. Simply \
-                                    hover over and click a game to view game facts."
+                                the 3D plot. Click and drag to  move around the \
+                                3D plot, and use the mouse to zoom. Simply hover \
+                                over and click a game to view game facts."
                             ),
                         ],
                         id="popover3",
@@ -875,7 +886,7 @@ app.layout = html.Div(
     [Input("open", "n_clicks"), Input("close", "n_clicks")],
     [State("modal", "is_open")],
 )
-def toggle_modal(n1, n2, is_open):
+def toggle_modal_description(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
@@ -887,7 +898,7 @@ def toggle_modal(n1, n2, is_open):
     [Input("open2", "n_clicks"), Input("close2", "n_clicks")],
     [State("modal2", "is_open")],
 )
-def toggle_modal(n1, n2, is_open):
+def toggle_modal_tab1(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
@@ -899,7 +910,7 @@ def toggle_modal(n1, n2, is_open):
     [Input("popover-target", "n_clicks")],
     [State("popover", "is_open")],
 )
-def toggle_popover(n, is_open):
+def toggle_popover_tab1(n, is_open):
     if n:
         return not is_open
     return is_open
@@ -923,7 +934,7 @@ def update_options_tab1(chosen_selection):
     Input("radio-dependent-tab1", "value"),
     Input("min-num-ratings", "value"),
 )
-def call_scatter(col, list_, n_ratings):
+def call_scatter_tab1(col, list_, n_ratings):
     chart = app_gr.scatter_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart.to_html()
 
@@ -935,7 +946,7 @@ def call_scatter(col, list_, n_ratings):
     Input("radio-dependent-tab1", "value"),
     Input("min-num-ratings", "value"),
 )
-def call_counts(col, list_, n_ratings):
+def call_counts_tab1(col, list_, n_ratings):
     chart2 = app_gr.count_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart2.to_html()
 
@@ -945,7 +956,7 @@ def call_counts(col, list_, n_ratings):
     dash.dependencies.Output("top-range-slider-output", "children"),
     dash.dependencies.Input("top-range-slider", "value"),
 )
-def range_slider_select(value):
+def range_slider_select_tab1(value):
     transformed_value = [v for v in value]
     return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
@@ -958,7 +969,7 @@ def range_slider_select(value):
     Input("top-range-slider", "value"),
     Input("min-num-ratings", "value"),
 )
-def call_density(col, list_, value1, value2):
+def call_density_tab1(col, list_, value1, value2):
     transformed_value = [v for v in value1]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
@@ -980,19 +991,19 @@ def call_density(col, list_, value1, value2):
     [Input("open3", "n_clicks"), Input("close3", "n_clicks")],
     [State("modal3", "is_open")],
 )
-def toggle_modal(n1, n2, is_open):
+def toggle_modal_tab(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
 
 
-# modal for description tab 2
+# modal for description tab 3
 @app.callback(
     Output("modal4", "is_open"),
     [Input("open4", "n_clicks"), Input("close4", "n_clicks")],
     [State("modal4", "is_open")],
 )
-def toggle_modal(n1, n2, is_open):
+def toggle_modal_tab3(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
@@ -1004,7 +1015,7 @@ def toggle_modal(n1, n2, is_open):
     [Input("popover-target2", "n_clicks")],
     [State("popover2", "is_open")],
 )
-def toggle_popover(n, is_open):
+def toggle_popover_tab2(n, is_open):
     if n:
         return not is_open
     return is_open
@@ -1016,7 +1027,7 @@ def toggle_popover(n, is_open):
     [Input("popover-target3", "n_clicks")],
     [State("popover3", "is_open")],
 )
-def toggle_popover(n, is_open):
+def toggle_popover_tab3(n, is_open):
     if n:
         return not is_open
     return is_open
@@ -1030,7 +1041,7 @@ def toggle_popover(n, is_open):
     Input("publisher-widget-tab2", "value"),
     Input("min-num-ratings2", "value"),
 )
-def call_top_n_games(c, m, p, value2):
+def call_top_n_games_tab2(c, m, p, value2):
     top_n_games = app_gr.top_n_plot(
         data=boardgame_data,
         cat=c,
@@ -1051,7 +1062,7 @@ def call_top_n_games(c, m, p, value2):
     Input("publisher-widget-tab2", "value"),
     Input("min-num-ratings2", "value"),
 )
-def update_table(c, m, p, value2):
+def update_table_tab2(c, m, p, value2):
     list_cols = [
         "name",
         "min_players",
@@ -1117,7 +1128,7 @@ def update_games_tab3(col, list_):
     Input("radio-dependent-tab3", "value"),
     Input("games-dependent-tab3", "value"),
 )
-def call_tsne(col, list_, game):
+def call_tsne_tab3(col, list_, game):
     fig = app_gr.graph_3D(boardgame_data, col, list_, game, extents_3d)
     return fig
 
@@ -1132,7 +1143,7 @@ def call_tsne(col, list_, game):
     Output("tsne-data-out-publishers", "children"),
     Input("tsne-3d-plot", "clickData"),
 )
-def display_click_message(clickData):
+def display_click_message_tab3(clickData):
     if clickData:
         click_point_np = np.array(
             [clickData["points"][0][i] for i in ["x", "y", "z"]]
@@ -1158,7 +1169,7 @@ def display_click_message(clickData):
     dash.dependencies.Output("slider-output-container_2", "children"),
     [dash.dependencies.Input("min-num-ratings", "value")],
 )
-def update_output(value):
+def update_output_tab1(value):
     return "Min Ratings: {}".format(value)
 
 
@@ -1167,7 +1178,7 @@ def update_output(value):
     dash.dependencies.Output("slider-output-container_3", "children"),
     [dash.dependencies.Input("min-num-ratings2", "value")],
 )
-def update_output(value):
+def update_output_tab2(value):
     return "Min Ratings: {}".format(value)
 
 
@@ -1177,7 +1188,7 @@ def update_output(value):
     [Input("collapse-button", "n_clicks")],
     [State("collapse", "is_open")],
 )
-def toggle_collapse(n, is_open):
+def toggle_collapse_tab2(n, is_open):
     if n:
         return not is_open
     return is_open
