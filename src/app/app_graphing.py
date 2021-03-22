@@ -401,34 +401,39 @@ def rank_plot_density(
             data, col, list_, year_in, year_out, n_ratings
         )
 
+    plot_data = app_wr.bin_rating(plot_data)
+
+    plot_data = app_wr.density_transform(plot_data, col)
+
     rank_plot = (
         alt.Chart(plot_data, height=80)
-        .transform_density(
-            "average_rating", as_=["average_rating", "density"], groupby=["group"]
-        )
         .mark_area(
             interpolate="monotone", fillOpacity=0.8, stroke="lightgray", strokeWidth=0.5
         )
         .encode(
             alt.X(
                 "average_rating:Q",
-                bin="binned",
                 title="Average Rating",
                 axis=alt.Axis(labelFontSize=13, titleFontSize=15, titleFontWeight=100),
             ),
-            alt.Y("density:Q", title=None, scale=alt.Scale(domain=[0, 1])),
+            alt.Y(
+                "density:Q",
+                title=None,
+                scale=alt.Scale(domain=[0, 1]),
+                axis=None,
+            ),
             alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2")),
         )
     )
 
-    avg_line = (
-        alt.Chart(plot_data)
-        .mark_rule(color="black")
-        .encode(x="mean(average_rating)", fill=alt.Fill("group", legend=None))
-    )
+    # avg_line = (
+    #     alt.Chart(plot_data)
+    #     .mark_rule(color="black")
+    #     .encode(x="mean(average_rating)", fill=alt.Fill("group", legend=None))
+    # )
 
     out_plot = (
-        (rank_plot + avg_line)
+        (rank_plot)
         .facet(
             row=alt.Row(
                 "group:N",
@@ -438,11 +443,10 @@ def rank_plot_density(
         )
         .properties(bounds="flush")
         .configure_facet(spacing=0)
-        .configure_view(stroke=None)
+        .configure_view(stroke=None, strokeOpacity=0)
         .configure_title(anchor="middle")
         .configure(background="transparent")
         .configure_legend(titleFontSize=18, labelFontSize=13)
-        .configure_view(strokeOpacity=0)
     )
 
     return out_plot

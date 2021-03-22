@@ -3,6 +3,7 @@ takes data from board_games.csv and changes it to a usable format for the app
 """
 
 import pandas as pd
+import numpy as np
 
 
 def call_boardgame_data():
@@ -328,6 +329,7 @@ def call_boardgame_top_density(data, col, year_in, year_out, no_of_ratings):
     col: string, column to filter on
     year_in: int, start of time period (inclusive)
     year_in: int, end of time period (inclusive)
+    no_of_ratings: int
 
     Returns
     -------
@@ -398,3 +400,64 @@ def rating_filter(data, no_of_ratings):
     boardgame_data = boardgame_data[rating_filter]
 
     return boardgame_data
+
+
+def bin_rating(data):
+    """
+    Bins the average rating into 0.5 increments
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+
+    Returns
+    -------
+    pandas.dataframe
+    """
+    # list of bins
+    bin_list = list(np.arange(0, 10.5, 0.5))
+    # list of bin labels
+    set_list = list(np.arange(0.5, 10.5, 0.5))
+    # bins the average rating column
+    data["average_rating"] = pd.cut(
+        data["average_rating"], bins=bin_list, labels=set_list
+    )
+
+    return data
+
+
+def density_transform(data, col):
+    """
+    Creates a density column for average ratings
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+    col: string, column to filter on
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    # create density column
+    plot_density = (
+        data.explode("group")
+        .groupby(["average_rating", "group"])[col]
+        .count()
+        .to_frame("density")
+        .reset_index()
+    )
+    # generate list of group names
+    names = list(plot_density["group"].unique())
+    # create empty list for chart data
+    chart_data = []
+
+    # runs through each group and creates density
+    for x in names:
+        temp = plot_density[plot_density["group"] == x]
+        temp["density"] = temp["density"] / temp["density"].sum()
+        chart_data.append(temp)
+    # puts back into single dataframe
+    chart_data = pd.concat(chart_data).reset_index().drop(columns="index")
+
+    return chart_data
