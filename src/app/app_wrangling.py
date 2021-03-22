@@ -415,11 +415,11 @@ def bin_rating(data):
     pandas.dataframe
     """
     # list of bins
-    bin_list = list(np.arange(0, 10.5, 0.5))
+    bin_list = list(np.arange(-0.25, 10.5, 0.5))
     # list of bin labels
-    set_list = list(np.arange(0.5, 10.5, 0.5))
+    set_list = list(np.arange(0, 10.5, 0.5))
     # bins the average rating column
-    data["average_rating"] = pd.cut(
+    data["average_rating_bin"] = pd.cut(
         data["average_rating"], bins=bin_list, labels=set_list
     )
 
@@ -439,14 +439,25 @@ def density_transform(data, col):
     -------
     pandas.DataFrame
     """
+    data_copy = data.copy()
+
     # create density column
     plot_density = (
-        data.explode("group")
-        .groupby(["average_rating", "group"])[col]
+        data_copy.explode("group")
+        .groupby(["average_rating_bin", "group"])[col]
         .count()
         .to_frame("density")
         .reset_index()
     )
+    # create mean values
+    plot_mean = (
+        data_copy.explode("group")
+        .groupby("group")["average_rating"]
+        .mean()
+        .to_frame("average_rating")
+        .reset_index()
+    )
+
     # generate list of group names
     names = list(plot_density["group"].unique())
     # create empty list for chart data
@@ -456,6 +467,7 @@ def density_transform(data, col):
     for x in names:
         temp = plot_density[plot_density["group"] == x]
         temp["density"] = temp["density"] / temp["density"].sum()
+        temp["mean"] = plot_mean[plot_mean["group"] == x]["average_rating"]
         chart_data.append(temp)
     # puts back into single dataframe
     chart_data = pd.concat(chart_data).reset_index().drop(columns="index")
