@@ -282,7 +282,7 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10):
     return top_plot + top_text
 
 
-def graph_3D(data, col="category", list_=[None], game=None):
+def graph_3D(data, col="category", list_=[None], game=None, extents=None):
     """
     3D t-sne graph data output
 
@@ -294,13 +294,25 @@ def graph_3D(data, col="category", list_=[None], game=None):
     return: fig_out, 3D plotly figure
     """
     # layout for the 3D plot
-    axes = dict(
-        title="", showgrid=True, zeroline=False, showticklabels=False, showspikes=False
+    axis_x = dict(
+        title="",
+        showgrid=True,
+        zeroline=False,
+        showticklabels=False,
+        showspikes=False,
+        range=[extents["min_x"], extents["max_x"]],
     )
+    axis_y = axis_x.copy()
+    axis_y["range"] = [extents["min_y"], extents["max_y"]]
+    axis_z = axis_x.copy()
+    axis_z["range"] = [extents["min_z"], extents["max_z"]]
+
     layout_out = go.Layout(
         margin=dict(l=0, r=0, b=0, t=0),
-        scene=dict(xaxis=axes, yaxis=axes, zaxis=axes),
+        scene=dict(xaxis=axis_x, yaxis=axis_y, zaxis=axis_z),
         legend=dict(yanchor="top", y=0.93, xanchor="right", x=0.99),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
     )
 
     # plotting data
@@ -311,6 +323,19 @@ def graph_3D(data, col="category", list_=[None], game=None):
         set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
 
     data_out = []
+    # corresponds with dark2 palette
+    # had trouble manually setting color palette for graph_object
+    color_list = [
+        "#1b9e77",
+        "#d95f02",
+        "#7570b3",
+        "#e7298a",
+        "#66a61e",
+        "#e6ab02",
+        "#a6761d",
+        "#666666",
+    ]
+    i = 0
     for idx, val in set_data.groupby(set_data.group):
         if idx == "none":
             marker_style = dict(
@@ -323,9 +348,13 @@ def graph_3D(data, col="category", list_=[None], game=None):
 
         else:
             marker_style = dict(
-                size=val["average_rating"] * 1.6, symbol="circle", opacity=0.4
+                size=val["average_rating"] * 1.6,
+                symbol="circle",
+                opacity=0.4,
+                color=color_list[i],
             )
             legend_show = True
+            i += 1
 
         scatter = go.Scatter3d(
             name=idx,
@@ -346,7 +375,7 @@ def graph_3D(data, col="category", list_=[None], game=None):
             size=game_data["average_rating"] * 1.6,
             symbol="circle",
             opacity=1.0,
-            color="violet",
+            color="purple",
         )
 
         scatter = go.Scatter3d(
