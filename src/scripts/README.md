@@ -13,3 +13,5 @@ There are two python files (`direct_api_caller.py` and `indirect_api_caller`) fo
 `compare_datasets.py` is to sanity check that our new processed dataset resembles the dataset we used in our initial EDA.  
 
 `utils.py` contains helper functions for our api caller files.  
+
+`tsne_analysis.py` adds the x, y, z coordinates for the 3d plot in the application.
