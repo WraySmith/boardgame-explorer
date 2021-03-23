@@ -1023,7 +1023,6 @@ def call_density_tab1(col, list_, value1, value2):
         list_,
         year_in=int(val1),
         year_out=int(val2),
-        bool_=False,
         n_ratings=value2,
     )
     return density_chart.to_html()

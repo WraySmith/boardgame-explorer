@@ -272,7 +272,7 @@ def call_boardgame_top(data, col, year_in, year_out, no_of_ratings=0):
         .to_frame()
         .reset_index()
     )
-
+    print(board_game_exp)
     return board_game_exp
 
 
@@ -336,8 +336,6 @@ def call_boardgame_top_density(data, col, year_in, year_out, no_of_ratings):
     pandas.DataFrame
     """
     boardgame_data = data.copy(deep=True)
-
-    boardgame_data = rating_filter(boardgame_data, no_of_ratings)
 
     boardgame_list = call_boardgame_top(data, col, year_in, year_out)[col].to_list()
 
@@ -469,7 +467,9 @@ def density_transform(data, col):
         temp["density"] = temp["density"] / temp["density"].sum()
         temp["mean"] = plot_mean[plot_mean["group"] == x]["average_rating"]
         chart_data.append(temp)
+
     # puts back into single dataframe
+
     chart_data = pd.concat(chart_data).reset_index().drop(columns="index")
 
     return chart_data
