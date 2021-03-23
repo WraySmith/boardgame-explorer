@@ -171,7 +171,7 @@ def rank_plot_density(
 
     return: altair plot
     """
-    if len(list_) == 0:
+    if not bool(list_):
         plot_data = app_wr.call_boardgame_top_density(
             data, col, year_in, year_out, n_ratings
         )

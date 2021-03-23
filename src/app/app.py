@@ -1240,4 +1240,4 @@ def toggle_collapse_tab2(n, is_open):
 
 # run
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8055)
+    app.run_server(debug=False, host="127.0.0.1", port=8055)
