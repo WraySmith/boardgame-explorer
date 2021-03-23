@@ -473,3 +473,23 @@ def density_transform(data, col):
     chart_data = pd.concat(chart_data).reset_index().drop(columns="index")
 
     return chart_data
+
+
+def clean_table(data):
+    """
+    Cleans the table on tab 2 including rounding and date formatting.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    data["year_published"] = data["year_published"].dt.year
+    data["mechanic"] = [", ".join(map(str, item)) for item in data["mechanic"]]
+    data["publisher"] = [", ".join(map(str, item)) for item in data["publisher"]]
+    data["category"] = [", ".join(map(str, item)) for item in data["category"]]
+    data["average_rating"] = round(data["average_rating"], 2)
+    return data
