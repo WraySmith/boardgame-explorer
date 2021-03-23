@@ -19,6 +19,10 @@ The best way to understand the functionality is just to check it out!
 
 An exploratory data analysis was also prepared prior to the dashboard and can be read [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/blob/main/reports/exploratory_data_analysis/boardgame_EDA.ipynb).
 
+![](./images/README_fig1.png)
+
+![](./images/README_fig2.png)
+
 ## Status
 
 The dashboard is currently under active development and will soon include the following updates (stay tuned!):
