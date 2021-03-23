@@ -162,19 +162,25 @@ def parse_game_ids(game_ids):
 
 
 if __name__ == "__main__":
-    # new_data = pd.read_csv("./data/raw/bgg_GameItem.csv")
-    # game_ids = list(new_data["bgg_id"])
-    # chunked_game_ids = utils.create_chunks(game_ids, 500)
+    new_data = pd.read_csv("./data/raw/bgg_GameItem.csv")
+    game_ids = list(new_data["bgg_id"])
+    chunked_game_ids = utils.create_chunks(game_ids, 500)
 
-    # df_list = []
+    df_list = []
 
-    # for id_chunk in list(chunked_game_ids):
-    #     df_list.append(parse_game_ids(id_chunk))
+    percent_complete = 1
+    number_of_chunks = len(list(game_ids)) / 500
+    for id_chunk in list(chunked_game_ids):
 
-    # df = pd.concat(df_list)
+        df_list.append(parse_game_ids(id_chunk))
+        print("percent complete: {}".format(percent_complete / number_of_chunks))
+        percent_complete += 1
 
-    # print(df.head())
-    # print(df.shape)
+    print("joining")
+    df = pd.concat(df_list)
 
-    # df.to_csv("./data/processed/bgg_with_scraped_names.csv")
+    print(df.head())
+    print(df.shape)
 
+    print("saving")
+    df.to_csv("./data/processed/bgg_with_scraped_names.csv")
