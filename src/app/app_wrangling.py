@@ -272,7 +272,6 @@ def call_boardgame_top(data, col, year_in, year_out, no_of_ratings=0):
         .to_frame()
         .reset_index()
     )
-    print(board_game_exp)
     return board_game_exp
 
 
