@@ -727,7 +727,7 @@ top_n_games_table_card_tab2 = dbc.Card(
                         ),
                         id="collapse",
                     ),
-                ]
+                ],
             )
         ]
     ),
@@ -883,8 +883,11 @@ app.layout = html.Div(
                                             ]
                                         ),
                                         html.Br(),
-                                        dbc.Row(dbc.Col(top_n_games_table_card_tab2)),
-                                    ]
+                                        dbc.Row(
+                                            dbc.Col(top_n_games_table_card_tab2),
+                                        ),
+                                    ],
+                                    style={"height": 1250},
                                 )
                             ],
                             style=tab_style,
