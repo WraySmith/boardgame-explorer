@@ -16,7 +16,9 @@ import time
 
 def parse_game_ids(game_ids):
     game_ids = ",".join(str(x) for x in game_ids)
-    url = url = "https://www.boardgamegeek.com/xmlapi/boardgame/{}".format(game_ids)
+    url = url = "https://www.boardgamegeek.com/xmlapi/boardgame/{}?stats=1".format(
+        game_ids
+    )
     print(url)
     resp = requests.get(url)
     tree = ET.fromstring(resp.content)
@@ -39,6 +41,8 @@ def parse_game_ids(game_ids):
         "family",
         "mechanic",
         "publisher",
+        "users_rated",
+        "average_rating",
     ]
 
     id_list = []
@@ -47,9 +51,13 @@ def parse_game_ids(game_ids):
 
     for idx, val in enumerate(list(tree)):
         # name
+        name = ""
         value = val.findall("name")
-        # ids = [x.items()[0][1] for x in value]
-        name = [x.text for x in value][0]
+        for v in value:
+            if "primary" in set(v.attrib.keys()):
+                name = v.text
+        if not name:
+            name = [x.text for x in value][0]
 
         # maxplayers
         value = val.findall("maxplayers")
@@ -106,6 +114,12 @@ def parse_game_ids(game_ids):
         value = val.findall("boardgamepublisher")
         publisher = [x.text for x in value]
 
+        # stats
+        stats = val.find("statistics")
+        ratings = stats.find("ratings")
+        user_ratings = ratings.find("usersrated").text
+        average_rating = ratings.find("average").text
+
         row = [
             bgg_id,
             maxplayers,
@@ -122,6 +136,8 @@ def parse_game_ids(game_ids):
             family,
             mechanic,
             publisher,
+            user_ratings,
+            average_rating,
         ]
         rows.append(row)
     df = pd.DataFrame(rows, columns=column_names)
@@ -146,18 +162,19 @@ def parse_game_ids(game_ids):
 
 
 if __name__ == "__main__":
-    new_data = pd.read_csv("./data/raw/bgg_GameItem.csv")
-    game_ids = list(new_data["bgg_id"])
-    chunked_game_ids = utils.create_chunks(game_ids, 500)
+    # new_data = pd.read_csv("./data/raw/bgg_GameItem.csv")
+    # game_ids = list(new_data["bgg_id"])
+    # chunked_game_ids = utils.create_chunks(game_ids, 500)
 
-    df_list = []
+    # df_list = []
 
-    for id_chunk in list(chunked_game_ids):
-        df_list.append(parse_game_ids(id_chunk))
+    # for id_chunk in list(chunked_game_ids):
+    #     df_list.append(parse_game_ids(id_chunk))
 
-    df = pd.concat(df_list)
+    # df = pd.concat(df_list)
 
-    print(df.head())
-    print(df.shape)
+    # print(df.head())
+    # print(df.shape)
 
-    df.to_csv("./data/processed/bgg_with_scraped_names.csv")
+    # df.to_csv("./data/processed/bgg_with_scraped_names.csv")
+
