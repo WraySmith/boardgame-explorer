@@ -23,6 +23,8 @@ An exploratory data analysis was also prepared prior to the dashboard and can be
 
 ![](./images/README_fig2.png)
 
+![](./images/test.gif)
+
 ## Status
 
 The dashboard is currently under active development and will soon include the following updates (stay tuned!):
