@@ -727,7 +727,7 @@ top_n_games_table_card_tab2 = dbc.Card(
                         ),
                         id="collapse",
                     ),
-                ]
+                ],
             )
         ]
     ),
@@ -883,8 +883,11 @@ app.layout = html.Div(
                                             ]
                                         ),
                                         html.Br(),
-                                        dbc.Row(dbc.Col(top_n_games_table_card_tab2)),
-                                    ]
+                                        dbc.Row(
+                                            dbc.Col(top_n_games_table_card_tab2),
+                                        ),
+                                    ],
+                                    style={"height": 1250},
                                 )
                             ],
                             style=tab_style,
@@ -1020,7 +1023,6 @@ def call_density_tab1(col, list_, value1, value2):
         list_,
         year_in=int(val1),
         year_out=int(val2),
-        bool_=False,
         n_ratings=value2,
     )
     return density_chart.to_html()
@@ -1238,4 +1240,4 @@ def toggle_collapse_tab2(n, is_open):
 
 # run
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8055)
+    app.run_server(debug=False, host="127.0.0.1", port=8055)

@@ -156,7 +156,7 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
 
 
 def rank_plot_density(
-    data, col="category", list_=[], year_in=1990, year_out=2010, bool_=True, n_ratings=0
+    data, col="category", list_=[], year_in=1990, year_out=2010, n_ratings=0
 ):
 
     """
@@ -171,7 +171,7 @@ def rank_plot_density(
 
     return: altair plot
     """
-    if bool_ or (not bool(list_)):
+    if not bool(list_):
         plot_data = app_wr.call_boardgame_top_density(
             data, col, year_in, year_out, n_ratings
         )
