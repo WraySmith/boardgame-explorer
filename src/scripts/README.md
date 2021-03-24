@@ -4,19 +4,19 @@ This directory holds files for gathering and processing data.
 
 Paths to the various data files are relative, thus all these scripts are to be run from the root of this repository.
 
-`data/raw/bgg_GameItem.csv` is an updated board game dataset, but it has ids for columns like category instead of names.
+`data/raw/bgg_GameItem.csv` is an updated board game dataset, it is used for its updated list of board game ids for bgg.
 
-Run `scraper.py` to get a dataframe of all board games with names in the columns. Produces `./data/processed/bgg_with_scraped_names.csv`
+Run `bgg_api_querier.py` to get a dataframe of all board games with names in the columns. Produces `./data/raw/bgg_data_from_api.csv`
 
-Then run `wrangle.py` to join the scrapped dataframe from above with `data/raw/bgg_GameItem.csv` which gives us columns with names as well as user rating data. This file also filters rows to include only those with greater than 50 user reviews as well as rows between 1950 and 2021.
+Then run `wrangle.py` to filter `./data/raw/bgg_data_from_api.csv` to have published year greater than 1950, and to only include board games with atleast 50 user reviews. Also drops rows with non valid year published data. This files output is 
 
 `utils.py` contains helper functions for our api caller files.  
 
-`tsne_analysis.py` adds the x, y, z coordinates for the 3d plot in the application.
+`tsne_analysis.py` adds the x, y, z coordinates for the 3d plot in the application, and out puts the file `./data/app_data/bgg_data_tsne.csv`
 
 Order of files run:
 
-1) `scraper.py`
+1) `bgg_api_querier.py`
 
 2) `wrangle.py`
 
