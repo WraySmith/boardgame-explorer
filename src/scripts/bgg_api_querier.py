@@ -45,6 +45,7 @@ def parse_game_ids(game_ids):
         "average_rating",
     ]
 
+    # collect the board games' bgg_ids
     id_list = []
     for child in tree:
         id_list.append(child.attrib["objectid"])

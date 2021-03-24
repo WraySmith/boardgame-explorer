@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     df["year_published"] = df["year_published"].astype("int")
 
-    gt_50 = df[df["users_rated"] > 50]
+    gt_50 = df[df["users_rated"] > 100]
 
     between_1950_2021 = gt_50[(gt_50["year_published"] >= 1950)]
 
