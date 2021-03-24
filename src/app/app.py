@@ -187,7 +187,8 @@ def tab_3_description():
 # control card for tab 1
 def generate_control_card_tab1():
     """
-    :return: A Div containing controls for graphs on tab 1, which go on the control card on the left.
+    :return: A Div containing controls for graphs on tab 1,
+    which go on the control card on the left.
     """
     return html.Div(
         id="control-card-tab1",
@@ -222,7 +223,8 @@ def generate_control_card_tab1():
 # control card for tab 2
 def generate_control_card_tab2():
     """
-    :return: A Div containing controls for graphs on tab 2, which go on the control card on the left.
+    :return: A Div containing controls for graphs on tab 2,
+    which go on the control card on the left.
     """
     return html.Div(
         id="control-card-tab2",
@@ -275,7 +277,8 @@ def generate_control_card_tab2():
 # control card for tab 3
 def generate_control_card_tab3():
     """
-    :return: A Div containing controls for graphs on tab 3, which go on the control card on the left.
+    :return: A Div containing controls for graphs on tab 3,
+    which go on the control card on the left.
     """
     return html.Div(
         id="control-card-tab3",
@@ -875,12 +878,17 @@ app.layout = html.Div(
                                             [
                                                 dbc.Col(first_card_tab2, width=3),
                                                 dbc.Col(
-                                                    [top_n_games_card_tab2,], width=9,
+                                                    [
+                                                        top_n_games_card_tab2,
+                                                    ],
+                                                    width=9,
                                                 ),
                                             ]
                                         ),
                                         html.Br(),
-                                        dbc.Row(dbc.Col(top_n_games_table_card_tab2),),
+                                        dbc.Row(
+                                            dbc.Col(top_n_games_table_card_tab2),
+                                        ),
                                     ],
                                     style={"height": 1250},
                                 )
@@ -1120,7 +1128,12 @@ def call_top_n_games_tab2(c, m, p, value2):
     :return: Top 10 games plot on tab 2.
     """
     top_n_games = app_gr.top_n_plot(
-        data=boardgame_data, cat=c, mech=m, pub=p, n=10, n_ratings=value2,
+        data=boardgame_data,
+        cat=c,
+        mech=m,
+        pub=p,
+        n=10,
+        n_ratings=value2,
     )
     return top_n_games.to_html()
 
@@ -1136,7 +1149,8 @@ def call_top_n_games_tab2(c, m, p, value2):
 )
 def update_table_tab2(c, m, p, value2):
     """
-    :return: Data frame columns and ouput to populate data table(dcc.DataTable) on tab 2. 
+    :return: Data frame columns and ouput to
+    populate data table(dcc.DataTable) on tab 2.
     """
     list_cols = [
         "name",
@@ -1259,7 +1273,8 @@ def display_click_message_tab3(clickData):
 )
 def update_output_tab1(value):
     """
-    :return: Minimum number of games selected output text on tab 1 based on slider input.
+    :return: Minimum number of games selected output
+    text on tab 1 based on slider input.
     """
     return "Min Ratings: {}".format(value)
 
@@ -1271,7 +1286,8 @@ def update_output_tab1(value):
 )
 def update_output_tab2(value):
     """
-    :return: Minimum number of games selected output text on tab 2 based on slider input.
+    :return: Minimum number of games selected
+    output text on tab 2 based on slider input.
     """
     return "Min Ratings: {}".format(value)
 
