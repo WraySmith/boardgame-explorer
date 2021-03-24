@@ -4,14 +4,20 @@ This directory holds files for gathering and processing data.
 
 Paths to the various data files are relative, thus all these scripts are to be run from the root of this repository.
 
-There are two python files (`direct_api_caller.py` and `indirect_api_caller`) for creating id to name look up tables.
-`direct_api_caller.py` uses the boardgame geeks' api for the group (publisher, artist, or designer).  
-`indirect_api_caller` is for groups that do not have an api call (eg mechanic or category), so instead it finds the required data by calling the board game geeks' api for a boardgame, and gets the information that way.  
+`data/raw/bgg_GameItem.csv` is an updated board game dataset, it is used for its updated list of board game ids for bgg.
 
-`wrangle_data.py` takes the raw data and turns it into our processed data by first applying our id name lookup tables, then applies some filtering.  
+Run `bgg_api_querier.py` to get a dataframe of all board games with names in the columns. Produces `./data/raw/bgg_data_from_api.csv`
 
-`compare_datasets.py` is to sanity check that our new processed dataset resembles the dataset we used in our initial EDA.  
+Then run `wrangle.py` to filter `./data/raw/bgg_data_from_api.csv` to have published year greater than 1950, and to only include board games with atleast 50 user reviews. Also drops rows with non valid year published data. This files output is 
 
 `utils.py` contains helper functions for our api caller files.  
 
-`tsne_analysis.py` adds the x, y, z coordinates for the 3d plot in the application.
+`tsne_analysis.py` adds the x, y, z coordinates for the 3d plot in the application, and out puts the file `./data/app_data/bgg_data_tsne.csv`
+
+Order of files run:
+
+1) `bgg_api_querier.py`
+
+2) `wrangle.py`
+
+3) `tsne_analysis.py`
