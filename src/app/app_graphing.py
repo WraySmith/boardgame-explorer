@@ -12,12 +12,12 @@ def scatter_plot_dates(data, col="category", list_=[], n_ratings=0):
     Takes in inputs filtering data and creates an altair scatter
     plot for comparison of user ratings over time
 
-    data -- a pandas df generated from app_wrangling.call_boardgame_data()
-    col -- string indicating which column (default 'category')
-    list_ -- list of elements in column (default [])
-    n_ratings -- int of number of minimum rating to filter (default 0)
+    :param data: a pandas df generated from app_wrangling.call_boardgame_data()
+    :param col: string indicating which column (default 'category')
+    :param list_: list of elements in column (default [])
+    :param n_ratings: int of number of minimum rating to filter (default 0)
 
-    returns: altair plot
+    :return scatter_plot: altair plot
     """
 
     # Need to disable max rows in case of showing entire dataset:
@@ -93,12 +93,12 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
     Takes input filtering data and creates
     a plot counting how many game occurrences
 
-    data -- a pandas df generated from app_wrangling.call_boardgame_data()
-    col -- string indicating which column (default 'category)
-    list_ -- list of elements in column (default [])
-    n_ratings -- int of number of minimum rating to filter (default 0)
+    :param data: a pandas df generated from app_wrangling.call_boardgame_data()
+    :param col: string indicating which column (default 'category')
+    :param list_: list of elements in column (default [])
+    :param n_ratings: int of number of minimum rating to filter (default 0)
 
-    return: altair plot
+    :return count_plot: altair plot
     """
 
     # Need to disable max rows in case of showing entire dataset:
@@ -164,18 +164,17 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
 def rank_plot_density(
     data, col="category", list_=[], year_in=1990, year_out=2010, n_ratings=0
 ):
-
     """
     Creates altair graph of set column for set years
 
-    data -- a pandas df generated from app_wrangling.call_boardgame_data()
-    col -- string indicating which column (default 'category')
-    list_ -- list of elements in column (default [])
-    year_in -- int of year to start filtering on (default 1990)
-    year_out -- int of year to stop filtering on (default 2010)
-    n_ratings -- int of number of minimum rating to filter (default 0)
+    :param data: a pandas df generated from app_wrangling.call_boardgame_data()
+    :param col: string indicating which column (default 'category')
+    :param list_: list of elements in column (default [])
+    :param year_in: int of year to start filtering on (default 1990)
+    :param year_out: int of year to stop filtering on (default 2010)
+    :param n_ratings: int of number of minimum rating to filter (default 0)
 
-    return: altair plot
+    :return out_plot: altair plot
     """
 
     # If no elements selected return entire dataset:
@@ -250,14 +249,14 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10, n_ratings=0):
     """
     Creates altair graph for top "n" games with filtered data
 
-    data -- a pandas df generated from app_wrangling.call_boardgame_data()
-    cat -- list of elements in category (default [None])
-    mech -- list of elements in mechanic (default [None])
-    pub -- list of elements in publisher (default [None])
-    n -- int of maximum games to call (default 10)
-    n_ratings -- int of number of minimum rating to filter (default 0)
+    :param data: a pandas df generated from app_wrangling.call_boardgame_data()
+    :param cat: list of elements in category (default [None])
+    :param mech: list of elements in mechanic (default [None])
+    :param pub: list of elements in publisher (default [None])
+    :param n: int of maximum games to call (default 10)
+    :param n_ratings: int of number of minimum rating to filter (default 0)
 
-    return: altair plot
+    :return out_plot: altair plot
     """
 
     # Need to disable max rows in case of showing entire dataset:
@@ -320,13 +319,13 @@ def graph_3D(data, col="category", list_=[None], game=None, extents=None):
     """
     3D t-sne graph data output
 
-    data -- a pandas df generated from app_wrangling.call_boardgame_data()
-    col -- string indicating which column (default 'category')
-    list_ -- list of elements in column (default [None])
-    game -- string of board game name (default None)
-    extents -- string (default None)
+    :param data: a pandas df generated from app_wrangling.call_boardgame_data()
+    :param col: string indicating which column (default 'category')
+    :param list_: list of elements in column (default [None])
+    :param game: string of board game name (default None)
+    :param extents: string (default None)
 
-    return: fig_out, 3D plotly figure
+    :return fig_out: 3D plotly figure
     """
     # layout for the 3D plot:
     axis_x = dict(
