@@ -9,31 +9,35 @@ import plotly.graph_objs as go
 
 def scatter_plot_dates(data, col="category", list_=[], n_ratings=0):
     """
-    Takes in inputs filtering data and creates scatter plot
-    for comparison of user ratings over time
+    Takes in inputs filtering data and creates an altair scatter
+    plot for comparison of user ratings over time
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    list_: list
-    n_ratings: int
+    data -- a pandas df generated from app_wrangling.call_boardgame_data()
+    col -- string indicating which column (default 'category')
+    list_ -- list of elements in column (default [])
+    n_ratings -- int of number of minimum rating to filter (default 0)
 
     returns: altair plot
     """
-    alt.data_transformers.disable_max_rows()
 
+    # Need to disable max rows in case of showing entire dataset:
+    alt.data_transformers.disable_max_rows()
+    # If no elements selected return entire dataset:
     if (list_ == [None]) or (not list_):
         set_scatter = app_wr.rating_filter(data, n_ratings)
+        # colors the graph grey:
         set_scatter_col = alt.value("grey")
     else:
         set_scatter = app_wr.call_boardgame_radio(
             data, col, list_, no_of_ratings=n_ratings
         ).explode("group")
+        # colors the graph according to elements selected:
         set_scatter_col = alt.Color(
             "group:N", title=None, scale=alt.Scale(scheme="dark2")
         )
-
+    # removes extraneous columns:
     reduced_data = app_wr.remove_columns(set_scatter)
-
+    # creates altair scatter plot:
     scatter_plot = (
         alt.Chart(reduced_data)
         .mark_circle(size=60, opacity=0.2)
@@ -65,17 +69,17 @@ def scatter_plot_dates(data, col="category", list_=[], n_ratings=0):
             height=150,
         )
     )
-
+    # create data for the total mean user rating:
     line_plot_data = (
         data[["year_published", "average_rating"]].groupby("year_published").mean()
     ).reset_index()
-
+    # creates altair plot of the total mean user rating:
     line_plot = (
         alt.Chart(line_plot_data)
         .mark_line(color="#62a9b5", size=3, opacity=0.6)
         .encode(x="year_published:T", y="average_rating")
     )
-
+    # combine plots:
     scatter_plot = (
         (scatter_plot + line_plot)
         .configure(background="transparent")
@@ -89,24 +93,28 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
     Takes input filtering data and creates
     a plot counting how many game occurrences
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    list_: list of strings input
-    n_rating: int
+    data -- a pandas df generated from app_wrangling.call_boardgame_data()
+    col -- string indicating which column (default 'category)
+    list_ -- list of elements in column (default [])
+    n_ratings -- int of number of minimum rating to filter (default 0)
 
     return: altair plot
     """
-    alt.data_transformers.disable_max_rows()
 
+    # Need to disable max rows in case of showing entire dataset:
+    alt.data_transformers.disable_max_rows()
+    # If no elements selected return entire dataset:
     if (list_ == [None]) or (not list_):
         set_data = app_wr.rating_filter(data, n_ratings)
+        # colors the graph blue:
         set_color = alt.value("#62a9b5")
     else:
         set_data = app_wr.call_boardgame_radio(
             data, col, list_, no_of_ratings=n_ratings
         ).explode("group")
+        # colors the graph according to elements selected:
         set_color = alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2"))
-
+    # removes extraneous columns:
     reduced_data = app_wr.remove_columns(set_data)
     reduced_data = reduced_data.drop(columns=["name"])
 
@@ -116,8 +124,7 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
     grouped_data = reduced_data.groupby(grouping_columns).count()
     grouped_data.columns = ["count"]
     grouped_data = grouped_data.reset_index()
-
-    alt.data_transformers.disable_max_rows()
+    # create altair bar chart:
     count_plot = (
         alt.Chart(grouped_data)
         .mark_bar()
@@ -151,7 +158,6 @@ def count_plot_dates(data, col="category", list_=[], n_ratings=0):
         .configure(background="transparent")
         .configure_legend(titleFontSize=18, labelFontSize=13)
     )
-
     return count_plot
 
 
@@ -162,15 +168,17 @@ def rank_plot_density(
     """
     Creates altair graph of set column for set years
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    list_: list
-    year_in: int
-    year_out: int
-    n_rating: int
+    data -- a pandas df generated from app_wrangling.call_boardgame_data()
+    col -- string indicating which column (default 'category')
+    list_ -- list of elements in column (default [])
+    year_in -- int of year to start filtering on (default 1990)
+    year_out -- int of year to stop filtering on (default 2010)
+    n_ratings -- int of number of minimum rating to filter (default 0)
 
     return: altair plot
     """
+
+    # If no elements selected return entire dataset:
     if not bool(list_):
         plot_data = app_wr.call_boardgame_top_density(
             data, col, year_in, year_out, n_ratings
@@ -179,11 +187,11 @@ def rank_plot_density(
         plot_data = app_wr.call_boardgame_radio(
             data, col, list_, year_in, year_out, n_ratings
         )
-
+    # Bins average rating:
     plot_data = app_wr.bin_rating(plot_data)
-
+    # Creates density column:
     plot_data = app_wr.density_transform(plot_data, col)
-
+    # Creates altair density chart:
     rank_plot = (
         alt.Chart(plot_data, height=80)
         .mark_area(
@@ -206,7 +214,7 @@ def rank_plot_density(
             alt.Color("group:N", title=None, scale=alt.Scale(scheme="dark2")),
         )
     )
-
+    # creates rule of mean average rating:
     avg_line = (
         alt.Chart(plot_data)
         .mark_rule(color="black")
@@ -219,7 +227,7 @@ def rank_plot_density(
             ],
         )
     )
-
+    # combines density and rule chart:
     out_plot = (
         (rank_plot + avg_line)
         .facet(
@@ -235,7 +243,6 @@ def rank_plot_density(
         .configure_facet(spacing=0)
         .configure_view(stroke=None, strokeOpacity=0)
     )
-
     return out_plot
 
 
@@ -243,18 +250,22 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10, n_ratings=0):
     """
     Creates altair graph for top "n" games with filtered data
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    cat: list
-    mech: list
-    pub: list
-    n: int
-    n_ratings: int
+    data -- a pandas df generated from app_wrangling.call_boardgame_data()
+    cat -- list of elements in category (default [None])
+    mech -- list of elements in mechanic (default [None])
+    pub -- list of elements in publisher (default [None])
+    n -- int of maximum games to call (default 10)
+    n_ratings -- int of number of minimum rating to filter (default 0)
 
     return: altair plot
     """
+
+    # Need to disable max rows in case of showing entire dataset:
+    alt.data_transformers.disable_max_rows()
+    # Filters data:
     plot_data = app_wr.call_boardgame_filter(data, cat, mech, pub, n, n_ratings)
 
-    alt.data_transformers.disable_max_rows()
+    # Create altair bar chart:
     top_plot = (
         alt.Chart(plot_data)
         .mark_bar()
@@ -291,16 +302,17 @@ def top_n_plot(data, cat=[None], mech=[None], pub=[None], n=10, n_ratings=0):
             height=300,
         )
     )
+    # Create text of bar chart ratings:
     top_text = top_plot.mark_text(align="center", baseline="bottom", dy=-3).encode(
         text=alt.Text("average_rating:Q", format=",.2r")
     )
+    # Combine bar and text charts:
     out_plot = (
         (top_plot + top_text)
         .configure(background="transparent")
         .configure_legend(titleFontSize=15, labelFontSize=13, titleFontWeight=100)
         .configure_view(strokeOpacity=0)
     )
-
     return out_plot
 
 
@@ -308,14 +320,15 @@ def graph_3D(data, col="category", list_=[None], game=None, extents=None):
     """
     3D t-sne graph data output
 
-    data: a pandas df generated from app_wrangling.call_boardgame_data()
-    col: string
-    list_: list
-    game: string (default None)
+    data -- a pandas df generated from app_wrangling.call_boardgame_data()
+    col -- string indicating which column (default 'category')
+    list_ -- list of elements in column (default [None])
+    game -- string of board game name (default None)
+    extents -- string (default None)
 
     return: fig_out, 3D plotly figure
     """
-    # layout for the 3D plot
+    # layout for the 3D plot:
     axis_x = dict(
         title="",
         showgrid=True,
@@ -337,7 +350,7 @@ def graph_3D(data, col="category", list_=[None], game=None, extents=None):
         plot_bgcolor="rgba(0,0,0,0)",
     )
 
-    # plotting data
+    # plotting data:
     if (list_ == [None]) or (not list_):
         set_data = data.copy(deep=True)
         set_data["group"] = "none"
@@ -345,8 +358,8 @@ def graph_3D(data, col="category", list_=[None], game=None, extents=None):
         set_data = app_wr.call_boardgame_radio(data, col, list_).explode("group")
 
     data_out = []
-    # corresponds with dark2 palette
-    # had trouble manually setting color palette for graph_object
+    # corresponds with dark2 palette:
+    # had trouble manually setting color palette for graph_object:
     color_list = [
         "#1b9e77",
         "#d95f02",
