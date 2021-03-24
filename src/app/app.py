@@ -73,8 +73,8 @@ def description_card_tab1():
 # Data set description for tab 1
 def data_set_desc_tab1():
     """
-    :return: A Div containing description of the data set for tab 1,
-    which pops out in the modal.
+    :return: A Div containing description of the data set,
+    which pops out in the tab 1 modal.
     """
     return html.Div(
         children=[
@@ -187,7 +187,8 @@ def tab_3_description():
 # control card for tab 1
 def generate_control_card_tab1():
     """
-    :return: A Div containing controls for graphs on tab 1.
+    :return: A Div containing controls for graphs on tab 1,
+    which go on the control card on the left.
     """
     return html.Div(
         id="control-card-tab1",
@@ -222,7 +223,8 @@ def generate_control_card_tab1():
 # control card for tab 2
 def generate_control_card_tab2():
     """
-    :return: A Div containing controls for graphs on tab 2.
+    :return: A Div containing controls for graphs on tab 2,
+    which go on the control card on the left.
     """
     return html.Div(
         id="control-card-tab2",
@@ -275,7 +277,8 @@ def generate_control_card_tab2():
 # control card for tab 3
 def generate_control_card_tab3():
     """
-    :return: A Div containing controls for graphs on tab 3.
+    :return: A Div containing controls for graphs on tab 3,
+    which go on the control card on the left.
     """
     return html.Div(
         id="control-card-tab3",
@@ -931,6 +934,9 @@ app.layout = html.Div(
     [State("modal", "is_open")],
 )
 def toggle_modal_description(n1, n2, is_open):
+    """
+    :return: Open modal callback if user clicks data set description button on tab 1.
+    """
     if n1 or n2:
         return not is_open
     return is_open
@@ -943,6 +949,9 @@ def toggle_modal_description(n1, n2, is_open):
     [State("modal2", "is_open")],
 )
 def toggle_modal_tab1(n1, n2, is_open):
+    """
+    :return: Open modal callback if user clicks tab 1 description button on tab 1.
+    """
     if n1 or n2:
         return not is_open
     return is_open
@@ -955,6 +964,9 @@ def toggle_modal_tab1(n1, n2, is_open):
     [State("popover", "is_open")],
 )
 def toggle_popover_tab1(n, is_open):
+    """
+    :return: Open pop-over callback for how to use button for tab 1.
+    """
     if n:
         return not is_open
     return is_open
@@ -967,6 +979,9 @@ def toggle_popover_tab1(n, is_open):
     [dash.dependencies.Input("radio-selection-tab1", "value")],
 )
 def update_options_tab1(chosen_selection):
+    """
+    :return: Callback to generate drop down based on radio button selection.
+    """
     col = chosen_selection
     return [{"label": c, "value": c} for c in col_dict[col]], []
 
@@ -979,6 +994,9 @@ def update_options_tab1(chosen_selection):
     Input("min-num-ratings", "value"),
 )
 def call_scatter_tab1(col, list_, n_ratings):
+    """
+    :return: Scatter plot of game ratings on tab 1.
+    """
     chart = app_gr.scatter_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart.to_html()
 
@@ -991,16 +1009,22 @@ def call_scatter_tab1(col, list_, n_ratings):
     Input("min-num-ratings", "value"),
 )
 def call_counts_tab1(col, list_, n_ratings):
+    """
+    :return: Bar chart of published game counts on tab 1.
+    """
     chart2 = app_gr.count_plot_dates(boardgame_data, col, list_, n_ratings)
     return chart2.to_html()
 
 
-# 1st year range slider output tab 1
+# year range slider output tab 1
 @app.callback(
     dash.dependencies.Output("top-range-slider-output", "children"),
     dash.dependencies.Input("top-range-slider", "value"),
 )
 def range_slider_select_tab1(value):
+    """
+    :return: Tab 1 year range slider output years for density plot on tab 1.
+    """
     transformed_value = [v for v in value]
     return "Years Selected: {} to {}".format(transformed_value[0], transformed_value[1])
 
@@ -1014,6 +1038,9 @@ def range_slider_select_tab1(value):
     Input("min-num-ratings", "value"),
 )
 def call_density_tab1(col, list_, value1, value2):
+    """
+    :return: Game rating density plot on tab 1.
+    """
     transformed_value = [v for v in value1]
     val1 = transformed_value[0]
     val2 = transformed_value[1]
@@ -1035,6 +1062,9 @@ def call_density_tab1(col, list_, value1, value2):
     [State("modal3", "is_open")],
 )
 def toggle_modal_tab(n1, n2, is_open):
+    """
+    :return: Open modal callback if user clicks tab 2 description button on tab 2.
+    """
     if n1 or n2:
         return not is_open
     return is_open
@@ -1047,6 +1077,9 @@ def toggle_modal_tab(n1, n2, is_open):
     [State("modal4", "is_open")],
 )
 def toggle_modal_tab3(n1, n2, is_open):
+    """
+    :return: Open modal callback if user clicks tab 3 description button on tab 3.
+    """
     if n1 or n2:
         return not is_open
     return is_open
@@ -1059,6 +1092,9 @@ def toggle_modal_tab3(n1, n2, is_open):
     [State("popover2", "is_open")],
 )
 def toggle_popover_tab2(n, is_open):
+    """
+    :return: Open pop-over callback for how to use button for tab 2.
+    """
     if n:
         return not is_open
     return is_open
@@ -1071,6 +1107,9 @@ def toggle_popover_tab2(n, is_open):
     [State("popover3", "is_open")],
 )
 def toggle_popover_tab3(n, is_open):
+    """
+    :return: Open pop-over callback for how to use button for tab 2.
+    """
     if n:
         return not is_open
     return is_open
@@ -1085,6 +1124,9 @@ def toggle_popover_tab3(n, is_open):
     Input("min-num-ratings2", "value"),
 )
 def call_top_n_games_tab2(c, m, p, value2):
+    """
+    :return: Top 10 games plot on tab 2.
+    """
     top_n_games = app_gr.top_n_plot(
         data=boardgame_data,
         cat=c,
@@ -1106,6 +1148,10 @@ def call_top_n_games_tab2(c, m, p, value2):
     Input("min-num-ratings2", "value"),
 )
 def update_table_tab2(c, m, p, value2):
+    """
+    :return: Data frame columns and ouput to
+    populate data table(dcc.DataTable) on tab 2.
+    """
     list_cols = [
         "name",
         "min_players",
@@ -1146,6 +1192,9 @@ def update_table_tab2(c, m, p, value2):
     [dash.dependencies.Input("radio-selection-tab3", "value")],
 )
 def update_options_tab3(chosen_selection):
+    """
+    :return: Callback to generate radio buttons on tab 3.
+    """
     col = chosen_selection
     return [{"label": c, "value": c} for c in col_dict[col]]
 
@@ -1156,6 +1205,9 @@ def update_options_tab3(chosen_selection):
     [Input("radio-selection-tab3", "value"), Input("radio-dependent-tab3", "value")],
 )
 def update_games_tab3(col, list_):
+    """
+    :return: Callback to generate drop down based on radio button selection on tab 3.
+    """
     if col == "category":
         games = app_wr.call_boardgame_filter(boardgame_data, cat=list_)
     elif col == "mechanic":
@@ -1173,6 +1225,9 @@ def update_games_tab3(col, list_):
     Input("games-dependent-tab3", "value"),
 )
 def call_tsne_tab3(col, list_, game):
+    """
+    :return: Interactive TSNE plot tab 3.
+    """
     fig = app_gr.graph_3D(boardgame_data, col, list_, game, extents_3d)
     return fig
 
@@ -1188,6 +1243,9 @@ def call_tsne_tab3(col, list_, game):
     Input("tsne-3d-plot", "clickData"),
 )
 def display_click_message_tab3(clickData):
+    """
+    :return: Selected game data to put into control card on tab 3.
+    """
     if clickData:
         click_point_np = np.array(
             [clickData["points"][0][i] for i in ["x", "y", "z"]]
@@ -1214,6 +1272,10 @@ def display_click_message_tab3(clickData):
     [dash.dependencies.Input("min-num-ratings", "value")],
 )
 def update_output_tab1(value):
+    """
+    :return: Minimum number of games selected output
+    text on tab 1 based on slider input.
+    """
     return "Min Ratings: {}".format(value)
 
 
@@ -1223,6 +1285,10 @@ def update_output_tab1(value):
     [dash.dependencies.Input("min-num-ratings2", "value")],
 )
 def update_output_tab2(value):
+    """
+    :return: Minimum number of games selected
+    output text on tab 2 based on slider input.
+    """
     return "Min Ratings: {}".format(value)
 
 
@@ -1233,6 +1299,9 @@ def update_output_tab2(value):
     [State("collapse", "is_open")],
 )
 def toggle_collapse_tab2(n, is_open):
+    """
+    :return: Open top 10 games fact table on tab 2 if clicked.
+    """
     if n:
         return not is_open
     return is_open
