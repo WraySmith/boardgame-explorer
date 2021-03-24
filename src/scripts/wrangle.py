@@ -24,9 +24,7 @@ if __name__ == "__main__":
 
     gt_50 = df[df["users_rated"] > 50]
 
-    between_1950_2021 = gt_50[
-        (gt_50["year_published"] >= 1950) & (gt_50["year_published"] <= 2021)
-    ]
+    between_1950_2021 = gt_50[(gt_50["year_published"] >= 1950)]
 
     between_1950_2021["year_published"] = between_1950_2021["year_published"].astype(
         "str"
