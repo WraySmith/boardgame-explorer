@@ -39,7 +39,6 @@ def load_data(filename):
             "name",
             "category",
             "compilation",
-            "expansion",
             "mechanic",
             "average_rating",
             "users_rated",
@@ -64,8 +63,8 @@ def clean_data(data):
     # compilation and expansion have a high number of values
     # and many boardgames don't have values at all
     # just list whether a game is part of a compilation or expanionsion or not
-    boardgame_data_sub[["expansion", "compilation"]] = (
-        boardgame_data_sub[["expansion", "compilation"]].notna().astype(int)
+    boardgame_data_sub[["compilation"]] = (
+        boardgame_data_sub[["compilation"]].notna().astype(int)
     )
 
     # convert category and mechanic to one hot encoding and standardize the columns
@@ -105,26 +104,26 @@ def tsne_analyse(onehot_df, user_df):
     return: tsne_user_df, pd.DataFrame of output from user rating TSNE
     """
     # run TSNE on one-hot encoded category and mechanic features
-    # a high perplexity fo 50 was found to provide a good visual result
+    # a high perplexity of 50 was found to provide a good visual result
     tsne_cat = TSNE(perplexity=50, n_components=2)
 
     tsne_cat_results = tsne_cat.fit_transform(onehot_df)
     # run TSNE on user ratings features
     # this is done as we want a separate axis related to user rating
-    tsne_user = TSNE(perplexity=50, n_components=1)
+    tsne_user = TSNE(perplexity=30, n_components=1)
     tsne_user_results = tsne_user.fit_transform(user_df)
 
     # create a dataframe for output
     tsne_cat_df = pd.DataFrame(tsne_cat_results, columns=["x", "y"])
     # note: dividing user tsne results by 2 and multiply by -1 for plotting purposes
-    tsne_user_df = pd.DataFrame((tsne_user_results * -1) / 2, columns=["z"])
+    tsne_user_df = pd.DataFrame((tsne_user_results) / 2, columns=["z"])
 
     return tsne_cat_df, tsne_user_df
 
 
 if __name__ == "__main__":
     # load data and create subset for analysis
-    filename = "./data/app_data/board_game_date.csv"
+    filename = "./data/processed/bgg_wrangled.csv"
     raw, mod = load_data(filename)
     print("Data loaded successfully")
 
@@ -138,5 +137,5 @@ if __name__ == "__main__":
 
     # save data
     combined_output = pd.concat([raw, result_cat, result_user], axis=1)
-    combined_output.to_csv(filename + "_tsne.csv", index=False)
+    combined_output.to_csv("./data/processed/bgg_data" + "_tsne.csv", index=False)
     print("Dataframe saved")
