@@ -27,17 +27,23 @@ Features include:
 
 The best way to understand the functionality is just to check-out the [app](https://boardgame-dashboard-data551.herokuapp.com/) but a few examples are shown below.
 
+**Average User Ratings**
+
 ![Average Game Ratings](./images/README_fig1.png)
+
+**Published Game Counts**
 
 ![Published Game Counts](./images/README_fig2.png)
 
-![3D Game Explorer](./images/test.gif)
+**3D Game Explorer**
+
+![3D Game Explorer](./images/README_vid.gif)
 
 ## 3D Game Explorer
 
 The 3D Game Explorer is a representation of game similarity based on game categories, mechanics, and user ratings. It allows a user to select a game and then explore similar games in close proximity.
 
-A brief demo is shown above and a more detailed demo can be found here.
+A brief demo is shown above and a more detailed demo can be found [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/blob/main/docs/demo/).
 
 The 3D Game Explorer uses dimensionality reduction (t-SNE) which results in plotting similar games close to each other and less similar games farther away. The horizontal axes represent similarity in game categories and mechanics and the vertical axis represents similarity in user ratings (count of ratings and average ratings).
 
