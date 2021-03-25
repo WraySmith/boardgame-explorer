@@ -4,7 +4,7 @@
 
 The Board Game Analysis Dashboard includes the functionality originally proposed and incorporates the feedback after Milestone 2. We were also able to implement the two enhancements that were started during Milestone 2.
 
-### Updates from Milestone 2
+## Updates from Milestone 2
 
 The following updates were made to the app building on top of Milestone 2 [feedback](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/34):
 
@@ -30,6 +30,6 @@ We were also able to implement the two enhancements started during Milestone 2 i
 - Implementing dimensionality reduction (using t-SNE) of the categories and mechanics into 2-dimensions to allow 3-dimensional plotting with user rating as the third axis. This allows a user to visually explore similarities between board games. We found that the functionality of this works quite well providing a useful tool.
 - Updating the board game dataset. The original exploratory data analysis (EDA) was completed using a dataset that ended in 2016 and the format/source of that data is no longer available. It was a significant amount of effort to update the dataset to 2021 but it was completed.
 
-### Future Potential Enhancements
+## Future Potential Enhancements
 
 Other enhancements originally considered included deploying the app through AWS and putting the database in NoSQL which may improve the performance of the app.These were not be completed based on the effort required for the completed enhancements discussed above, but are potential future updates and are left as open [issues](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues).
