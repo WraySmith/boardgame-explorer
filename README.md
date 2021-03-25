@@ -49,16 +49,16 @@ The 3D Game Explorer uses dimensionality reduction (t-SNE) which results in plot
 
 ## Data
 
-The Board Game Data Explorer queries the [BoardGameGeek](https://boardgamegeek.com/) API every two weeks to update the dataset. 
+The Board Game Data Explorer queries the [BoardGameGeek](https://boardgamegeek.com/) API and is processed into the format used by the app using a GitHub Actions workflow. It is currently triggered manually but the plan is to automate it on a bi-weekly basis.
 
 There is some filtering done on the dataset before it goes into the explorer including:
 
-- Games with less than 50 user ratings are removed
+- Games with less than 100 user ratings are removed
 - Games published before 1950 or with no published year are removed
 
 ## Status
 
-v1.0.0 of the Board Game Data Explorer is now complete! The app was originally completed as part of the Master of Data Science program at the University of British Columbia (UBC) but will continue to be maintained.
+v1.0.0 of the Board Game Data Explorer is now complete! The app was completed as part of the Master of Data Science program at the University of British Columbia (UBC) but will continue to be maintained.
 
 There are still are few updates planned for the app that can be found [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/69) and include:
 

@@ -13,7 +13,7 @@ The following updates were made to the app building on top of Milestone 2 [feedb
 - Modified graph aesthetics.
 - Modified the bar charts that previously existed in v0.1.1 of the app to be density plots. We felt this conveyed additional information not captured in the original bar charts. We also removed the duplicate set of charts which was originally envisioned to provide comparison but was ultimately felt to be not useful.
 
-Several code based updates were also [completed](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/34) including:
+Several code based updates were also [completed](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/35) including:
 
 - Vectorizing most wrangling operations to improve app speed (originally completed as part of the R app for Milestone 3 and then also completed here).
 - Identifying and removing duplicated code ([jscpd](https://github.com/kucherenko/jscpd) was used as part of our super-linter process for this).
@@ -25,7 +25,7 @@ The one item that did not get completed due to time constraints was modifying th
 
 ## Enhancements Added
 
-We were also able to implement the two enhancement started during Milestone 2 including:
+We were also able to implement the two enhancements started during Milestone 2 including:
 
 - Implementing dimensionality reduction (using t-SNE) of the categories and mechanics into 2-dimensions to allow 3-dimensional plotting with user rating as the third axis. This allows a user to visually explore similarities between board games. We found that the functionality of this works quite well providing a useful tool.
 - Updating the board game dataset. The original exploratory data analysis (EDA) was completed using a dataset that ended in 2016 and the format/source of that data is no longer available. It was a significant amount of effort to update the dataset to 2021 but it was completed.
