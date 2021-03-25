@@ -8,7 +8,7 @@ Paths to the various data files are relative, thus all these scripts are to be r
 
 Run `bgg_api_querier.py` to get a dataframe of all board games with names in the columns. Produces `./data/raw/bgg_data_from_api.csv`
 
-Then run `wrangle.py` to filter `./data/raw/bgg_data_from_api.csv` to have published year greater than 1950, and to only include board games with atleast 50 user reviews. Also drops rows with non valid year published data. This files output is 
+Then run `wrangle.py` to filter `./data/raw/bgg_data_from_api.csv` to have published year greater than 1950, and to only include board games with atleast 50 user reviews. Also drops rows with non valid year published data. This files output is `./data/processed/bgg_wrangled.csv`
 
 `utils.py` contains helper functions for our api caller files.  
 
