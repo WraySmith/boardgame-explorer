@@ -1,38 +1,69 @@
-# Board Game Dashboard
+# Board Game Data Explorer
 
 ![GitHub](https://img.shields.io/github/license/ubco-mds-2020-labs/dashboard-project-group14) [![GitHub Super-Linter](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
-**Team:** Nathan Smith, Mitch Harris, Ryan Koenig, Sophia Bulcock
 
-**The Board Game Dashboard can be found [here](https://boardgame-dashboard-data551.herokuapp.com/)!**
+:game_die: **The Board Game Data Explorer can be found [here](https://boardgame-dashboard-data551.herokuapp.com/)!** :game_die:
+
+This document (the README file) provides information about the data explorer. Jump straight to one of the sections below, or just scroll down to find out more.
+
+* [Description](#description)
+* [3D Game Explorer](#3d-game-explorer)
+* [Data](#data)
+* [Status](#status)
+* [How to Contribute](#how-to-contribute)
 
 ## Description
 
-The Board Game Dashboard provides interactive exploration of a dataset of approximately 10,000 board games from the [Board Game Geek website](https://boardgamegeek.com/). The data includes board games with their descriptions, general game details, and user ratings and was obtained from the [R4DS TidyTuesday 2019-03-12 Github repository](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-03-12).
+The Board Game Data Explorer provides interactive exploration of board games from the [BoardGameGeek website](https://boardgamegeek.com/). 
 
-The dashboard has following general functionality:
+The app allows exploration based on game name, categories, mechanics, publishers and provides user rating information.
 
-- Exploration of trends in board game features from 1950 to 2016.
-- Summary of most popular board game features and board games based on user selections of game category, mechanics, publisher, and/or published year.
+Features include:
 
-The best way to understand the functionality is just to check it out!
+- Trends in board game features vs game published year.
+- Top 10 games based user ratings and filtering on categories, mechanics, and/or publishers.
+- :boom: A 3D game explorer. :boom:
 
-An exploratory data analysis was also prepared prior to the dashboard and can be read [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/blob/main/reports/exploratory_data_analysis/boardgame_EDA.ipynb).
+The best way to understand the functionality is just to check-out the [app](https://boardgame-dashboard-data551.herokuapp.com/) but a few examples are shown below.
+
+**Average User Ratings**
+
+![Average Game Ratings](./images/README_fig1.png)
+
+**Published Game Counts**
+
+![Published Game Counts](./images/README_fig2.png)
+
+**3D Game Explorer**
+
+![3D Game Explorer](./images/README_vid.gif)
+
+## 3D Game Explorer
+
+The 3D Game Explorer is a representation of game similarity based on game categories, mechanics, and user ratings. It allows a user to select a game and then explore similar games in close proximity.
+
+A brief demo is shown above and a more detailed demo can be found [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/blob/main/docs/demo/).
+
+The 3D Game Explorer uses dimensionality reduction (t-SNE) which results in plotting similar games close to each other and less similar games farther away. The horizontal axes represent similarity in game categories and mechanics and the vertical axis represents similarity in user ratings (count of ratings and average ratings).
+
+## Data
+
+The Board Game Data Explorer queries the [BoardGameGeek](https://boardgamegeek.com/) API and is processed into the format used by the app using a GitHub Actions workflow. It is currently triggered manually but the plan is to automate it on a bi-weekly basis.
+
+There is some filtering done on the dataset before it goes into the explorer including:
+
+- Games with less than 100 user ratings are removed
+- Games published before 1950 or with no published year are removed
 
 ## Status
 
-The dashboard is currently under active development and will soon include the following updates (stay tuned!):
+v1.0.0 of the Board Game Data Explorer is now complete! The app was completed as part of the Master of Data Science program at the University of British Columbia (UBC) but will continue to be maintained.
 
-- Improved layout and aesthetics
-- Revised game count vs published year bar chart
-- Additional in-app user instructions.
+There are still are few updates planned for the app that can be found [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/issues/69) and include:
 
-## Enhancements
-
-Several larger enhancements are also underway for the dashboard!
-
-- Updated board game dataset available on [Kaggle](https://www.kaggle.com/mshepherd/board-games). The updated dataset is provided by the author of [Recommend.Games](https://recommend.games/) (very cool board game recommender using machine learning) but requires additional wrangling into a useable state for the dashboard.
-- 3D visualization of the board game data. The visualization uses [T-SNE](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) dimensionality reduction to plot board game categories and mechanics on two dimensions and the third dimension represents user rating. An exploratory analysis completed for this functionality can be found [here](https://github.com/ubco-mds-2020-labs/dashboard-project-group14/blob/main/reports/tsne_analysis/).
+- Improve layout to scale better on different browsers
+- Adding a few more data filters for the graphs
 
 ## Getting Help or Reporting an Issue
 

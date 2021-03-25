@@ -30,8 +30,8 @@ The second tab allows the user to explore the most popular boardgames (based on 
 
 An additional tab (not shown in the sketch below) that may be provided as part of the app, depending on the timeline, includes a two- or three-dimensional network plot showing clustering of similar board games. The potential network plot will likely be completed using a dimensionality reducing technique such as Principle Component Analysis or Manifold Learning. The plot would allow a user to highlight specific categories, mechanics, and publishers and see connections between similar games. An example of the potential network plot can be seen [here](https://medium.com/plotly/exploring-and-investigating-network-relationships-with-plotlys-dash-and-dash-cytoscape-ec625ef63c59).
 
-![dashboard 1](./images/dashboard_sketch_1.PNG)
+![dashboard 1](../images/dashboard_sketch_1.PNG)
 *Figure 1: Board Game Dashboard Sketch (Tab 1)*
 
-![dashboard 2](./images/dashboard_sketch_2.PNG)
+![dashboard 2](../images/dashboard_sketch_2.PNG)
 *Figure 2: Board Game Dashboard Sketch (Tab 2)*

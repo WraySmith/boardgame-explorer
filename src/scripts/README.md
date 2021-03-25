@@ -1,14 +1,14 @@
-# Scripts directory description
+# Scripts Directory Description
 
-This directory holds files for gathering and processing data.
+This directory holds files for gathering and processing data. These are used by the GitHub Actions Data and Collection Processing workflow which is currently manually triggered.
 
 Paths to the various data files are relative, thus all these scripts are to be run from the root of this repository.
 
 `data/raw/bgg_GameItem.csv` is an updated board game dataset, it is used for its updated list of board game ids for bgg.
 
-Run `bgg_api_querier.py` to get a dataframe of all board games with names in the columns. Produces `./data/raw/bgg_data_from_api.csv`
+Run `bgg_api_querier.py` to get a dataframe of all board games with names in the columns. Produces `./data/raw/bgg_data_from_api.csv`.
 
-Then run `wrangle.py` to filter `./data/raw/bgg_data_from_api.csv` to have published year greater than 1950, and to only include board games with atleast 50 user reviews. Also drops rows with non valid year published data. This files output is 
+Then run `wrangle.py` to filter `./data/raw/bgg_data_from_api.csv` to have published year greater than 1950, and to only include board games with atleast 50 user reviews. Also drops rows with non valid year published data. This files output is `./data/processed/bgg_wrangled.csv`
 
 `utils.py` contains helper functions for our api caller files.  
 
