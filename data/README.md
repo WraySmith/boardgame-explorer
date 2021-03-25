@@ -1,6 +1,5 @@
 # Data Folder Descriptions
 
-
 ## raw
 
 Data gotten from the bgg api that still needs to be processed by `wrangle_data.py`.

@@ -36,7 +36,7 @@ jobs:
       - name: Run wrangle
         run: |
           python src/scripts/wrangle.py
-    - name: Sleep for 10 sec
+      - name: Sleep for 10 sec
         uses: jakejarvis/wait-action@master
         with:
           time: '10s'
