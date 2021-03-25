@@ -49,7 +49,7 @@ jobs:
 
       - name: Run tSNE
         run: |
-          python scr/scripts/tsne_analysis.py
+          python src/scripts/tsne_analysis.py
 
       - name: Commit & Push changes
         uses: actions-js/push@master
