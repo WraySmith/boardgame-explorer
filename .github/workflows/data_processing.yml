@@ -18,31 +18,39 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Run api_query
         run: |
           python src/scripts/bgg_api_querier.py
+
       - name: Sleep for 10 sec
         uses: jakejarvis/wait-action@master
         with:
           time: '10s'
+
       - name: Run wrangle
         run: |
           python src/scripts/wrangle.py
+
       - name: Sleep for 10 sec
         uses: jakejarvis/wait-action@master
         with:
           time: '10s'
+
       - name: Run tSNE
         run: |
           python scr/scripts/tsne_analysis.py
+
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
